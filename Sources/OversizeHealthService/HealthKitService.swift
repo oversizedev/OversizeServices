@@ -7,11 +7,11 @@
 
 import Foundation
 import HealthKit
-import OversizeCraft
+import OversizeModels
 
 public protocol HealthKitServiceProtocol {
     func requestAuthorization() async -> Result<Bool, AppError>
-    //func currentBodyMass() async throws -> Double?
+    func saveMass(date: Date, bodyMass: Double) async throws
     func fetchBodyMass() async throws -> HKStatisticsCollection?
     func calculateSteps(completion: @escaping (HKStatisticsCollection?) -> Void)
     func getWeightData(forDay days: Int, completion: @escaping ((_ weight: Double?, _ date: Date?) -> Void))
@@ -145,6 +145,71 @@ extension HealthKitService: HealthKitServiceProtocol {
         
     }
     
+    func save(_ sample: HKSample) async throws {
+
+        guard let healthStore = healthStore else {
+            throw HKError(.errorHealthDataUnavailable)
+        }
+
+        let _: Bool = try await withCheckedThrowingContinuation {
+            continuation in
+
+            healthStore.save(sample) { _, error in
+                if let error = error {
+
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                continuation.resume(returning: true)
+            }
+        }
+    }
+    
+    public func saveMass(date: Date, bodyMass: Double) async throws {
+
+        guard let healthStore = healthStore else {
+            throw HKError(.errorHealthDataUnavailable)
+        }
+        
+        let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
+        
+        let bodyMass = HKQuantitySample.init(type: quantityType!,
+                                             quantity: HKQuantity.init(unit: HKUnit.gramUnit(with: .kilo), doubleValue: bodyMass),
+                                             start: date,
+                                             end: date)
+
+        let _: Bool = try await withCheckedThrowingContinuation {
+            continuation in
+
+            healthStore.save(bodyMass) { _, error in
+                if let error = error {
+
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                continuation.resume(returning: true)
+            }
+        }
+    }
+    
+    func saveBodyMass(date: Date, bodyMass: Double) {
+        let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
+        let bodyMass = HKQuantitySample.init(type: quantityType!,
+                                             quantity: HKQuantity.init(unit: HKUnit.pound(), doubleValue: bodyMass),
+                                             start: date,
+                                             end: date)
+        healthStore?.save(bodyMass) { success, error in
+            if (error != nil) {
+                print("Error: \(String(describing: error))")
+            }
+            if success {
+                print("Saved: \(success)")
+            }
+        }
+    }
+
 //    func waterConsumptionGraphData(completion: @escaping ([WaterGraphData]?) -> Void) throws {
 //        guard let healthStore = healthStore else {
 //            throw HKError(.errorHealthDataUnavailable)

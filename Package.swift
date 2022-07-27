@@ -21,7 +21,7 @@ let package = Package(
             targets: ["OversizeHealthService"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/oversizedev/OversizeCraft.git", .upToNextMajor(from: "2.0.0")),
+        .package(name: "OversizeModels", path: "../OversizeModels"),
     ],
     targets: [
         .target(
@@ -31,7 +31,7 @@ let package = Package(
             name: "OversizeHealthService",
             dependencies: [
                 "OversizeServices",
-                .product(name: "OversizeCraft", package: "OversizeCraft"),
+                "OversizeModels"
             ]),
         .testTarget(
             name: "OversizeServicesTests",
