@@ -1,6 +1,6 @@
 //
 // Copyright © 2022 Alexander Romanov
-// ResolverRegistering.swift
+// ServiceRegistering.swift
 //
 
 import Foundation
@@ -10,9 +10,13 @@ private struct HealthKitServiceKey: InjectionKey {
     static var currentValue: HealthKitServiceProtocol = HealthKitService()
 }
 
-extension InjectedValues {
-    public var healthKitService: HealthKitServiceProtocol {
+public extension InjectedValues {
+    var healthKitService: HealthKitServiceProtocol {
         get { Self[HealthKitServiceKey.self] }
         set { Self[HealthKitServiceKey.self] = newValue }
     }
 }
+
+// public extension Container {
+//    static var healthKitService = Factory<HealthKitServiceProtocol> { HealthKitService() }
+// }

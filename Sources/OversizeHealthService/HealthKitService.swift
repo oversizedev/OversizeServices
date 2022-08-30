@@ -1,13 +1,11 @@
 //
-//  HealthKitService.swift
+// Copyright © 2022 Alexander Romanov
+// HealthKitService.swift
 //
-//
-//  Created by aromanov on 01.06.2022.
-
 
 import Foundation
 import HealthKit
-import OversizeModels
+import OversizeServices
 
 public protocol HealthKitServiceProtocol {
     func requestAuthorization() async -> Result<Bool, AppError>
@@ -18,13 +16,12 @@ public protocol HealthKitServiceProtocol {
 }
 
 open class HealthKitService {
-
     private var healthStore: HKHealthStore?
-    
+
     private let bodyMassType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
-    
+
     private var query: HKStatisticsCollectionQuery?
-    
+
     public init() {
         if HKHealthStore.isHealthDataAvailable() {
             healthStore = HKHealthStore()
@@ -33,120 +30,113 @@ open class HealthKitService {
 }
 
 extension HealthKitService: HealthKitServiceProtocol {
-    
     public func requestAuthorization() async -> Result<Bool, AppError> {
+        guard let healthStore = healthStore, let type = bodyMassType else { return .failure(AppError.custom(title: "Not StoreKit")) }
 
-        guard let healthStore = self.healthStore, let type = self.bodyMassType else { return .failure(AppError.custom(title: "Not StoreKit")) }
-        
         do {
             try await healthStore.requestAuthorization(toShare: [type], read: [type])
-            return  .success(true)
+            return .success(true)
         } catch {
-            return  .failure(AppError.custom(title: "Not get"))
+            return .failure(AppError.custom(title: "Not get"))
         }
     }
-    
-    
+
     public func getWeightData(forDay days: Int, completion: @escaping ((_ weight: Double?, _ date: Date?) -> Void)) {
-       // Getting quantityType as stepCount
-       guard let bodyMassType = HKObjectType.quantityType(forIdentifier: .bodyMass) else {
-           print("*** Unable to create a bodyMass type ***")
-           return
-       }
+        // Getting quantityType as stepCount
+        guard let bodyMassType = HKObjectType.quantityType(forIdentifier: .bodyMass) else {
+            print("*** Unable to create a bodyMass type ***")
+            return
+        }
 
-       let now = Date()
-       let startDate = Calendar.current.date(byAdding: DateComponents(day: -days), to: now)!
+        let now = Date()
+        let startDate = Calendar.current.date(byAdding: DateComponents(day: -days), to: now)!
 
-       var interval = DateComponents()
-       interval.day = 1
+        var interval = DateComponents()
+        interval.day = 1
 
-       var anchorComponents = Calendar.current.dateComponents([.day, .month, .year], from: now)
-       anchorComponents.hour = 0
-       let anchorDate = Calendar.current.date(from: anchorComponents)!
+        var anchorComponents = Calendar.current.dateComponents([.day, .month, .year], from: now)
+        anchorComponents.hour = 0
+        let anchorDate = Calendar.current.date(from: anchorComponents)!
 
-       // Note to myself:: StatisticsQuery!! Nicht Collection! Option .mostRecent. Achtung, unten auch setzen!!
-       let query = HKStatisticsCollectionQuery(quantityType: bodyMassType,
-                                               quantitySamplePredicate: nil,
-                                               options: [.mostRecent],
-                                               anchorDate: anchorDate,
-                                               intervalComponents: interval)
-       query.initialResultsHandler = { _, results, error in
-           guard let results = results else {
-               print("ERROR")
-               return
-           }
+        // Note to myself:: StatisticsQuery!! Nicht Collection! Option .mostRecent. Achtung, unten auch setzen!!
+        let query = HKStatisticsCollectionQuery(quantityType: bodyMassType,
+                                                quantitySamplePredicate: nil,
+                                                options: [.mostRecent],
+                                                anchorDate: anchorDate,
+                                                intervalComponents: interval)
+        query.initialResultsHandler = { _, results, _ in
+            guard let results = results else {
+                print("ERROR")
+                return
+            }
 
-           results.enumerateStatistics(from: startDate, to: now) { statistics, _ in
-               // hier wieder .mostRecent!
-               if let sum = statistics.mostRecentQuantity() {
-                   let bodyMassValue = sum.doubleValue(for: HKUnit.gramUnit(with: .kilo))
-                   completion(bodyMassValue, statistics.startDate)
-                   return
-               }
-           }
-       }
+            results.enumerateStatistics(from: startDate, to: now) { statistics, _ in
+                // hier wieder .mostRecent!
+                if let sum = statistics.mostRecentQuantity() {
+                    let bodyMassValue = sum.doubleValue(for: HKUnit.gramUnit(with: .kilo))
+                    completion(bodyMassValue, statistics.startDate)
+                    return
+                }
+            }
+        }
         healthStore?.execute(query)
-   }
+    }
 
     public func currentBodyMass() async throws -> Double? {
-        
         guard let healthStore = healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
-        
+
         let sort = NSSortDescriptor(
             key: HKSampleSortIdentifierStartDate,
             ascending: false
         )
-        
+
         return try await withCheckedThrowingContinuation { continuation in
-            
+
             let query = HKSampleQuery(
                 sampleType: bodyMassType!,
                 predicate: nil,
                 limit: 1,
                 sortDescriptors: [sort]
             ) { _, samples, _ in
-                
+
                 guard let latest = samples?.first as? HKQuantitySample else {
                     continuation.resume(returning: nil)
                     return
                 }
-                
+
                 let pounds = latest.quantity.doubleValue(for: .pound())
                 continuation.resume(returning: pounds)
             }
-            
+
             healthStore.execute(query)
         }
     }
-    
+
     public func calculateSteps(completion: @escaping (HKStatisticsCollection?) -> Void) {
-        
         let stepType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!
-        
+
         let startDate = Calendar.current.date(byAdding: .day, value: -100, to: Date())
-        
+
         let anchorDate = Date.mondayAt12AM()
-        
+
         let daily = DateComponents(day: 1)
-        
+
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
-        
+
         query = HKStatisticsCollectionQuery(quantityType: stepType, quantitySamplePredicate: predicate, anchorDate: anchorDate, intervalComponents: daily)
-        
-        query!.initialResultsHandler = { query, statisticsCollection, error in
+
+        query!.initialResultsHandler = { _, statisticsCollection, _ in
             completion(statisticsCollection)
         }
-        
-        if let healthStore = healthStore, let query = self.query {
+
+        if let healthStore = healthStore, let query = query {
             healthStore.execute(query)
         }
-        
     }
-    
-    func save(_ sample: HKSample) async throws {
 
+    func save(_ sample: HKSample) async throws {
         guard let healthStore = healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
@@ -156,52 +146,49 @@ extension HealthKitService: HealthKitServiceProtocol {
 
             healthStore.save(sample) { _, error in
                 if let error = error {
-
                     continuation.resume(throwing: error)
                     return
                 }
-                
+
                 continuation.resume(returning: true)
             }
         }
     }
-    
-    public func saveMass(date: Date, bodyMass: Double) async throws {
 
+    public func saveMass(date: Date, bodyMass: Double) async throws {
         guard let healthStore = healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
-        
+
         let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
-        
-        let bodyMass = HKQuantitySample.init(type: quantityType!,
-                                             quantity: HKQuantity.init(unit: HKUnit.gramUnit(with: .kilo), doubleValue: bodyMass),
-                                             start: date,
-                                             end: date)
+
+        let bodyMass = HKQuantitySample(type: quantityType!,
+                                        quantity: HKQuantity(unit: HKUnit.gramUnit(with: .kilo), doubleValue: bodyMass),
+                                        start: date,
+                                        end: date)
 
         let _: Bool = try await withCheckedThrowingContinuation {
             continuation in
 
             healthStore.save(bodyMass) { _, error in
                 if let error = error {
-
                     continuation.resume(throwing: error)
                     return
                 }
-                
+
                 continuation.resume(returning: true)
             }
         }
     }
-    
+
     func saveBodyMass(date: Date, bodyMass: Double) {
         let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
-        let bodyMass = HKQuantitySample.init(type: quantityType!,
-                                             quantity: HKQuantity.init(unit: HKUnit.pound(), doubleValue: bodyMass),
-                                             start: date,
-                                             end: date)
+        let bodyMass = HKQuantitySample(type: quantityType!,
+                                        quantity: HKQuantity(unit: HKUnit.pound(), doubleValue: bodyMass),
+                                        start: date,
+                                        end: date)
         healthStore?.save(bodyMass) { success, error in
-            if (error != nil) {
+            if error != nil {
                 print("Error: \(String(describing: error))")
             }
             if success {
@@ -252,10 +239,7 @@ extension HealthKitService: HealthKitServiceProtocol {
 //        healthStore.execute(query)
 //    }
 
-    
-    
     public func fetchBodyMass() async throws -> HKStatisticsCollection? {
-
         guard let healthStore = healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
@@ -278,14 +262,9 @@ extension HealthKitService: HealthKitServiceProtocol {
                                                     anchorDate: anchorDate,
                                                     intervalComponents: daily)
 
-
-
-
-            query.initialResultsHandler = { query, statisticsCollection, error in
-
+            query.initialResultsHandler = { _, statisticsCollection, _ in
 
                 continuation.resume(returning: statisticsCollection)
-
             }
 
             healthStore.execute(query)
@@ -295,6 +274,6 @@ extension HealthKitService: HealthKitServiceProtocol {
 
 extension Date {
     static func mondayAt12AM() -> Date {
-        return Calendar(identifier: .iso8601).date(from: Calendar(identifier: .iso8601).dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date()))!
+        Calendar(identifier: .iso8601).date(from: Calendar(identifier: .iso8601).dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date()))!
     }
 }
