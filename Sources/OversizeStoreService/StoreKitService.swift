@@ -237,11 +237,11 @@ public final class StoreKitService: ObservableObject {
 //                        //Text("You don't own any subscriptions. \nHead over to the shop to get started!")
 //                    }
                 }
-            case let .failure(error):
+            case .failure:
                 return false
             }
 
-        case let .failure(error):
+        case .failure:
             return false
         }
     }

@@ -14,24 +14,19 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "OversizeHealthService",
-            targets: ["OversizeHealthService"]
+            name: "OversizeHealthService", targets: ["OversizeHealthService"]
         ),
         .library(
-            name: "OversizeSecurityService",
-            targets: ["OversizeSecurityService"]
+            name: "OversizeSecurityService", targets: ["OversizeSecurityService"]
         ),
         .library(
-            name: "OversizeServices",
-            targets: ["OversizeServices"]
+            name: "OversizeServices", targets: ["OversizeServices"]
         ),
         .library(
-            name: "OversizeSettingsService",
-            targets: ["OversizeSettingsService"]
+            name: "OversizeSettingsService", targets: ["OversizeSettingsService"]
         ),
         .library(
-            name: "OversizeStoreService",
-            targets: ["OversizeStoreService"]
+            name: "OversizeStoreService", targets: ["OversizeStoreService"]
         ),
 
     ],
