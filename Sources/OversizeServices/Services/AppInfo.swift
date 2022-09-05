@@ -179,6 +179,11 @@ public enum AppInfo {
             let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsName", dictionary: storeDictonaryName, plist: configName)
             return value ?? ""
         }
+        
+        public static var subscriptionsDescription: String {
+            let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsDescription", dictionary: storeDictonaryName, plist: configName)
+            return value ?? ""
+        }
 
         public static var secretKey: String {
             let value = PlistService.shared.getStringFromDictionary(field: "SecretKey", dictionary: storeDictonaryName, plist: configName)
@@ -210,8 +215,9 @@ public struct StoreFeature: Codable, Identifiable, Hashable {
     public let illustrationURL: String?
     public let screenURL: String?
     public let topScreenAlignment: Bool?
+    public let backgroundColor: String?
     private enum CodingKeys: String, CodingKey {
-        case image, title, subtitle, screenURL, topScreenAlignment, illustrationURL
+        case image, title, subtitle, screenURL, topScreenAlignment, illustrationURL, backgroundColor
     }
 }
 

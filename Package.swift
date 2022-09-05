@@ -13,24 +13,15 @@ let package = Package(
         .watchOS(.v8),
     ],
     products: [
-        .library(
-            name: "OversizeHealthService", targets: ["OversizeHealthService"]
-        ),
-        .library(
-            name: "OversizeSecurityService", targets: ["OversizeSecurityService"]
-        ),
-        .library(
-            name: "OversizeServices", targets: ["OversizeServices"]
-        ),
-        .library(
-            name: "OversizeSettingsService", targets: ["OversizeSettingsService"]
-        ),
-        .library(
-            name: "OversizeStoreService", targets: ["OversizeStoreService"]
-        ),
+        .library(name: "OversizeHealthService", targets: ["OversizeHealthService"]),
+        .library(name: "OversizeSecurityService", targets: ["OversizeSecurityService"]),
+        .library(name: "OversizeServices", targets: ["OversizeServices"]),
+        .library(name: "OversizeSettingsService", targets: ["OversizeSettingsService"]),
+        .library(name: "OversizeStoreService", targets: ["OversizeStoreService"]),
 
     ],
     dependencies: [
+        .package(name: "OversizeCore", path: "../OversizeCore"),
         .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
         .package(name: "OversizeResources", path: "../OversizeResources"),
     ],
@@ -75,7 +66,7 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 "OversizeSettingsService",
-                // .product(name: "OversizeServices", package: "OversizeServices"),
+                .product(name: "OversizeCore", package: "OversizeCore"),
             ]
         ),
 

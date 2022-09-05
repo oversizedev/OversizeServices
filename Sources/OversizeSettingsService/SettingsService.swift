@@ -39,7 +39,7 @@ public protocol SettingsServiceProtocol {
     func biometricWhenGetCVVChange(_ newState: Bool) -> Void
 }
 
-public final class SettingsService: SettingsServiceProtocol {
+public final class SettingsService: ObservableObject, SettingsServiceProtocol {
     // private let keychain = Keychain(service: AppInfoService.app.bundleID.valueOrEmpty)
 
     @Injected(\.biometricService) var biometricService
