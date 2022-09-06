@@ -4,9 +4,13 @@
 //
 
 import Foundation
+import OversizeCore
+import OversizeServices
 import Security
 
 public final class SecureStorageService {
+    //let accessGroup = AppInfo.app.bundleID.valueOrEmpty
+
     enum KeychainError: Error {
         case itemAlreadyExist
         case itemNotFound
@@ -27,7 +31,6 @@ public final class SecureStorageService {
 
     func addItem(query: [CFString: Any]) throws {
         let status = SecItemAdd(query as CFDictionary, nil)
-
         if status != errSecSuccess {
             throw KeychainError(status: status)
         }
@@ -39,7 +42,6 @@ public final class SecureStorageService {
         query[kSecReturnData] = kCFBooleanTrue
 
         var searchResult: AnyObject?
-
         let status = withUnsafeMutablePointer(to: &searchResult) {
             SecItemCopyMatching(query as CFDictionary, $0)
         }
@@ -65,5 +67,10 @@ public final class SecureStorageService {
         if status != errSecSuccess {
             throw KeychainError(status: status)
         }
+    }
+
+    public func deleteAll() throws {
+        let status = SecItemDelete([kSecClass: kSecClassGenericPassword] as CFDictionary)
+        guard status == errSecSuccess else { throw KeychainError(status: status) }
     }
 }

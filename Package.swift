@@ -30,6 +30,7 @@ let package = Package(
             name: "OversizeHealthService",
             dependencies: [
                 "OversizeServices",
+                .product(name: "OversizeCore", package: "OversizeCore"),
                 // .product(name: "OversizeServices", package: "OversizeServices"),
             ]
         ),
@@ -37,6 +38,7 @@ let package = Package(
             name: "OversizeSecurityService",
             dependencies: [
                 "OversizeServices",
+                .product(name: "OversizeCore", package: "OversizeCore"),
                 // .product(name: "OversizeServices", package: "OversizeServices"),
             ]
         ),

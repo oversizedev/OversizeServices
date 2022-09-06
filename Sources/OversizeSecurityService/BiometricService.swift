@@ -4,7 +4,8 @@
 //
 
 import Foundation
-#if os(iOS)
+import OversizeCore
+#if canImport(LocalAuthentication)
     import LocalAuthentication
 #endif
 
@@ -17,7 +18,7 @@ public enum BiometricType: String {
 public protocol BiometricServiceProtocol {
     var biometricType: BiometricType { get }
     func checkIfBioMetricAvailable() -> Bool
-    func authenticating(reason: String, completion: @escaping (Bool) -> Void)
+    func authenticating(reason: String) async -> Bool
 }
 
 public class BiometricService {
@@ -51,7 +52,7 @@ extension BiometricService: BiometricServiceProtocol {
 
             let isBimetricAvailable = laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
             if let error = error {
-                print(error.localizedDescription)
+                log(error.localizedDescription)
             }
 
             return isBimetricAvailable
@@ -60,20 +61,20 @@ extension BiometricService: BiometricServiceProtocol {
         #endif
     }
 
-    public func authenticating(reason: String, completion: @escaping (Bool) -> Void) {
+    public func authenticating(reason: String) async -> Bool {
         #if os(iOS)
-            let laContext = LAContext()
-            if checkIfBioMetricAvailable() {
-                laContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason) { success, _ in
-                    if success {
-                        completion(true)
-                    } else {
-                        completion(false)
-                    }
+            do {
+                let laContext = LAContext()
+                if checkIfBioMetricAvailable() {
+                    return try await laContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
+                } else {
+                    return false
                 }
+            } catch {
+                return false
             }
         #else
-            completion(false)
+            return false
         #endif
     }
 }

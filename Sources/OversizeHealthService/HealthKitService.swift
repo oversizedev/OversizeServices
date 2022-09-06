@@ -5,6 +5,7 @@
 
 import Foundation
 import HealthKit
+import OversizeCore
 import OversizeServices
 
 public protocol HealthKitServiceProtocol {
@@ -44,7 +45,7 @@ extension HealthKitService: HealthKitServiceProtocol {
     public func getWeightData(forDay days: Int, completion: @escaping ((_ weight: Double?, _ date: Date?) -> Void)) {
         // Getting quantityType as stepCount
         guard let bodyMassType = HKObjectType.quantityType(forIdentifier: .bodyMass) else {
-            print("*** Unable to create a bodyMass type ***")
+            log("*** Unable to create a bodyMass type ***")
             return
         }
 
@@ -66,7 +67,7 @@ extension HealthKitService: HealthKitServiceProtocol {
                                                 intervalComponents: interval)
         query.initialResultsHandler = { _, results, _ in
             guard let results = results else {
-                print("ERROR")
+                log("ERROR")
                 return
             }
 
@@ -189,10 +190,10 @@ extension HealthKitService: HealthKitServiceProtocol {
                                         end: date)
         healthStore?.save(bodyMass) { success, error in
             if error != nil {
-                print("Error: \(String(describing: error))")
+                log("Error: \(String(describing: error))")
             }
             if success {
-                print("Saved: \(success)")
+                log("Saved: \(success)")
             }
         }
     }

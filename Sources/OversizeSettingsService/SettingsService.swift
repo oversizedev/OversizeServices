@@ -6,6 +6,7 @@
 #if os(iOS)
     import LocalAuthentication
 #endif
+import OversizeCore
 import OversizeSecurityService
 import OversizeServices
 import SwiftUI
@@ -40,8 +41,6 @@ public protocol SettingsServiceProtocol {
 }
 
 public final class SettingsService: ObservableObject, SettingsServiceProtocol {
-    // private let keychain = Keychain(service: AppInfoService.app.bundleID.valueOrEmpty)
-
     @Injected(\.biometricService) var biometricService
 
     public init() {}
@@ -98,18 +97,19 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol {
 // PIN Code
 public extension SettingsService {
     func getPINCode() -> String {
-        pinCode ?? ""
+        log(pinCode)
+        return pinCode ?? ""
     }
 
-    func setPINCode(pin _: String) {
-        pinCode = pinCode
+    func setPINCode(pin: String) {
+        pinCode = pin
     }
 
-    func updatePINCode(oldPIN: String, newPIN _: String, completion: @escaping (Bool) -> Void) {
-        let pinCode = getPINCode()
+    func updatePINCode(oldPIN: String, newPIN: String, completion: @escaping (Bool) -> Void) {
+        let currentCode = getPINCode()
 
-        if oldPIN == pinCode {
-            self.pinCode = pinCode
+        if oldPIN == currentCode {
+            pinCode = newPIN
 
             completion(true)
         }
@@ -130,36 +130,32 @@ public extension SettingsService {
 
 public extension SettingsService {
     func biometricChange(_ newState: Bool) {
-        var reason = ""
-        if newState {
-            reason = "Provice \(biometricService.biometricType.rawValue) to enable"
-        } else {
-            reason = "Provice \(biometricService.biometricType.rawValue) to disable"
-        }
-        biometricService.authenticating(reason: reason) { [weak self] authenticate in
-            switch authenticate {
-            case true:
-                self?.biometricEnabled = newState
-            case false:
-                break
+        Task {
+            var reason = ""
+            if newState {
+                reason = "Provice \(biometricService.biometricType.rawValue) to enable"
+            } else {
+                reason = "Provice \(biometricService.biometricType.rawValue) to disable"
+            }
+            let auth = await biometricService.authenticating(reason: reason)
+            if auth {
+                biometricEnabled = newState
             }
         }
     }
 
     func biometricWhenGetCVVChange(_ newState: Bool) {
-        var reason = ""
-        let biometricType = biometricService.biometricType
-        if newState {
-            reason = "Provice \(biometricType.rawValue) to enable"
-        } else {
-            reason = "Provice\(biometricType.rawValue) to disable"
-        }
-        biometricService.authenticating(reason: reason) { [weak self] authenticate in
-            switch authenticate {
-            case true:
-                self?.biometricWhenGetCVVEnabend = newState
-            case false:
-                break
+        Task {
+            var reason = ""
+            let biometricType = biometricService.biometricType
+            if newState {
+                reason = "Provice \(biometricType.rawValue) to enable"
+            } else {
+                reason = "Provice\(biometricType.rawValue) to disable"
+            }
+            let auth = await biometricService.authenticating(reason: reason)
+            if auth {
+                biometricWhenGetCVVEnabend = newState
             }
         }
     }

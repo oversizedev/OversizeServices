@@ -67,7 +67,7 @@ public final class StoreKitService: ObservableObject {
                     newNonRenewables.append(product)
                 default:
                     // Ignore this product.
-                    print("Unknown product")
+                    log("Unknown product")
                 }
             }
 
@@ -80,7 +80,7 @@ public final class StoreKitService: ObservableObject {
             // Sort each product category by price, lowest to highest, to update the store.
 
         } catch {
-            print("Failed product request from the App Store server: \(error)")
+            log("Failed product request from the App Store server: \(error)")
             return .failure(.custom(title: "Failed product request from the App Store server"))
         }
     }
@@ -206,35 +206,20 @@ public final class StoreKitService: ObservableObject {
             let result = await updateCustomerProductStatus(products: preProducts)
             switch result {
             case let .success(finalProducts):
-                print("Purchased AutoRenewable: \(finalProducts.purchasedAutoRenewable.count)")
-                print("Purchased NonConsumable: \(finalProducts.nonConsumable.count)")
-                print("Purchased NonRenewable: \(finalProducts.purchasedNonRenewable.count)")
+                log("Purchased AutoRenewable: \(finalProducts.purchasedAutoRenewable.count)")
+                log("Purchased NonConsumable: \(finalProducts.nonConsumable.count)")
+                log("Purchased NonRenewable: \(finalProducts.purchasedNonRenewable.count)")
                 if #available(iOS 15.4, *) {
-                    print("SubscriptionGroupStatus: \(String(describing: finalProducts.subscriptionGroupStatus?.localizedDescription))")
-                } else {
-                    // Fallback on earlier versions
+                    log("SubscriptionGroupStatus: \(String(describing: finalProducts.subscriptionGroupStatus?.localizedDescription))")
                 }
                 if finalProducts.subscriptionGroupStatus == .subscribed {
-                    print("subscriptionGroupStatus == .subscribed")
+                    log("subscriptionGroupStatus == .subscribed")
                 }
 
                 if !finalProducts.purchasedAutoRenewable.isEmpty || !finalProducts.purchasedNonRenewable.isEmpty {
                     return true
                 } else {
                     return false
-//                    if let subscriptionGroupStatus = finalProducts.subscriptionGroupStatus {
-//                        if subscriptionGroupStatus == .expired || subscriptionGroupStatus == .revoked {
-//                            false
-//                        } else if subscriptionGroupStatus == .inBillingRetryPeriod {
-//                            //The best practice for subscriptions in the billing retry state is to provide a deep link
-//                            //from your app to https://apps.apple.com/account/billing.
-//                            //Text("Please verify your billing details.")
-//                            return false
-//                        }
-//                    } else {
-//                        return false
-//                        //Text("You don't own any subscriptions. \nHead over to the shop to get started!")
-//                    }
                 }
             case .failure:
                 return false
@@ -242,6 +227,30 @@ public final class StoreKitService: ObservableObject {
 
         case .failure:
             return false
+        }
+    }
+
+    public func fetchPremiumAndSubscriptionsStatus() async -> (Bool, RenewalState?) {
+        let products = await requestProducts()
+
+        switch products {
+        case let .success(preProducts):
+
+            let result = await updateCustomerProductStatus(products: preProducts)
+            switch result {
+            case let .success(finalProducts):
+
+                if !finalProducts.purchasedAutoRenewable.isEmpty || !finalProducts.purchasedNonRenewable.isEmpty {
+                    return (true, finalProducts.subscriptionGroupStatus)
+                } else {
+                    return (false, finalProducts.subscriptionGroupStatus)
+                }
+            case .failure:
+                return (false, nil)
+            }
+
+        case .failure:
+            return (false, nil)
         }
     }
 

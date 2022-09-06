@@ -179,7 +179,7 @@ public enum AppInfo {
             let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsName", dictionary: storeDictonaryName, plist: configName)
             return value ?? ""
         }
-        
+
         public static var subscriptionsDescription: String {
             let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsDescription", dictionary: storeDictonaryName, plist: configName)
             return value ?? ""

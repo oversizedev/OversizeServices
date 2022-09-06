@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import OversizeServices
 import Security
 import SwiftUI
 
@@ -12,8 +13,9 @@ public extension SecureStorageService {
         var query: [CFString: Any] = [:]
         query[kSecClass] = kSecClassGenericPassword
         query[kSecAttrAccount] = account
+        // query[kSecAttrAccessGroup] = accessGroup
+        query[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
         query[kSecValueData] = password.data(using: .utf8)
-
         do {
             try addItem(query: query)
         } catch {
@@ -30,7 +32,7 @@ public extension SecureStorageService {
         var query: [CFString: Any] = [:]
         query[kSecClass] = kSecClassGenericPassword
         query[kSecAttrAccount] = account
-
+        // query[kSecAttrAccessGroup] = accessGroup
         var attributesToUpdate: [CFString: Any] = [:]
         attributesToUpdate[kSecValueData] = password.data(using: .utf8)
 
@@ -45,7 +47,7 @@ public extension SecureStorageService {
         var query: [CFString: Any] = [:]
         query[kSecClass] = kSecClassGenericPassword
         query[kSecAttrAccount] = account
-
+        // query[kSecAttrAccessGroup] = accessGroup
         var result: [CFString: Any]?
 
         do {
@@ -65,32 +67,11 @@ public extension SecureStorageService {
         var query: [CFString: Any] = [:]
         query[kSecClass] = kSecClassGenericPassword
         query[kSecAttrAccount] = account
-
+        // query[kSecAttrAccessGroup] = accessGroup
         do {
             try deleteItem(query: query)
         } catch {
             return
-        }
-    }
-}
-
-@propertyWrapper
-public struct SecureStorage: DynamicProperty {
-    private let key: String
-    private let storage = SecureStorageService()
-
-    public init(_ key: String) {
-        self.key = key
-    }
-
-    public var wrappedValue: String? {
-        get { storage.getPassword(for: key) }
-        nonmutating set {
-            if let newValue = newValue {
-                storage.updatePassword(newValue, for: key)
-            } else {
-                storage.deletePassword(for: key)
-            }
         }
     }
 }
