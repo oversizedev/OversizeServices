@@ -19,9 +19,9 @@ public protocol SettingsServiceProtocol {
     var vibrationEnabled: Bool { get set }
     var cloudKitEnabled: Bool { get set }
     var cloudKitCVVEnabled: Bool { get set }
-    var biometricEnabled: Bool { get set }
-    var biometricWhenGetCVVEnabend: Bool { get set }
-    var pinCodeEnabend: Bool { get set }
+    var biometricEnabled: Bool { get }
+    var biometricWhenGetCVVEnabend: Bool { get }
+    var pinCodeEnabend: Bool { get }
     var deleteDataIfBruteForceEnabled: Bool { get set }
     var spotlightEnabled: Bool { get set }
     var alertPINCodeEnabled: Bool { get set }
@@ -34,10 +34,10 @@ public protocol SettingsServiceProtocol {
     var askPasswordAfterMinimizeEnabend: Bool { get set }
     func getPINCode() -> String
     func setPINCode(pin: String) -> Void
-    func updatePINCode(oldPIN: String, newPIN: String, completion: @escaping (Bool) -> Void) -> Void
+    func updatePINCode(oldPIN: String, newPIN: String) async -> Bool
     func isSetedPinCode() -> Bool
-    func biometricChange(_ newState: Bool) -> Void
-    func biometricWhenGetCVVChange(_ newState: Bool) -> Void
+    func biometricChange(_ newState: Bool) async
+    func biometricWhenGetCVVChange(_ newState: Bool) async
 }
 
 public final class SettingsService: ObservableObject, SettingsServiceProtocol {
@@ -97,23 +97,26 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol {
 // PIN Code
 public extension SettingsService {
     func getPINCode() -> String {
-        log(pinCode)
+        log("🔐 Get PIN Code")
         return pinCode ?? ""
     }
 
     func setPINCode(pin: String) {
+        log("🔐 Set PIN Code")
         pinCode = pin
     }
 
-    func updatePINCode(oldPIN: String, newPIN: String, completion: @escaping (Bool) -> Void) {
+    func updatePINCode(oldPIN: String, newPIN: String) async -> Bool {
+        log("🔐 Update PIN Code")
         let currentCode = getPINCode()
 
         if oldPIN == currentCode {
             pinCode = newPIN
-
-            completion(true)
+            log("✅ PIN Code Updated")
+            return true
         }
-        completion(false)
+        log("🛑 PIN Code Not updated")
+        return false
     }
 
     func isSetedPinCode() -> Bool {
@@ -129,34 +132,32 @@ public extension SettingsService {
 // Biometric
 
 public extension SettingsService {
-    func biometricChange(_ newState: Bool) {
-        Task {
-            var reason = ""
-            if newState {
-                reason = "Provice \(biometricService.biometricType.rawValue) to enable"
-            } else {
-                reason = "Provice \(biometricService.biometricType.rawValue) to disable"
-            }
-            let auth = await biometricService.authenticating(reason: reason)
-            if auth {
-                biometricEnabled = newState
-            }
+    func biometricChange(_ newState: Bool) async {
+        log("🪬 Updated biometric state")
+        var reason = ""
+        if newState {
+            reason = "Provice \(biometricService.biometricType.rawValue) to enable"
+        } else {
+            reason = "Provice \(biometricService.biometricType.rawValue) to disable"
+        }
+        let auth = await biometricService.authenticating(reason: reason)
+        if auth {
+            log("✅ Updated biometric state")
+            biometricEnabled = newState
         }
     }
 
-    func biometricWhenGetCVVChange(_ newState: Bool) {
-        Task {
-            var reason = ""
-            let biometricType = biometricService.biometricType
-            if newState {
-                reason = "Provice \(biometricType.rawValue) to enable"
-            } else {
-                reason = "Provice\(biometricType.rawValue) to disable"
-            }
-            let auth = await biometricService.authenticating(reason: reason)
-            if auth {
-                biometricWhenGetCVVEnabend = newState
-            }
+    func biometricWhenGetCVVChange(_ newState: Bool) async {
+        var reason = ""
+        let biometricType = biometricService.biometricType
+        if newState {
+            reason = "Provice \(biometricType.rawValue) to enable"
+        } else {
+            reason = "Provice\(biometricType.rawValue) to disable"
+        }
+        let auth = await biometricService.authenticating(reason: reason)
+        if auth {
+            biometricWhenGetCVVEnabend = newState
         }
     }
 }

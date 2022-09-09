@@ -9,7 +9,7 @@ import OversizeServices
 import Security
 
 public final class SecureStorageService {
-    //let accessGroup = AppInfo.app.bundleID.valueOrEmpty
+    // let accessGroup = AppInfo.app.bundleID.valueOrEmpty
 
     enum KeychainError: Error {
         case itemAlreadyExist

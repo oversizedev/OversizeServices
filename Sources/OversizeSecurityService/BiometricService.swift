@@ -66,7 +66,7 @@ extension BiometricService: BiometricServiceProtocol {
             do {
                 let laContext = LAContext()
                 if checkIfBioMetricAvailable() {
-                    return try await laContext.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
+                    return try await laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason)
                 } else {
                     return false
                 }

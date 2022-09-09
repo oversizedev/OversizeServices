@@ -43,4 +43,8 @@ public final class AppStateService: ObservableObject { //: AppStateServiceProtoc
         onbardingPage = 0
         isCompletedOnbarding = false
     }
+
+    public func restAppRunCount() {
+        appRunCount = 0
+    }
 }

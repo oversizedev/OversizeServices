@@ -199,23 +199,12 @@ public final class StoreKitService: ObservableObject {
 
     public func fetchPremiumStatus() async -> Bool {
         let products = await requestProducts()
-
         switch products {
         case let .success(preProducts):
 
             let result = await updateCustomerProductStatus(products: preProducts)
             switch result {
             case let .success(finalProducts):
-                log("Purchased AutoRenewable: \(finalProducts.purchasedAutoRenewable.count)")
-                log("Purchased NonConsumable: \(finalProducts.nonConsumable.count)")
-                log("Purchased NonRenewable: \(finalProducts.purchasedNonRenewable.count)")
-                if #available(iOS 15.4, *) {
-                    log("SubscriptionGroupStatus: \(String(describing: finalProducts.subscriptionGroupStatus?.localizedDescription))")
-                }
-                if finalProducts.subscriptionGroupStatus == .subscribed {
-                    log("subscriptionGroupStatus == .subscribed")
-                }
-
                 if !finalProducts.purchasedAutoRenewable.isEmpty || !finalProducts.purchasedNonRenewable.isEmpty {
                     return true
                 } else {
@@ -224,33 +213,30 @@ public final class StoreKitService: ObservableObject {
             case .failure:
                 return false
             }
-
         case .failure:
             return false
         }
     }
 
-    public func fetchPremiumAndSubscriptionsStatus() async -> (Bool, RenewalState?) {
+    public func fetchPremiumAndSubscriptionsStatus() async -> (Bool?, RenewalState?) {
         let products = await requestProducts()
 
         switch products {
         case let .success(preProducts):
-
             let result = await updateCustomerProductStatus(products: preProducts)
             switch result {
             case let .success(finalProducts):
-
-                if !finalProducts.purchasedAutoRenewable.isEmpty || !finalProducts.purchasedNonRenewable.isEmpty {
+                if !finalProducts.purchasedAutoRenewable.isEmpty || !finalProducts.purchasedNonConsumable.isEmpty {
                     return (true, finalProducts.subscriptionGroupStatus)
                 } else {
                     return (false, finalProducts.subscriptionGroupStatus)
                 }
             case .failure:
-                return (false, nil)
+                return (nil, nil)
             }
 
         case .failure:
-            return (false, nil)
+            return (nil, nil)
         }
     }
 
