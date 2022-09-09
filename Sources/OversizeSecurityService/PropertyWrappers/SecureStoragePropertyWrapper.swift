@@ -8,7 +8,7 @@ import SwiftUI
 @propertyWrapper
 public struct SecureStorage: DynamicProperty {
     private let key: String
-    private let storage = SecureStorageService()
+    private let storage: SecureStorageService = .init()
 
     public init(_ key: String) {
         self.key = key

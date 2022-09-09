@@ -159,7 +159,7 @@ public final class StoreKitService: ObservableObject {
                         // This app defines this non-renewing subscription's expiration date to be one year after purchase.
                         // If the current date is within one year of the `purchaseDate`, the user is still entitled to this
                         // product.
-                        let currentDate = Date()
+                        let currentDate: Date = .init()
                         let expirationDate = Calendar(identifier: .gregorian).date(byAdding: DateComponents(year: 1),
                                                                                    to: transaction.purchaseDate)!
 

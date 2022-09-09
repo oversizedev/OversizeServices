@@ -49,7 +49,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             return
         }
 
-        let now = Date()
+        let now: Date = .init()
         let startDate = Calendar.current.date(byAdding: DateComponents(day: -days), to: now)!
 
         var interval = DateComponents()
@@ -122,7 +122,7 @@ extension HealthKitService: HealthKitServiceProtocol {
 
         let anchorDate = Date.mondayAt12AM()
 
-        let daily = DateComponents(day: 1)
+        let daily: DateComponents = .init(day: 1)
 
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
 
@@ -251,7 +251,7 @@ extension HealthKitService: HealthKitServiceProtocol {
 
         let anchorDate = Date.mondayAt12AM()
 
-        let daily = DateComponents(day: 1)
+        let daily: DateComponents = .init(day: 1)
 
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
 

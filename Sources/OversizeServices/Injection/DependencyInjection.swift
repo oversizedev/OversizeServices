@@ -239,7 +239,7 @@
 //
 // public extension SharedContainer.Scope {
 //    /// Defines a cached scope. The same instance will be returned by the factory until the cache is reset.
-//    static let cached = Cached()
+//    static let cached: Cached = .init()
 //    final class Cached: SharedContainer.Scope {
 //        override public init() {
 //            super.init()
@@ -247,7 +247,7 @@
 //    }
 //
 //    /// Defines a shared (weak) scope. The same instance will be returned by the factory as long as someone maintains a strong reference.
-//    static let shared = Shared()
+//    static let shared: Shared = .init()
 //    final class Shared: SharedContainer.Scope {
 //        override public init() {
 //            super.init()
@@ -266,7 +266,7 @@
 //    }
 //
 //    /// Defines a singleton scope. The same instance will always be returned by the factory.
-//    static let singleton = Singleton()
+//    static let singleton: Singleton = .init()
 //    final class Singleton: SharedContainer.Scope {
 //        override public init() {
 //            super.init()

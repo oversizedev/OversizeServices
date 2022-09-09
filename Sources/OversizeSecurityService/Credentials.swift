@@ -50,7 +50,7 @@ public extension SecureStorageService {
 
         if let account = result?[kSecAttrAccount] as? String,
            let data = result?[kSecValueData] as? Data,
-           let password = String(data: data, encoding: .utf8)
+           let password: String = .init(data: data, encoding: .utf8)
         {
             return Credentials(login: account, password: password)
         } else {

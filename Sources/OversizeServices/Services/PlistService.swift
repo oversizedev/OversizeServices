@@ -6,7 +6,7 @@
 import Foundation
 
 public class PlistService {
-    public static let shared = PlistService()
+    public static let shared: PlistService = .init()
     public init() {}
 
     public func getStringArrayFromDictionary(field: String, dictionary: String, plist: String) -> [String] {

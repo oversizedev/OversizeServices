@@ -26,7 +26,7 @@ public class BiometricService {
 
     public var biometricType: BiometricType {
         #if os(iOS)
-            let authContext = LAContext()
+            let authContext: LAContext = .init()
             _ = authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
             switch authContext.biometryType {
             case .none:
@@ -48,7 +48,7 @@ extension BiometricService: BiometricServiceProtocol {
     public func checkIfBioMetricAvailable() -> Bool {
         #if os(iOS)
             var error: NSError?
-            let laContext = LAContext()
+            let laContext: LAContext = .init()
 
             let isBimetricAvailable = laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
             if let error = error {
@@ -64,7 +64,7 @@ extension BiometricService: BiometricServiceProtocol {
     public func authenticating(reason: String) async -> Bool {
         #if os(iOS)
             do {
-                let laContext = LAContext()
+                let laContext: LAContext = .init()
                 if checkIfBioMetricAvailable() {
                     return try await laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason)
                 } else {

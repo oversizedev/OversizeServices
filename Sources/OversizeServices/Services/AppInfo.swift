@@ -150,7 +150,7 @@ public enum AppInfo {
                 fatalError("Couldn't find file \(configName).plist'.")
             }
             let data = try! Data(contentsOf: filePath)
-            let decoder = PropertyListDecoder()
+            let decoder: PropertyListDecoder = .init()
             do {
                 let decodeData = try decoder.decode(PlistConfiguration.self, from: data)
                 if let features = decodeData.store?.features {
@@ -166,7 +166,7 @@ public enum AppInfo {
         public func parseConfig() -> PlistConfiguration {
             let url = Bundle.main.url(forResource: configName, withExtension: "plist")!
             let data = try! Data(contentsOf: url)
-            let decoder = PropertyListDecoder()
+            let decoder: PropertyListDecoder = .init()
             return try! decoder.decode(PlistConfiguration.self, from: data)
         }
 
@@ -199,7 +199,7 @@ public enum AppInfo {
     public static var plist: PlistConfiguration? {
         let url = Bundle.main.url(forResource: configName, withExtension: "plist")!
         let data = try! Data(contentsOf: url)
-        let decoder = PropertyListDecoder()
+        let decoder: PropertyListDecoder = .init()
         return try? decoder.decode(PlistConfiguration.self, from: data)
     }
 }

@@ -8,7 +8,7 @@ import SwiftUI
 @propertyWrapper
 public struct Credentials: DynamicProperty {
     private let label: String
-    private let storage = SecureStorageService()
+    private let storage: SecureStorageService = .init()
 
     public init(_ label: String) {
         self.label = label
