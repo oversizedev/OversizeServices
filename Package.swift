@@ -27,6 +27,13 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "OversizeServices",
+            dependencies: [
+                .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
+                .product(name: "OversizeResources", package: "OversizeResources"),
+            ]
+        ),
+        .target(
             name: "OversizeHealthService",
             dependencies: [
                 "OversizeServices",
@@ -42,15 +49,7 @@ let package = Package(
                 // .product(name: "OversizeServices", package: "OversizeServices"),
             ]
         ),
-        .target(
-            name: "OversizeServices",
-            dependencies: [
-                //                "OversizeLocalizable",
-//                "OversizeResources"
-                .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
-                .product(name: "OversizeResources", package: "OversizeResources"),
-            ]
-        ),
+
         .target(
             name: "OversizeSettingsService",
             dependencies: [
