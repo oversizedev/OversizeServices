@@ -32,7 +32,7 @@ open class HealthKitService {
 
 extension HealthKitService: HealthKitServiceProtocol {
     public func requestAuthorization() async -> Result<Bool, AppError> {
-        guard let healthStore = healthStore, let type = bodyMassType else { return .failure(AppError.custom(title: "Not StoreKit")) }
+        guard let healthStore, let type = bodyMassType else { return .failure(AppError.custom(title: "Not StoreKit")) }
 
         do {
             try await healthStore.requestAuthorization(toShare: [type], read: [type])
@@ -66,7 +66,7 @@ extension HealthKitService: HealthKitServiceProtocol {
                                                 anchorDate: anchorDate,
                                                 intervalComponents: interval)
         query.initialResultsHandler = { _, results, _ in
-            guard let results = results else {
+            guard let results else {
                 log("ERROR")
                 return
             }
@@ -84,7 +84,7 @@ extension HealthKitService: HealthKitServiceProtocol {
     }
 
     public func currentBodyMass() async throws -> Double? {
-        guard let healthStore = healthStore else {
+        guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
 
@@ -132,13 +132,13 @@ extension HealthKitService: HealthKitServiceProtocol {
             completion(statisticsCollection)
         }
 
-        if let healthStore = healthStore, let query = query {
+        if let healthStore, let query {
             healthStore.execute(query)
         }
     }
 
     func save(_ sample: HKSample) async throws {
-        guard let healthStore = healthStore else {
+        guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
 
@@ -146,7 +146,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             continuation in
 
             healthStore.save(sample) { _, error in
-                if let error = error {
+                if let error {
                     continuation.resume(throwing: error)
                     return
                 }
@@ -157,7 +157,7 @@ extension HealthKitService: HealthKitServiceProtocol {
     }
 
     public func saveMass(date: Date, bodyMass: Double) async throws {
-        guard let healthStore = healthStore else {
+        guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
 
@@ -172,7 +172,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             continuation in
 
             healthStore.save(bodyMass) { _, error in
-                if let error = error {
+                if let error {
                     continuation.resume(throwing: error)
                     return
                 }
@@ -241,7 +241,7 @@ extension HealthKitService: HealthKitServiceProtocol {
 //    }
 
     public func fetchBodyMass() async throws -> HKStatisticsCollection? {
-        guard let healthStore = healthStore else {
+        guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
 

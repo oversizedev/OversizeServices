@@ -17,7 +17,7 @@ public struct Credentials: DynamicProperty {
     public var wrappedValue: SecureStorageService.Credentials? {
         get { storage.getCredentials(with: label) }
         nonmutating set {
-            if let newValue = newValue {
+            if let newValue {
                 storage.updateCredentials(newValue, with: label)
             } else {
                 storage.deleteCredentials(with: label)

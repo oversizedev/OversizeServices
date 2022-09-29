@@ -3,6 +3,7 @@
 // AppStateService.swift
 //
 
+import OversizeCore
 import SwiftUI
 
 // public protocol AppStateServiceProtocol: ObservableObject {
@@ -24,15 +25,23 @@ public final class AppStateService: ObservableObject { //: AppStateServiceProtoc
         static let isShowOnbarding = "AppState.isShowOnbarding"
         static let isCompletedOnbarding = "AppState.isCompletedOnbarding"
         static let onbardingPage = "AppState.onbardingPage"
+        static let lastRunDate = "AppState.lastRunDate"
+        static let firstRunDate = "AppState.firstRunDate"
     }
 
     @AppStorage(Keys.appRunCount) public var appRunCount: Int = 0
     @AppStorage(Keys.isShowOnbarding) public var isShowOnbarding: Bool = false
     @AppStorage(Keys.isCompletedOnbarding) public var isCompletedOnbarding: Bool = false
     @AppStorage(Keys.onbardingPage) public var onbardingPage: Int = 0
+    @AppStorage(Keys.lastRunDate) private var lastRunDate: Date = .init()
+    @AppStorage(Keys.firstRunDate) private var firstRunDate: Date = .init()
 
     public func appRun() {
+        if appRunCount == 0 {
+            firstRunDate = Date()
+        }
         appRunCount += 1
+        lastRunDate = Date()
     }
 
     public func completedOnbarding() {

@@ -17,7 +17,7 @@ public struct SecureStorage: DynamicProperty {
     public var wrappedValue: String? {
         get { storage.getPassword(for: key) }
         nonmutating set {
-            if let newValue = newValue {
+            if let newValue {
                 storage.updatePassword(newValue, for: key)
             } else {
                 storage.deletePassword(for: key)

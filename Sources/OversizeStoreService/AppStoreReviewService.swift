@@ -3,55 +3,102 @@
 // AppStoreReviewService.swift
 //
 
+import OversizeCore
 import StoreKit
 import SwiftUI
 
 // MARK: AppStoreReviewServiceProtocol
 
 public protocol AppStoreReviewServiceProtocol {
-    func appRunRequest() -> Void
-    func actionRequest() -> Void
+    func launchEvent()
+    func actionEvent()
+    func rewiewBunnerClosed()
+    func estimate(goodRating: Bool)
+    var isShowReviewBanner: Bool { get }
+    var isShowReviewSheet: Bool { get }
 }
 
 // MARK: AppStoreReviewService
 
 public class AppStoreReviewService {
-    public init() {}
-
     private enum Keys {
         static let appRunCount = "AppState.appRunCount"
         static let appStoreReviewRequestCount = "AppState.appStoreReviewRequestCount"
+        static let isAppReviewBannerClosed = "AppState.isAppReviewBannerClosed"
+        static let isAppReviewd = "AppState.isAppReviewd"
+        static let isAppGoodRating = "AppState.isAppGoodRating"
+        static let appReviewBannerClosedDate = "AppState.appReviewBannerClosedDate"
+        static let appReviewEstimateDate = "AppState.appReviewEstimateDate"
     }
 
+    // @Environment(\.requestReview) var requestReview
     @AppStorage(Keys.appRunCount) private var appRunCount: Int = 0
-    @AppStorage(Keys.appRunCount) private var appStoreReviewRequestCount: Int = 0
-    private let runReviewCount = [1, 3, 5, 8, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500]
+    @AppStorage(Keys.appStoreReviewRequestCount) private var appStoreReviewRequestCount: Int = 0
+    @AppStorage(Keys.isAppReviewBannerClosed) private var isAppReviewBannerClosed = false
+    @AppStorage(Keys.isAppReviewd) private var isAppReviewd = false
+    @AppStorage(Keys.isAppGoodRating) private var isAppGoodRating = false
+    @AppStorage(Keys.appReviewBannerClosedDate) private var appReviewBannerClosedDate: Date = .init()
+    @AppStorage(Keys.appReviewEstimateDate) private var appReviewEstimateDate: Date = .init()
 
-    private let actionEventCount = [0, 2, 3, 5, 8, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500]
+    private let launchReviewCount: [Int] = [3, 5, 8, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500]
+    private let rewiewAfterEventCount: [Int] = [0, 2, 5, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500]
+    private let rewiewBannerShowingCount: [Int] = .init(0 ... 100) // [4, 5, 6, 9, 12, 32, 50, 80, 100, 150, 200, 300, 400, 500]
+    private let rewiewSheetShowingCount: [Int] = [8, 25, 30, 50, 80, 100, 150, 200, 300, 400, 500]
+
+    public init() {}
 }
 
 extension AppStoreReviewService: AppStoreReviewServiceProtocol {
-    public func appRunRequest() {
-        #if os(iOS)
-            for runReviewActionEvent in runReviewCount where appRunCount == runReviewActionEvent {
-                if let scene = UIApplication.shared.connectedScenes
-                    .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
-                {
-                    SKStoreReviewController.requestReview(in: scene)
-                }
-            }
-        #endif
+    public var isShowReviewBanner: Bool {
+        if !isAppReviewBannerClosed /*  appReviewBannerClosedDate.dayAfter < Date()*/, !isAppReviewd {
+            return rewiewBannerShowingCount.contains(appRunCount)
+        } else {
+            return false
+        }
     }
 
-    public func actionRequest() {
+    public var isShowReviewSheet: Bool {
+        if !isAppReviewd {
+            return rewiewSheetShowingCount.contains(appRunCount)
+        } else {
+            return false
+        }
+    }
+
+    public func launchEvent() {
+        if launchReviewCount.contains(appRunCount) {
+            showSystemRewiewAlert()
+            if appReviewBannerClosedDate.weekAfter < Date() {
+                isAppReviewBannerClosed = false
+            }
+        }
+    }
+
+    public func actionEvent() {
+        if rewiewAfterEventCount.contains(appStoreReviewRequestCount) {
+            showSystemRewiewAlert()
+            appStoreReviewRequestCount += 1
+        }
+    }
+
+    public func rewiewBunnerClosed() {
+        appReviewBannerClosedDate = Date()
+        isAppReviewBannerClosed = true
+    }
+
+    public func estimate(goodRating: Bool) {
+        isAppReviewd = true
+        isAppGoodRating = goodRating
+        appReviewEstimateDate = Date()
+        rewiewBunnerClosed()
+    }
+}
+
+private extension AppStoreReviewService {
+    func showSystemRewiewAlert() {
         #if os(iOS)
-            for actionEvent in actionEventCount where appStoreReviewRequestCount == actionEvent {
-                if let scene = UIApplication.shared.connectedScenes
-                    .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene
-                {
-                    SKStoreReviewController.requestReview(in: scene)
-                    appStoreReviewRequestCount += 1
-                }
+            if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                SKStoreReviewController.requestReview(in: scene)
             }
         #endif
     }

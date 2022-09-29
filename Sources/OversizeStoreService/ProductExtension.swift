@@ -11,7 +11,7 @@ public extension Product {
     var displayMonthsCount: String {
         switch type {
         case .autoRenewable, .nonRenewable:
-            if let subscription = subscription {
+            if let subscription {
                 switch subscription.subscriptionPeriod.unit {
                 case .day:
                     return "\(subscription.subscriptionPeriod.value)"
@@ -38,7 +38,7 @@ public extension Product {
     var displayMonthPrice: String {
         switch type {
         case .autoRenewable, .nonRenewable:
-            if let subscription = subscription {
+            if let subscription {
                 switch subscription.subscriptionPeriod.unit {
                 case .day:
                     return "\((price * 30).rounded(2))"
@@ -94,7 +94,7 @@ public extension Product {
     var displayMonthsCountDescription: String {
         switch type {
         case .autoRenewable, .nonRenewable:
-            if let subscription = subscription {
+            if let subscription {
                 switch subscription.subscriptionPeriod.unit {
                 case .day:
                     return "Day"
