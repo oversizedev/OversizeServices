@@ -25,6 +25,11 @@ public enum FeatureFlags /*: ObservableObject */ {
             let value = PlistService.shared.getBoolFromDictionary(field: "CloudKit", dictionary: dictonaryName, plist: configName)
             return value
         }
+        
+        public static var healthKit: Bool? {
+            let value = PlistService.shared.getBoolFromDictionary(field: "HealthKit", dictionary: dictonaryName, plist: configName)
+            return value
+        }
 
         public static var notifications: Bool? {
             let value = PlistService.shared.getBoolFromDictionary(field: "Notifications", dictionary: dictonaryName, plist: configName)

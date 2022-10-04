@@ -19,6 +19,7 @@ public protocol SettingsServiceProtocol {
     var vibrationEnabled: Bool { get set }
     var cloudKitEnabled: Bool { get set }
     var cloudKitCVVEnabled: Bool { get set }
+    var healthKitEnabled: Bool { get set }
     var biometricEnabled: Bool { get }
     var biometricWhenGetCVVEnabend: Bool { get }
     var pinCodeEnabend: Bool { get }
@@ -52,6 +53,7 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol {
         static let vibrationEnabled = "SettingsStore.vibrationEnabled"
         static let cloudKitEnabled = "SettingsStore.cloudKitEnabled"
         static let cloudKitCVVEnabled = "SettingsStore.cloudKitCVVEnabled"
+        static let healthKitEnabled = "SettingsStore.healthKitEnabled"
 
         // Security
         static let biometricEnabled = "SettingsStore.biometricEnabled"
@@ -76,6 +78,7 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol {
     @AppStorage(Keys.vibrationEnabled) public var vibrationEnabled: Bool = true
     @AppStorage(Keys.cloudKitEnabled) public var cloudKitEnabled: Bool = false
     @AppStorage(Keys.cloudKitCVVEnabled) public var cloudKitCVVEnabled: Bool = false
+    @AppStorage(Keys.healthKitEnabled) public var healthKitEnabled: Bool = false
 
     // Security
     @AppStorage(Keys.biometricEnabled) public var biometricEnabled = false
