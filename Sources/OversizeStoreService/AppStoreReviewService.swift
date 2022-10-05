@@ -50,7 +50,7 @@ public class AppStoreReviewService {
 
 extension AppStoreReviewService: AppStoreReviewServiceProtocol {
     public var isShowReviewBanner: Bool {
-        if !isAppReviewBannerClosed /*  appReviewBannerClosedDate.dayAfter < Date()*/, !isAppReviewd {
+        if !isAppReviewBannerClosed, appRunCount > 1 /*  appReviewBannerClosedDate.dayAfter < Date()*/, !isAppReviewd {
             return rewiewBannerShowingCount.contains(appRunCount)
         } else {
             return false
@@ -58,7 +58,7 @@ extension AppStoreReviewService: AppStoreReviewServiceProtocol {
     }
 
     public var isShowReviewSheet: Bool {
-        if !isAppReviewd {
+        if !isAppReviewd, appRunCount > 1 {
             return rewiewSheetShowingCount.contains(appRunCount)
         } else {
             return false

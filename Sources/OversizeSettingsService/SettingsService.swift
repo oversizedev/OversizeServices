@@ -46,30 +46,30 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol {
 
     public init() {}
 
-    private enum Keys {
+    public enum Keys {
         // App
-        static let notificationsEnabled = "SettingsStore.notificationsEnabled"
-        static let soundsEnabled = "SettingsStore.soundsEnabled"
-        static let vibrationEnabled = "SettingsStore.vibrationEnabled"
-        static let cloudKitEnabled = "SettingsStore.cloudKitEnabled"
-        static let cloudKitCVVEnabled = "SettingsStore.cloudKitCVVEnabled"
-        static let healthKitEnabled = "SettingsStore.healthKitEnabled"
+        public static let notificationsEnabled = "SettingsStore.notificationsEnabled"
+        public static let soundsEnabled = "SettingsStore.soundsEnabled"
+        public static let vibrationEnabled = "SettingsStore.vibrationEnabled"
+        public static let cloudKitEnabled = "SettingsStore.cloudKitEnabled"
+        public static let cloudKitCVVEnabled = "SettingsStore.cloudKitCVVEnabled"
+        public static let healthKitEnabled = "SettingsStore.healthKitEnabled"
 
         // Security
-        static let biometricEnabled = "SettingsStore.biometricEnabled"
-        static let biometricWhenGetCVVEnabend = "SettingsStore.faceIdWhenGetCVVEnabend"
-        static let pinCodeEnabend = "SettingsStore.pinCodeEnabend"
-        static let pinCode = "SettingsStore.pinCode"
-        static let bruteForceSecurityEnabled = "SettingsStore.bruteForceSecurityEnabled"
-        static let spotlightEnabled = "SettingsStore.spotlightEnabled"
-        static let alertPINCodeEnabled = "SettingsStore.alertPINCodeEnabled"
-        static let alertPINCode = "SettingsStore.alertPINCode"
-        static let photoBreakerEnabend = "SettingsStore.photoBreakerEnabend"
-        static let facedownLockEnabend = "SettingsStore.facedownLockEnabend"
-        static let blurMinimizeEnabend = "SettingsStore.blurWhenMinimizeEnabend"
-        static let authHistoryEnabend = "SettingsStore.authHistoryEnabend"
-        static let askPasswordWhenInactiveEnabend = "SettingsStore.askPasswordWhenInactiveEnabend"
-        static let askPasswordAfterMinimizeEnabend = "SettingsStore.askPasswordAfterMinimizeEnabend"
+        public static let biometricEnabled = "SettingsStore.biometricEnabled"
+        public static let biometricWhenGetCVVEnabend = "SettingsStore.faceIdWhenGetCVVEnabend"
+        public static let pinCodeEnabend = "SettingsStore.pinCodeEnabend"
+        public static let pinCode = "SettingsStore.pinCode"
+        public static let bruteForceSecurityEnabled = "SettingsStore.bruteForceSecurityEnabled"
+        public static let spotlightEnabled = "SettingsStore.spotlightEnabled"
+        public static let alertPINCodeEnabled = "SettingsStore.alertPINCodeEnabled"
+        public static let alertPINCode = "SettingsStore.alertPINCode"
+        public static let photoBreakerEnabend = "SettingsStore.photoBreakerEnabend"
+        public static let facedownLockEnabend = "SettingsStore.facedownLockEnabend"
+        public static let blurMinimizeEnabend = "SettingsStore.blurWhenMinimizeEnabend"
+        public static let authHistoryEnabend = "SettingsStore.authHistoryEnabend"
+        public static let askPasswordWhenInactiveEnabend = "SettingsStore.askPasswordWhenInactiveEnabend"
+        public static let askPasswordAfterMinimizeEnabend = "SettingsStore.askPasswordAfterMinimizeEnabend"
     }
 
     // App
