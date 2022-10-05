@@ -37,6 +37,7 @@ let package = Package(
         .target(
             name: "OversizeServices",
             dependencies: [
+                .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
                 .product(name: "OversizeResources", package: "OversizeResources"),
             ]

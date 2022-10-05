@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "oversizecore",
+      "kind" : "remoteSourceControl",
+      "location" : "http://github.com/oversizedev/OversizeCore.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "2a446afd63335cc9fa2aaba6b0a716597595cda6"
+      }
+    },
+    {
+      "identity" : "oversizelocalizable",
+      "kind" : "remoteSourceControl",
+      "location" : "http://github.com/oversizedev/OversizeLocalizable.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0f160fdf5a26eaefc3ebc367e3a5872d776b2131"
+      }
+    },
+    {
+      "identity" : "oversizeresources",
+      "kind" : "remoteSourceControl",
+      "location" : "http://github.com/oversizedev/OversizeResources.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "cb940a39a0ca016a4d7f752893551682619830cc"
+      }
+    }
+  ],
+  "version" : 2
+}
