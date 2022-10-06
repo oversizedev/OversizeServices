@@ -42,7 +42,7 @@ public class AppStoreReviewService {
 
     private let launchReviewCount: [Int] = .init([3, 5, 8, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500])
     private let rewiewAfterEventCount: [Int] = .init([0, 2, 5, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500])
-    private let rewiewBannerShowingCount: [Int] = .init([2, 4, 5 , 20, 45, 70, 90, 140, 180, 234, 245, 454, 699])
+    private let rewiewBannerShowingCount: [Int] = .init([2, 4, 5, 20, 45, 70, 90, 140, 180, 234, 245, 454, 699])
     private let rewiewSheetShowingCount: [Int] = .init([3, 25, 50, 80, 100, 150, 200, 300, 400, 500])
 
     public init() {}

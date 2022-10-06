@@ -72,9 +72,9 @@ public extension Product {
 
     var perYearLabel: String {
         if displayPrice.count < 6 {
-            return " / month"
+            return " / year"
         } else {
-            return " / mo"
+            return " / yr"
         }
     }
 }
@@ -176,7 +176,7 @@ public extension Product {
 
 public extension Product {
     var isOffer: Bool {
-        if self.id.contains(".offer") {
+        if id.contains(".offer") {
             return true
         } else {
             return false
