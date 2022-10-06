@@ -173,3 +173,13 @@ public extension Product {
         return period
     }
 }
+
+public extension Product {
+    var isOffer: Bool {
+        if self.id.contains(".offer") {
+            return true
+        } else {
+            return false
+        }
+    }
+}

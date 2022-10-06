@@ -246,12 +246,11 @@ public final class StoreKitService: ObservableObject {
 
     // Get a subscription's level of service using the product ID.
     public func tier(for productId: String) -> SubscriptionTier {
-        switch productId {
-        case "romanov.cc.ScaleDown.monthly":
-            return .monthly
-        case "romanov.cc.ScaleDown.yearly":
+        if productId.contains(".yearly") {
             return .yearly
-        default:
+        } else if productId.contains(".monthly") {
+            return .monthly
+        } else {
             return .none
         }
     }
