@@ -40,10 +40,10 @@ public class AppStoreReviewService {
     @AppStorage(Keys.appReviewBannerClosedDate) private var appReviewBannerClosedDate: Date = .init()
     @AppStorage(Keys.appReviewEstimateDate) private var appReviewEstimateDate: Date = .init()
 
-    private let launchReviewCount: [Int] = [3, 5, 8, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500]
-    private let rewiewAfterEventCount: [Int] = [0, 2, 5, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500]
-    private let rewiewBannerShowingCount: [Int] = .init(0 ... 100) // [4, 5, 6, 9, 12, 32, 50, 80, 100, 150, 200, 300, 400, 500]
-    private let rewiewSheetShowingCount: [Int] = [8, 25, 30, 50, 80, 100, 150, 200, 300, 400, 500]
+    private let launchReviewCount: [Int] = .init([3, 5, 8, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500])
+    private let rewiewAfterEventCount: [Int] = .init([0, 2, 5, 10, 20, 30, 50, 80, 100, 150, 200, 300, 400, 500])
+    private let rewiewBannerShowingCount: [Int] = .init([2, 4, 5 , 20, 45, 70, 90, 140, 180, 234, 245, 454, 699])
+    private let rewiewSheetShowingCount: [Int] = .init([3, 25, 50, 80, 100, 150, 200, 300, 400, 500])
 
     public init() {}
 }
@@ -58,7 +58,7 @@ extension AppStoreReviewService: AppStoreReviewServiceProtocol {
     }
 
     public var isShowReviewSheet: Bool {
-        if !isAppReviewd, appRunCount > 1 {
+        if !isAppReviewd {
             return rewiewSheetShowingCount.contains(appRunCount)
         } else {
             return false
