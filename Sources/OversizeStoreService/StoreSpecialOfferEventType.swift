@@ -16,7 +16,7 @@ public enum StoreSpecialOfferEventType: String, Identifiable, CaseIterable, Hash
         switch self {
         case .newYear:
             // TODO: NEW YEAR DATE
-            let dateComponents = DateComponents(calendar: caledar, year: currentYear, month: 10, day: 7)
+            let dateComponents = DateComponents(calendar: caledar, year: currentYear, month: 1, day: 1)
             return caledar.date(from: dateComponents)
         case .foolsDay:
             let dateComponents = DateComponents(calendar: caledar, year: currentYear, month: 4, day: 1)
