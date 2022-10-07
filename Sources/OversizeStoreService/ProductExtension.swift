@@ -176,7 +176,7 @@ public extension Product {
 
 public extension Product {
     var isOffer: Bool {
-        if id.contains(".offer") {
+        if id.contains(".offerYearly") {
             return true
         } else {
             return false
