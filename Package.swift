@@ -7,12 +7,18 @@ let productionDependencies: [PackageDescription.Package.Dependency] = { [
     .package(url: "http://github.com/oversizedev/OversizeCore.git", branch: "main"),
     .package(url: "http://github.com/oversizedev/OversizeLocalizable.git", branch: "main"),
     .package(url: "http://github.com/oversizedev/OversizeResources.git", branch: "main"),
+    .package(url: "http://github.com/oversizedev/OversizeCDN.git", branch: "main"),
+    .package(url: "https://github.com/SDWebImage/SDWebImageSwiftUI.git", from: "2.0.2"),
+    .package(url: "https://github.com/SDWebImage/SDWebImageSVGCoder.git", from: "1.6.1"),
 ] }()
 
 let developmentDependencies: [PackageDescription.Package.Dependency] = { [
     .package(name: "OversizeCore", path: "../OversizeCore"),
     .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
     .package(name: "OversizeResources", path: "../OversizeResources"),
+    .package(name: "OversizeCDN", path: "../OversizeCDN"),
+    .package(url: "https://github.com/SDWebImage/SDWebImageSwiftUI.git", from: "2.0.2"),
+    .package(url: "https://github.com/SDWebImage/SDWebImageSVGCoder.git", from: "1.6.1"),
 ] }()
 
 let package = Package(
@@ -32,7 +38,7 @@ let package = Package(
         .library(name: "OversizeStoreService", targets: ["OversizeStoreService"]),
 
     ],
-    dependencies: developmentDependencies,
+    dependencies: productionDependencies,
     targets: [
         .target(
             name: "OversizeServices",
