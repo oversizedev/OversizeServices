@@ -7,9 +7,8 @@ import Foundation
 import OversizeCDN
 
 public enum StoreSpecialOfferEventType: String, Identifiable, CaseIterable, Hashable {
-    
     case newUser, activeUser, oldUser, newYear, christmas, halloween, blackFriday, foolsDay, backToSchool, cyberMonday
-    
+
     private var eventStartDate: Date? {
         let caledar = Calendar.current
         let currentYear = caledar.component(.year, from: .init())
@@ -83,7 +82,7 @@ public enum StoreSpecialOfferEventType: String, Identifiable, CaseIterable, Hash
         default: return "Free full access\nfor" // \(trialDaysPeriodText)"
         }
     }
-    
+
     public var specialOfferBannerTitle: String {
         switch self {
         case .activeUser, .oldUser: return "You have a gift"

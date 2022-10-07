@@ -27,7 +27,7 @@ public final class AppStateService: ObservableObject { //: AppStateServiceProtoc
         static let onbardingPage = "AppState.onbardingPage"
         static let lastRunDate = "AppState.lastRunDate"
         static let firstRunDate = "AppState.firstRunDate"
-        //static let lastClosedSpecialOffer = "AppState.lastClosedSpecialOffer"
+        // static let lastClosedSpecialOffer = "AppState.lastClosedSpecialOffer"
     }
 
     @AppStorage(Keys.appRunCount) public var appRunCount: Int = .init(0)
