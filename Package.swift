@@ -82,6 +82,7 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 "OversizeSettingsService",
+                .product(name: "OversizeCDN", package: "OversizeCDN"),
                 .product(name: "OversizeCore", package: "OversizeCore"),
             ]
         ),
