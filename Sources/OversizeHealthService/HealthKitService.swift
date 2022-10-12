@@ -10,12 +10,12 @@ import OversizeServices
 
 public protocol HealthKitServiceProtocol {
     func requestAuthorization() async -> Result<Bool, AppError>
-    func saveMass(date: Date, bodyMass: Double) async throws
     func fetchBodyMass() async throws -> HKStatisticsCollection?
     func calculateSteps(completion: @escaping (HKStatisticsCollection?) -> Void)
     func getWeightData(forDay days: Int, completion: @escaping ((_ weight: Double?, _ date: Date?) -> Void))
     func fetchBodyMass(forDay days: Int) async throws -> [HKQuantitySample]?
-    func saveBodyMass(date: Date, bodyMass: Double) async throws -> HKQuantitySample
+    func saveMass(date: Date, bodyMass: Double, unit: HKUnit) async throws
+    func saveBodyMass(date: Date, bodyMass: Double, unit: HKUnit) async throws -> HKQuantitySample
 }
 
 open class HealthKitService {
@@ -212,7 +212,7 @@ extension HealthKitService: HealthKitServiceProtocol {
         }
     }
 
-    public func saveMass(date: Date, bodyMass: Double) async throws {
+    public func saveMass(date: Date, bodyMass: Double, unit: HKUnit) async throws {
         guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
@@ -220,7 +220,7 @@ extension HealthKitService: HealthKitServiceProtocol {
         let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
 
         let bodyMass = HKQuantitySample(type: quantityType!,
-                                        quantity: HKQuantity(unit: HKUnit.gramUnit(with: .kilo), doubleValue: bodyMass),
+                                        quantity: HKQuantity(unit: unit, doubleValue: bodyMass),
                                         start: date,
                                         end: date)
 
@@ -237,7 +237,7 @@ extension HealthKitService: HealthKitServiceProtocol {
         }
     }
 
-    public func saveBodyMass(date: Date, bodyMass: Double) async throws -> HKQuantitySample {
+    public func saveBodyMass(date: Date, bodyMass: Double, unit: HKUnit) async throws -> HKQuantitySample {
         guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)
         }
@@ -245,7 +245,7 @@ extension HealthKitService: HealthKitServiceProtocol {
         let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
 
         let bodyMass = HKQuantitySample(type: quantityType!,
-                                        quantity: HKQuantity(unit: HKUnit.gramUnit(with: .kilo), doubleValue: bodyMass),
+                                        quantity: HKQuantity(unit: unit, doubleValue: bodyMass),
                                         start: date,
                                         end: date)
 
