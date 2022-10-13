@@ -16,6 +16,7 @@ public protocol HealthKitServiceProtocol {
     func fetchBodyMass(forDay days: Int) async throws -> [HKQuantitySample]?
     func saveMass(date: Date, bodyMass: Double, unit: HKUnit) async throws
     func saveBodyMass(date: Date, bodyMass: Double, unit: HKUnit) async throws -> HKQuantitySample
+    func deleteBodyMass(userWeightUUID: UUID) async throws -> Bool
 }
 
 open class HealthKitService {
@@ -211,7 +212,37 @@ extension HealthKitService: HealthKitServiceProtocol {
             }
         }
     }
+    
+    public func deleteBodyMass(userWeightUUID: UUID) async throws -> Bool {
+        try await withCheckedThrowingContinuation { continuation in // 👈🏻
 
+            let sampleType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
+            let predicate = HKQuery.predicateForObject(with: userWeightUUID)
+
+            let query = HKSampleQuery(sampleType: sampleType!,
+                                      predicate: predicate,
+                                      limit: 1,
+                                      sortDescriptors: nil) { _, results, error in
+
+                if let error {
+                    continuation.resume(throwing: error) // 👈🏻
+                } else if let deleteObject = results?.first {
+                    self.healthStore?.delete(deleteObject, withCompletion: { result, error in
+                        if let error = error {
+                            continuation.resume(throwing: error)
+                        } else {
+                            continuation.resume(returning: true)
+                        }
+                    })
+                } else {
+                    continuation.resume(returning: false)
+                }
+            }
+            healthStore?.execute(query)
+        }
+    }
+
+    
     public func saveMass(date: Date, bodyMass: Double, unit: HKUnit) async throws {
         guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)
