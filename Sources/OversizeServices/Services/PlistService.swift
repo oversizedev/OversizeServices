@@ -32,6 +32,18 @@ public class PlistService {
         let value: Bool? = links[field] as? Bool
         return value
     }
+    
+    public func getIntFromDictionary(field: String, dictionary: String, plist: String) -> Int? {
+        guard let filePath = Bundle.main.path(forResource: plist, ofType: "plist") else {
+            fatalError("Couldn't find file \(plist).plist'.")
+        }
+        let plist = NSDictionary(contentsOfFile: filePath)
+        guard let links = plist?.object(forKey: dictionary) as? [String: Any] else {
+            fatalError("Couldn't find dictionary '\(dictionary)' in '\(String(describing: plist)).plist'.")
+        }
+        let value: Int? = links[field] as? Int
+        return value
+    }
 
     public func getStringFromDictionary(field: String, dictionary: String, plist: String) -> String? {
         guard let filePath = Bundle.main.path(forResource: plist, ofType: "plist") else {

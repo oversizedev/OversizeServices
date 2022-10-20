@@ -50,6 +50,13 @@ public enum FeatureFlags /*: ObservableObject */ {
             let value = PlistService.shared.getBoolFromDictionary(field: "Spotlight", dictionary: dictonaryName, plist: configName)
             return value
         }
+        
+        public static var alternateAppIcons: Int? {
+            let value = PlistService.shared.getIntFromDictionary(field: "AlternateAppIcons", dictionary: dictonaryName, plist: configName)
+            return value
+        }
+        
+        
     }
 
     public enum secure {

@@ -42,7 +42,7 @@ public protocol SettingsServiceProtocol {
 }
 
 public final class SettingsService: ObservableObject, SettingsServiceProtocol {
-    @Injected(\.biometricService) var biometricService
+    @Injected(Container.biometricService) var biometricService
 
     public init() {}
 

@@ -6,13 +6,6 @@
 import Foundation
 import OversizeServices
 
-private struct BiometricServiceKey: InjectionKey {
-    static var currentValue: BiometricServiceProtocol = BiometricService()
-}
-
-public extension InjectedValues {
-    var biometricService: BiometricServiceProtocol {
-        get { Self[BiometricServiceKey.self] }
-        set { Self[BiometricServiceKey.self] = newValue }
-    }
+public extension Container {
+   static var biometricService = Factory<BiometricServiceProtocol> { BiometricService() }
 }
