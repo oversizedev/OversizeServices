@@ -32,7 +32,7 @@ public class PlistService {
         let value: Bool? = links[field] as? Bool
         return value
     }
-    
+
     public func getIntFromDictionary(field: String, dictionary: String, plist: String) -> Int? {
         guard let filePath = Bundle.main.path(forResource: plist, ofType: "plist") else {
             fatalError("Couldn't find file \(plist).plist'.")

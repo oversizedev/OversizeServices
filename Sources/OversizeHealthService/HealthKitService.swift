@@ -212,7 +212,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             }
         }
     }
-    
+
     public func deleteBodyMass(userWeightUUID: UUID) async throws -> Bool {
         try await withCheckedThrowingContinuation { continuation in // 👈🏻
 
@@ -227,8 +227,8 @@ extension HealthKitService: HealthKitServiceProtocol {
                 if let error {
                     continuation.resume(throwing: error) // 👈🏻
                 } else if let deleteObject = results?.first {
-                    self.healthStore?.delete(deleteObject, withCompletion: { result, error in
-                        if let error = error {
+                    self.healthStore?.delete(deleteObject, withCompletion: { _, error in
+                        if let error {
                             continuation.resume(throwing: error)
                         } else {
                             continuation.resume(returning: true)
@@ -242,7 +242,6 @@ extension HealthKitService: HealthKitServiceProtocol {
         }
     }
 
-    
     public func saveMass(date: Date, bodyMass: Double, unit: HKUnit) async throws {
         guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)

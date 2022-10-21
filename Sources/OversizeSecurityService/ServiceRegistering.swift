@@ -7,5 +7,5 @@ import Foundation
 import OversizeServices
 
 public extension Container {
-   static var biometricService = Factory<BiometricServiceProtocol> { BiometricService() }
+    static var biometricService = Factory<BiometricServiceProtocol> { BiometricService() }
 }

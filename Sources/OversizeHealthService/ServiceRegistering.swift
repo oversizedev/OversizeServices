@@ -6,6 +6,6 @@
 import Foundation
 import OversizeServices
 
- public extension Container {
+public extension Container {
     static var healthKitService = Factory<HealthKitServiceProtocol> { HealthKitService() }
- }
+}

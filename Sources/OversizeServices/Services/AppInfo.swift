@@ -72,6 +72,11 @@ public enum AppInfo {
             return value
         }
 
+        public static var company: String? {
+            let value = PlistService.shared.getStringFromDictionary(field: "DeveloperCompany", dictionary: linksDictonaryName, plist: configName)
+            return value
+        }
+
         public static var appStoreID: String? {
             let value = PlistService.shared.getStringFromDictionary(field: "DeveloperAppStoreID", dictionary: linksDictonaryName, plist: configName)
             return value
@@ -84,6 +89,31 @@ public enum AppInfo {
 
         public static var facebookAccountID: String? {
             let value = PlistService.shared.getStringFromDictionary(field: "DeveloperFacebookAccountID", dictionary: linksDictonaryName, plist: configName)
+            return value
+        }
+
+        public static var companyTwitterID: String? {
+            let value = PlistService.shared.getStringFromDictionary(field: "TwitterID", dictionary: linksDictonaryName, plist: configName)
+            return value
+        }
+
+        public static var companyDribbbleID: String? {
+            let value = PlistService.shared.getStringFromDictionary(field: "DribbbleID", dictionary: linksDictonaryName, plist: configName)
+            return value
+        }
+
+        public static var companyInstagramID: String? {
+            let value = PlistService.shared.getStringFromDictionary(field: "InstagramID", dictionary: linksDictonaryName, plist: configName)
+            return value
+        }
+
+        public static var companyFacebookID: String? {
+            let value = PlistService.shared.getStringFromDictionary(field: "FacebookID", dictionary: linksDictonaryName, plist: configName)
+            return value
+        }
+
+        public static var companyTelegramID: String? {
+            let value = PlistService.shared.getStringFromDictionary(field: "TelegramCompanyID", dictionary: linksDictonaryName, plist: configName)
             return value
         }
     }
@@ -140,6 +170,36 @@ public enum AppInfo {
         public static var appTermsOfUseUrl: URL? {
             let urlString = PlistService.shared.getStringFromDictionary(field: "AppTermsOfUseURL", dictionary: linksDictonaryName, plist: configName)
             let url = URL(string: urlString ?? "")
+            return url
+        }
+
+        public static var companyTelegram: URL? {
+            guard let id = developer.companyTelegramID else { return nil }
+            guard let url = URL(string: "https://www.t.me/\(id)") else { return nil }
+            return url
+        }
+
+        public static var companyFacebook: URL? {
+            guard let id = developer.companyFacebookID else { return nil }
+            guard let url = URL(string: "https://www.facebook.com/\(id)") else { return nil }
+            return url
+        }
+
+        public static var companyTwitter: URL? {
+            guard let id = developer.companyTwitterID else { return nil }
+            guard let url = URL(string: "https://www.twitter.com/\(id)") else { return nil }
+            return url
+        }
+
+        public static var companyDribbble: URL? {
+            guard let id = developer.companyDribbbleID else { return nil }
+            guard let url = URL(string: "https://www.dribbble.com/\(id)") else { return nil }
+            return url
+        }
+
+        public static var companyInstagram: URL? {
+            guard let id = developer.companyInstagramID else { return nil }
+            guard let url = URL(string: "https://www.instagram.com/\(id)") else { return nil }
             return url
         }
     }
