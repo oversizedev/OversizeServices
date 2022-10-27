@@ -5,6 +5,7 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 
 // swiftlint:disable all
 public enum AppInfo {
@@ -15,6 +16,30 @@ public enum AppInfo {
     public enum app {
         public static var verstion: String? {
             Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        }
+
+        public static var build: String? {
+            Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+        }
+
+        public static var device: String? {
+            #if os(iOS)
+                return UIDevice.current.model
+            #else
+                return nil
+            #endif
+        }
+
+        public static var system: String? {
+            #if os(iOS)
+                return UIDevice.current.systemName + " " + UIDevice.current.systemVersion
+            #else
+                return nil
+            #endif
+        }
+
+        public static var language: String? {
+            Locale.current.identifier
         }
 
         public static var name: String? {
@@ -48,12 +73,6 @@ public enum AppInfo {
             else { return nil }
             return iconFileName
         }
-
-        /*
-         public static var iconName: String? {
-             return Bundle.main.object(forInfoDictionaryKey: "AppIconName") as? String
-         }
-          */
     }
 
     public enum developer {
@@ -115,6 +134,14 @@ public enum AppInfo {
         public static var companyTelegramID: String? {
             let value = PlistService.shared.getStringFromDictionary(field: "TelegramCompanyID", dictionary: linksDictonaryName, plist: configName)
             return value
+        }
+    }
+
+    public enum company {
+        public static var url: URL? {
+            guard let value: String = PlistService.shared.getStringFromDictionary(field: "CompanyURL", dictionary: linksDictonaryName, plist: configName) else { return nil }
+            guard let url = URL(string: value) else { return nil }
+            return url
         }
     }
 
@@ -204,6 +231,38 @@ public enum AppInfo {
         }
     }
 
+    public static var apps: [App] {
+        guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
+            fatalError("Couldn't find file \(configName).plist'.")
+        }
+        let data = try! Data(contentsOf: filePath)
+        let decoder: PropertyListDecoder = .init()
+        do {
+            let decodeData = try decoder.decode(PlistConfiguration.self, from: data)
+            return decodeData.apps
+        } catch {
+            return []
+        }
+    }
+
+    public static var links: Links? {
+        guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
+            fatalError("Couldn't find file \(configName).plist'.")
+        }
+        let data = try! Data(contentsOf: filePath)
+        let decoder: PropertyListDecoder = .init()
+        do {
+            let decodeData = try decoder.decode(PlistConfiguration.self, from: data)
+            if let features = decodeData.links {
+                return features
+            } else {
+                return nil
+            }
+        } catch {
+            return nil
+        }
+    }
+
     public enum store {
         public static var features: [StoreFeature] {
             guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
@@ -256,11 +315,126 @@ public enum AppInfo {
         }
     }
 
-    public static var plist: PlistConfiguration? {
+    public static var all: PlistConfiguration? {
         let url = Bundle.main.url(forResource: configName, withExtension: "plist")!
         let data = try! Data(contentsOf: url)
         let decoder: PropertyListDecoder = .init()
         return try? decoder.decode(PlistConfiguration.self, from: data)
+    }
+}
+
+public struct PlistConfiguration: Codable {
+    public var store: Store?
+    public var apps: [App]
+    public var links: Links?
+
+    private enum CodingKeys: String, CodingKey {
+        case store = "Store"
+        case apps = "Apps"
+        case links = "Links"
+    }
+}
+
+public struct Links: Codable {
+    public var app: App
+    public var developer: Developer
+    public var company: Company
+
+    private enum CodingKeys: String, CodingKey {
+        case app = "App"
+        case developer = "Developer"
+        case company = "Company"
+    }
+
+    public struct App: Codable, Hashable {
+        public var urlString: String?
+        public var telegramChat: String?
+        public var appStore: String?
+
+        public var url: URL? {
+            URL(string: urlString ?? "")
+        }
+
+        public var privacyPolicyURL: URL? {
+            URL(string: "\(urlString ?? "")/privacy-policy")
+        }
+
+        public var termsOfUseURL: URL? {
+            URL(string: "\(urlString ?? "")/terms-and-conditions")
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case urlString = "Url"
+            case telegramChat = "TelegramChat"
+            case appStore = "AppStore"
+        }
+    }
+
+    public struct Developer: Codable, Hashable {
+        public var name: String?
+        public var url: String?
+        public var email: String?
+        public var fecebook: String?
+        public var telegram: String?
+
+        private enum CodingKeys: String, CodingKey {
+            case name = "Name"
+            case url = "Url"
+            case email = "Email"
+            case fecebook = "Fecebook"
+            case telegram = "Telegram"
+        }
+    }
+
+    public struct Company: Codable, Hashable {
+        public var name: String?
+        public var urlString: String?
+        public var email: String?
+        public var fecebook: String?
+        public var telegram: String?
+        public var dribbble: String?
+        public var instagram: String?
+
+        public var facebookUrl: URL? {
+            URL(string: "https://www.facebook.com/\(String(describing: fecebook))")
+        }
+
+        public var url: URL? {
+            URL(string: urlString ?? "")
+        }
+
+        private enum CodingKeys: String, CodingKey {
+            case name = "Name"
+            case urlString = "Url"
+            case email = "Email"
+            case fecebook = "Fecebook"
+            case telegram = "Telegram"
+            case dribbble = "Dribbble"
+            case instagram = "Instagram"
+        }
+    }
+}
+
+public struct App: Codable, Identifiable, Hashable {
+    public var id: String?
+    public var name: String?
+    public var title: String?
+    public var subtitle: String?
+    public var path: String?
+    private enum CodingKeys: String, CodingKey {
+        case id = "Id"
+        case name = "Name"
+        case title = "Title"
+        case subtitle = "Subtitle"
+        case path = "Path"
+    }
+}
+
+public struct Store: Codable {
+    public var features: [StoreFeature]
+
+    private enum CodingKeys: String, CodingKey {
+        case features = "Features"
     }
 }
 
@@ -278,21 +452,5 @@ public struct StoreFeature: Codable, Identifiable, Hashable {
     public let backgroundColor: String?
     private enum CodingKeys: String, CodingKey {
         case image, title, subtitle, screenURL, topScreenAlignment, illustrationURL, backgroundColor
-    }
-}
-
-public struct Store: Codable {
-    public var features: [StoreFeature]
-
-    private enum CodingKeys: String, CodingKey {
-        case features = "Features"
-    }
-}
-
-public struct PlistConfiguration: Codable {
-    public var store: Store?
-
-    private enum CodingKeys: String, CodingKey {
-        case store = "Store"
     }
 }
