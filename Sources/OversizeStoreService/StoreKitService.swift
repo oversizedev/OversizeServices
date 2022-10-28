@@ -45,7 +45,7 @@ public final class StoreKitService: ObservableObject {
 
     public func requestProducts() async -> Result<StoreKitProducts, AppError> {
         do {
-            let productsIds = AppInfo.store.productIdentifiers
+            let productsIds = Info.store.productIdentifiers
 
             let storeProducts = try await Product.products(for: productsIds)
 
