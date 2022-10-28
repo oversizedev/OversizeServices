@@ -9,6 +9,7 @@ import MapKit
 
 public protocol LocationServiceProtocol {
     func currentLocation() async throws -> CLLocationCoordinate2D
+    func permissionsStatus() -> CLAuthorizationStatus
     // func currentCity() async throws -> String
 }
 
