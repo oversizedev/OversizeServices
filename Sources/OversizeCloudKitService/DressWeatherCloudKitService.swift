@@ -5,7 +5,7 @@
 
 import CloudKit
 import Foundation
-import OversizeCraft
+import OversizeServices
 
 public protocol DressWeatherCloudKitServiceProtocol {
     func fetchAccountStatus() async -> Result<CKAccountStatus, AppError>

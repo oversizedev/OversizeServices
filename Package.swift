@@ -39,7 +39,7 @@ let package = Package(
         .library(name: "OversizeStoreService", targets: ["OversizeStoreService"]),
 
     ],
-    dependencies: productionDependencies,
+    dependencies: developmentDependencies,
     targets: [
         .target(
             name: "OversizeServices",

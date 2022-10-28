@@ -5,9 +5,9 @@
 
 import CloudKit
 import Foundation
-import OversizeCraft
 import SwiftUI
 import UIKit
+import OversizeServices
 
 open class AssetsCloudKitService {
     private var database: CKDatabase
