@@ -1,6 +1,6 @@
 //
 // Copyright © 2022 Alexander Romanov
-// AppInfo.swift
+// Info.swift
 //
 
 import Foundation
@@ -268,7 +268,7 @@ public enum Info {
             let decoder: PropertyListDecoder = .init()
             do {
                 let decodeData = try decoder.decode(PlistConfiguration.self, from: data)
-               return decodeData.store.features
+                return decodeData.store.features
             } catch {
                 return []
             }

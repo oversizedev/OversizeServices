@@ -1,8 +1,6 @@
 //
-//  File.swift
-//  
-//
-//  Created by aromanov on 28.10.2022.
+// Copyright © 2022 Alexander Romanov
+// AppConfig.swift
 //
 
 import Foundation
@@ -17,8 +15,6 @@ public struct PlistConfiguration: Codable {
         case apps = "Apps"
         case links = "Links"
     }
-    
-    
 }
 
 public struct Links: Codable {
@@ -40,7 +36,7 @@ public struct Links: Codable {
         public var url: URL? {
             URL(string: urlString ?? "")
         }
-        
+
         public var telegramChatUrl: URL? {
             URL(string: "https://t.me/\(telegramChat ?? "")")
         }
@@ -52,7 +48,7 @@ public struct Links: Codable {
         public var termsOfUseURL: URL? {
             URL(string: "\(urlString ?? "")/terms-and-conditions")
         }
-        
+
         public var iconName: String? {
             guard let icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
                   let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
@@ -61,7 +57,7 @@ public struct Links: Codable {
             else { return nil }
             return iconFileName
         }
-        
+
         public var appStoreReview: URL? {
             let url = URL(string: "itms-apps:itunes.apple.com/us/app/apple-store/id\(appStoreId)?mt=8&action=write-review")
             return url
@@ -112,6 +108,7 @@ public struct Links: Codable {
         public var facebookUrl: URL? {
             URL(string: "https://www.facebook.com/\(String(describing: fecebook))")
         }
+
 //
 //        public var telegramUrl: URL? {
 //            URL(string: "https://www.facebook.com/\(String(describing: fecebook))")
@@ -128,7 +125,7 @@ public struct Links: Codable {
         public var url: URL? {
             URL(string: urlString ?? "")
         }
-        
+
         public var emailUrl: URL? {
             let mail = URL(string: "mailto:\(email)")
             return mail
@@ -167,7 +164,7 @@ public struct Store: Codable {
     private enum CodingKeys: String, CodingKey {
         case features = "Features"
     }
-    
+
     public struct StoreFeature: Codable, Identifiable, Hashable {
         public var id: String {
             (image ?? "") + (title ?? "") + (subtitle ?? "")
@@ -185,6 +182,3 @@ public struct Store: Codable {
         }
     }
 }
-
-
-
