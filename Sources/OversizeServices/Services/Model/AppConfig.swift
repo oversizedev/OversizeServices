@@ -68,11 +68,6 @@ public struct Links: Codable {
             return url
         }
 
-        public var developerAllApps: URL? {
-            let url = URL(string: "itms-apps://itunes.apple.com/developer/id\(appStoreId)")
-            return url
-        }
-
         private enum CodingKeys: String, CodingKey {
             case urlString = "Url"
             case telegramChat = "TelegramChat"
@@ -99,14 +94,17 @@ public struct Links: Codable {
     public struct Company: Codable, Hashable {
         public var name: String?
         public var urlString: String?
-        public var email: String
-        public var fecebook: String?
+        public var email: String?
+        public var appStoreId: String
+        public var facebook: String?
         public var telegram: String?
         public var dribbble: String?
         public var instagram: String?
+        public var twitter: String?
+        public var cdnString: String?
 
         public var facebookUrl: URL? {
-            URL(string: "https://www.facebook.com/\(String(describing: fecebook))")
+            URL(string: "https://www.facebook.com/\(String(describing: facebook))")
         }
 
 //
@@ -126,8 +124,12 @@ public struct Links: Codable {
             URL(string: urlString ?? "")
         }
 
+        public var cdnUrl: URL? {
+            URL(string: cdnString ?? "")
+        }
+
         public var emailUrl: URL? {
-            let mail = URL(string: "mailto:\(email)")
+            let mail = URL(string: "mailto:\(email ?? "")")
             return mail
         }
 
@@ -135,16 +137,19 @@ public struct Links: Codable {
             case name = "Name"
             case urlString = "Url"
             case email = "Email"
-            case fecebook = "Fecebook"
+            case appStoreId = "AppStoreID"
+            case facebook = "Facebook"
             case telegram = "Telegram"
             case dribbble = "Dribbble"
             case instagram = "Instagram"
+            case twitter = "Twitter"
+            case cdnString = "CDNUrl"
         }
     }
 }
 
 public struct App: Codable, Identifiable, Hashable {
-    public var id: String?
+    public var id: String
     public var name: String?
     public var title: String?
     public var subtitle: String?

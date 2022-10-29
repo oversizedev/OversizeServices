@@ -5,9 +5,9 @@
 
 import CloudKit
 import Foundation
+import OversizeServices
 import SwiftUI
 import UIKit
-import OversizeServices
 
 open class AssetsCloudKitService {
     private var database: CKDatabase
@@ -65,5 +65,4 @@ public extension AssetsCloudKitService {
             return .failure(.cloudKit(type: .unknown))
         }
     }
-
 }

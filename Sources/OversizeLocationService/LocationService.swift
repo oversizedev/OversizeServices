@@ -75,7 +75,7 @@ extension LocationService: LocationServiceProtocol {
 
     public func currentLocation() async throws -> CLLocationCoordinate2D {
         try await withCheckedThrowingContinuation { [weak self] (continuation: LocationCheckedThrowingContinuation) in
-            guard let self = self else {
+            guard let self else {
                 return
             }
 

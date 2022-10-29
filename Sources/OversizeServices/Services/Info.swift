@@ -10,7 +10,6 @@ import UIKit
 // swiftlint:disable all
 public enum Info {
     private static let configName = "AppConfig"
-    private static let linksDictonaryName = "Links"
     private static let storeDictonaryName = "Store"
 
     public enum app {
@@ -47,22 +46,15 @@ public enum Info {
         }
 
         public static var appStoreID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "AppStoreID", dictionary: linksDictonaryName, plist: configName)
-            return value
+            links?.app.appStoreId
         }
 
         public static var bundleID: String? {
             Bundle.main.bundleIdentifier
         }
 
-        public static var facebookMessengerChatID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "AppFacebookMessengerChatID", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
         public static var telegramChatID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "AppTelegramChatID", dictionary: linksDictonaryName, plist: configName)
-            return value
+            links?.app.telegramChat
         }
 
         public static var iconName: String? {
@@ -77,71 +69,45 @@ public enum Info {
 
     public enum developer {
         public static var url: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "DeveloperURL", dictionary: linksDictonaryName, plist: configName)
-            return value
+            links?.developer.url
         }
 
         public static var email: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "DeveloperEmail", dictionary: linksDictonaryName, plist: configName)
-            return value
+            links?.developer.email
         }
 
         public static var name: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "DeveloperName", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var company: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "DeveloperCompany", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var appStoreID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "DeveloperAppStoreID", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var telegramAccountID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "DeveloperTelegramAccountID", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var facebookAccountID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "DeveloperFacebookAccountID", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var companyTwitterID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "TwitterID", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var companyDribbbleID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "DribbbleID", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var companyInstagramID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "InstagramID", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var companyFacebookID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "FacebookID", dictionary: linksDictonaryName, plist: configName)
-            return value
-        }
-
-        public static var companyTelegramID: String? {
-            let value = PlistService.shared.getStringFromDictionary(field: "TelegramCompanyID", dictionary: linksDictonaryName, plist: configName)
-            return value
+            links?.developer.name
         }
     }
 
     public enum company {
         public static var url: URL? {
-            guard let value: String = PlistService.shared.getStringFromDictionary(field: "CompanyURL", dictionary: linksDictonaryName, plist: configName) else { return nil }
-            guard let url = URL(string: value) else { return nil }
-            return url
+            links?.company.url
+        }
+
+        public static var appStoreID: String? {
+            links?.company.appStoreId
+        }
+
+        public static var twitterID: String? {
+            links?.company.twitter
+        }
+
+        public static var dribbbleID: String? {
+            links?.company.dribbble
+        }
+
+        public static var tnstagramID: String? {
+            links?.company.instagram
+        }
+
+        public static var facebookID: String? {
+            links?.company.facebook
+        }
+
+        public static var telegramID: String? {
+            links?.company.telegram
         }
     }
 
@@ -165,8 +131,8 @@ public enum Info {
         }
 
         public static var developerAllApps: URL? {
-            guard developer.appStoreID != nil else { return nil }
-            let url = URL(string: "itms-apps://itunes.apple.com/developer/id\(developer.appStoreID!)")
+            guard company.appStoreID != nil else { return nil }
+            let url = URL(string: "itms-apps://itunes.apple.com/developer/id\(company.appStoreID!)")
             return url
         }
 
@@ -176,56 +142,42 @@ public enum Info {
             return url
         }
 
-        public static var developerTelegram: URL? {
-            guard developer.telegramAccountID != nil else { return nil }
-            let url = URL(string: "https://t.me/\(developer.telegramAccountID!)")
-            return url
-        }
-
-        public static var developerFacebook: URL? {
-            guard developer.facebookAccountID != nil else { return nil }
-            let url = URL(string: "https://www.facebook.com/\(developer.facebookAccountID!)")
-            return url
-        }
-
         public static var appPrivacyPolicyUrl: URL? {
-            let urlString = PlistService.shared.getStringFromDictionary(field: "AppPrivacyPolicyURL", dictionary: linksDictonaryName, plist: configName)
-            let url = URL(string: urlString ?? "")
+            let url = URL(string: "\(Info.links?.company.urlString ?? "")/\(links?.app.urlString ?? ""))/privacy-policy")
             return url
         }
 
         public static var appTermsOfUseUrl: URL? {
-            let urlString = PlistService.shared.getStringFromDictionary(field: "AppTermsOfUseURL", dictionary: linksDictonaryName, plist: configName)
-            let url = URL(string: urlString ?? "")
+            let url = URL(string: "\(Info.links?.company.urlString ?? "")/\(links?.app.urlString ?? ""))/terms-and-conditions")
             return url
         }
 
         public static var companyTelegram: URL? {
-            guard let id = developer.companyTelegramID else { return nil }
+            guard let id = company.telegramID else { return nil }
             guard let url = URL(string: "https://www.t.me/\(id)") else { return nil }
             return url
         }
 
         public static var companyFacebook: URL? {
-            guard let id = developer.companyFacebookID else { return nil }
+            guard let id = company.facebookID else { return nil }
             guard let url = URL(string: "https://www.facebook.com/\(id)") else { return nil }
             return url
         }
 
         public static var companyTwitter: URL? {
-            guard let id = developer.companyTwitterID else { return nil }
+            guard let id = company.twitterID else { return nil }
             guard let url = URL(string: "https://www.twitter.com/\(id)") else { return nil }
             return url
         }
 
         public static var companyDribbble: URL? {
-            guard let id = developer.companyDribbbleID else { return nil }
+            guard let id = company.dribbbleID else { return nil }
             guard let url = URL(string: "https://www.dribbble.com/\(id)") else { return nil }
             return url
         }
 
         public static var companyInstagram: URL? {
-            guard let id = developer.companyInstagramID else { return nil }
+            guard let id = company.tnstagramID else { return nil }
             guard let url = URL(string: "https://www.instagram.com/\(id)") else { return nil }
             return url
         }

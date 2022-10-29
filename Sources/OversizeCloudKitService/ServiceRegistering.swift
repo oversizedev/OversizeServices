@@ -1,8 +1,6 @@
 //
-//  File.swift
-//  
-//
-//  Created by aromanov on 29.10.2022.
+// Copyright © 2022 Alexander Romanov
+// ServiceRegistering.swift
 //
 
 import Foundation
