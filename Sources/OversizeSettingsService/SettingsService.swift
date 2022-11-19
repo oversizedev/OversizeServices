@@ -135,6 +135,7 @@ public extension SettingsService {
 // Biometric
 
 public extension SettingsService {
+    @MainActor
     func biometricChange(_ newState: Bool) async {
         log("🪬 Updated biometric state")
         var reason = ""
