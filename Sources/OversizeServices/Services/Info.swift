@@ -143,12 +143,12 @@ public enum Info {
         }
 
         public static var appPrivacyPolicyUrl: URL? {
-            let url = URL(string: "\(Info.links?.company.urlString ?? "")/\(links?.app.urlString ?? ""))/privacy-policy")
+            let url = URL(string: "\(links?.app.urlString ?? "")/privacy-policy")
             return url
         }
 
         public static var appTermsOfUseUrl: URL? {
-            let url = URL(string: "\(Info.links?.company.urlString ?? "")/\(links?.app.urlString ?? ""))/terms-and-conditions")
+            let url = URL(string: "\(links?.app.urlString ?? "")/terms-and-conditions")
             return url
         }
 
