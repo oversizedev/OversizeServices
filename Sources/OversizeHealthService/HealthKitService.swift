@@ -91,7 +91,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             // Create a predicate that only returns samples created within the last 24 hours.
             let sampleType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
 
-            let today = Date()
+            let today: Date = .init()
             let startDate = Calendar.current.date(byAdding: DateComponents(day: -days), to: today)!
 
             let predicate = HKQuery.predicateForSamples(withStart: startDate, end: today, options: HKQueryOptions.strictEndDate)
@@ -118,7 +118,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             // Create a predicate that only returns samples created within the last 24 hours.
             let sampleType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
 
-            let today = Date()
+            let today: Date = .init()
             let startDate = Calendar.current.date(byAdding: DateComponents(day: -days), to: today)!
 
             let predicate = HKQuery.predicateForSamples(withStart: startDate, end: today, options: HKQueryOptions.strictEndDate)

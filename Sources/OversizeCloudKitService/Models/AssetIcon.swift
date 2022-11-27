@@ -7,7 +7,7 @@ import CloudKit
 import Foundation
 
 public struct AssetIcon: Identifiable {
-    public let id = UUID()
+    public let id: UUID = .init()
 
     public let name: String
     // public let style: String
