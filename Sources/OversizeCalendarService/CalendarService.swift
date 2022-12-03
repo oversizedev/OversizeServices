@@ -32,8 +32,6 @@ open class CalendarService {
             events += matchingEvents
         }
         return .success(events)
-
-        //
     }
 
     public func fetchCalendars() async -> Result<[EKCalendar], AppError> {
@@ -43,71 +41,54 @@ open class CalendarService {
         return .success(calendars)
     }
 
-//    func getEvents() -> [EKEvent] {
-//        var allEvents: [EKEvent] = []
-//
-//        // calendars
-//        let calendars = self.eventStore.calendars(for: .event)
-//
-//        // iterate over all selected calendars
-//        for (_, calendar) in calendars.enumerated() where isCalendarSelected(calendar.calendarIdentifier) {
-//
-//            // predicate for today (start to end)
-//            let predicate = self.eventStore.predicateForEvents(withStart: self.initialDates.first!, end: self.initialDates.last!, calendars: [calendar])
-//
-//            let matchingEvents = self.eventStore.events(matching: predicate)
-//
-//            // iterate through events
-//            for event in matchingEvents {
-//                allEvents.append(event)
-//            }
-//        }
-//
-//        return allEvents
-//    }
-}
-
-extension CalendarService {
-    func fetchCalendars() async -> [EKCalendar] {
-        var responseCalendars = [EKCalendar]()
-
-        eventStore.requestAccess(to: .event, completion: { (granted: Bool, _) in
-            if granted {
-                let calendars = self.eventStore.calendars(for: .event)
-
-                responseCalendars = calendars
-
-//                for calendar in calendars {
-//                    responseCalendars.append(calendar)
-//                    // print("Title: \(calendar.title)")
-//                    // self.calendarsNames.append(calendar.title)
-//                }
-            }
-        })
-        return responseCalendars
+    public func fetchSourses() async -> Result<[EKSource], AppError> {
+        let access = await requestAccess()
+        if case let .failure(error) = access { return .failure(error) }
+        let calendars = eventStore.sources
+        return .success(calendars)
     }
 
-    func fetchCalendarNames() -> [String] {
-        var responseCalendars = [String]()
-
-        eventStore.requestAccess(to: .event, completion: { (granted: Bool, _) in
-            if granted {
-                print("Ok")
-
-                let calendars = self.eventStore.calendars(for: .event)
-
-                for calendar in calendars {
-                    log(calendar.title)
-                    // self.epic.append(calendar.title)
-                    // print("Title: \(calendar.title)")
-                    // self.calendarsNames.append(calendar.title)
-                }
-
-                responseCalendars.append("ada")
+    public func createEvent(
+        title: String,
+        notes: String? = nil,
+        startDate: Date,
+        endDate: Date,
+        calendar: EKCalendar? = nil,
+        isAllDay: Bool = false,
+        structuredLocation: EKStructuredLocation? = nil,
+        alarm: [EKAlarm]? = nil,
+        url: URL? = nil,
+        recurrenceRules: CalendarEventRecurrenceRules = .never,
+        recurrenceEndRules: CalendarEventEndRecurrenceRules = .never
+    ) async -> Result<Bool, AppError> {
+        let access = await requestAccess()
+        if case let .failure(error) = access { return .failure(error) }
+        var event: EKEvent = .init(eventStore: eventStore)
+        event.title = title
+        event.notes = notes
+        event.startDate = startDate
+        event.endDate = endDate
+        event.isAllDay = isAllDay
+        event.structuredLocation = structuredLocation
+        event.alarms = alarm
+        event.url = url
+        if recurrenceRules != .never {
+            var rule = recurrenceRules.rule
+            rule?.recurrenceEnd = recurrenceEndRules.end
+            if let rule {
+                event.recurrenceRules = [rule]
             }
-        })
-
-        print(responseCalendars)
-        return responseCalendars
+        }
+        if let calendar {
+            event.calendar = calendar
+        } else {
+            event.calendar = eventStore.defaultCalendarForNewEvents
+        }
+        do {
+            try eventStore.save(event, span: .thisEvent)
+            return .success(true)
+        } catch {
+            return .failure(.custom(title: "Not save event"))
+        }
     }
 }

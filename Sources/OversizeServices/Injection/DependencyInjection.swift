@@ -2,7 +2,6 @@
 // Copyright © 2022 Alexander Romanov
 // DependencyInjection.swift
 //
-
 //
 // Factory.swift
 //
