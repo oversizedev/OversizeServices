@@ -52,8 +52,18 @@ extension LocationService: LocationServiceProtocol {
 }
 
 extension LocationService: CLLocationManagerDelegate {
+//    public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+//        locationContinuation?.resume(returning: locations.last?.coordinate)
+//    }
+
     public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        locationContinuation?.resume(returning: locations.last?.coordinate)
+        if let locationObj = locations.last {
+            // Location
+            let coord = locationObj.coordinate
+            let location = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.longitude)
+            locationContinuation?.resume(returning: location)
+            locationContinuation = nil
+        }
     }
 
     public func locationManager(_: CLLocationManager, didFailWithError error: Error) {

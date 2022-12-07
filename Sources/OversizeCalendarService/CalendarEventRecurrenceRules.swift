@@ -3,12 +3,13 @@
 // CalendarEventRecurrenceRules.swift
 //
 
+import EventKit
 import Foundation
 
-public enum CalendarEventRecurrenceRules: CaseIterable, Equatable {
+public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable {
     case never, everyDay, everyWorkingDay, everyWeekend, everyWeek, everyTwoWeeks, everyMonth, everyYear, custom(EKRecurrenceRule?)
 
-    var rule: EKRecurrenceRule? {
+    public var rule: EKRecurrenceRule? {
         switch self {
         case .never:
             return nil
@@ -25,8 +26,7 @@ public enum CalendarEventRecurrenceRules: CaseIterable, Equatable {
                 daysOfTheYear: nil,
                 setPositions: nil,
                 end: nil
-            )
-            )
+            ))
         case .everyWeekend:
             return .init(EKRecurrenceRule(
                 recurrenceWith: .weekly,
@@ -38,8 +38,7 @@ public enum CalendarEventRecurrenceRules: CaseIterable, Equatable {
                 daysOfTheYear: nil,
                 setPositions: nil,
                 end: nil
-            )
-            )
+            ))
         case .everyWeek:
             return .init(recurrenceWith: .weekly, interval: 1, end: nil)
         case .everyTwoWeeks:
@@ -66,7 +65,7 @@ public enum CalendarEventRecurrenceRules: CaseIterable, Equatable {
         case .everyWeek:
             return "Every Week"
         case .everyTwoWeeks:
-            return "every 2 Weeks"
+            return "Every 2 Weeks"
         case .everyMonth:
             return "Every Month"
         case .everyYear:
@@ -76,10 +75,14 @@ public enum CalendarEventRecurrenceRules: CaseIterable, Equatable {
         }
     }
 
+    public var id: String {
+        title
+    }
+
     public static var allCases: [CalendarEventRecurrenceRules] = [.never, .everyDay, .everyWorkingDay, .everyWeekend, .everyWeek, .everyTwoWeeks, .everyMonth, .everyYear, .custom(nil)]
 }
 
-public enum CalendarEventEndRecurrenceRules: CaseIterable, Equatable {
+public enum CalendarEventEndRecurrenceRules: CaseIterable, Equatable, Identifiable, Hashable {
     case never, occurrenceCount(Int), endDate(Date)
 
     public var end: EKRecurrenceEnd? {
@@ -96,13 +99,30 @@ public enum CalendarEventEndRecurrenceRules: CaseIterable, Equatable {
     public var title: String {
         switch self {
         case .never:
-            return ""
+            return "Never"
         case .occurrenceCount:
-            return ""
+            return "Occurrence Count"
         case .endDate:
-            return ""
+            return "End Date"
         }
     }
 
+    public var id: String {
+        title
+    }
+
     public static var allCases: [CalendarEventEndRecurrenceRules] = [.never, .occurrenceCount(1), .endDate(Date())]
+}
+
+public extension EKEvent {
+    var calendarEventRecurrenceRules: CalendarEventRecurrenceRules? {
+        var eventRule = recurrenceRules?.first
+        eventRule?.recurrenceEnd = nil
+
+        if let rule = CalendarEventRecurrenceRules.allCases.first(where: { $0.rule == eventRule }) {
+            return rule
+        } else {
+            return .custom(recurrenceRules?.first)
+        }
+    }
 }

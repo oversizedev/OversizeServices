@@ -56,7 +56,7 @@ open class CalendarService {
         calendar: EKCalendar? = nil,
         isAllDay: Bool = false,
         structuredLocation: EKStructuredLocation? = nil,
-        alarm: [EKAlarm]? = nil,
+        alarms: [CalendarAlertsTimes]? = nil,
         url: URL? = nil,
         recurrenceRules: CalendarEventRecurrenceRules = .never,
         recurrenceEndRules: CalendarEventEndRecurrenceRules = .never
@@ -70,8 +70,10 @@ open class CalendarService {
         event.endDate = endDate
         event.isAllDay = isAllDay
         event.structuredLocation = structuredLocation
-        event.alarms = alarm
         event.url = url
+        if let alarms {
+            event.alarms = alarms.compactMap { $0.alarm }
+        }
         if recurrenceRules != .never {
             var rule = recurrenceRules.rule
             rule?.recurrenceEnd = recurrenceEndRules.end
@@ -89,6 +91,44 @@ open class CalendarService {
             return .success(true)
         } catch {
             return .failure(.custom(title: "Not save event"))
+        }
+    }
+
+    public func convertEventToCalendarEventRecurrenceRules(event: EKEvent) -> CalendarEventRecurrenceRules {
+        let eventRule = event.recurrenceRules?.first
+
+        if let rule = CalendarEventRecurrenceRules.allCases.first(where: {
+            $0.rule?.frequency == eventRule?.frequency
+                && $0.rule?.interval == eventRule?.interval
+                && $0.rule?.daysOfTheWeek == eventRule?.daysOfTheWeek
+                && $0.rule?.daysOfTheWeek == eventRule?.daysOfTheWeek
+        }) {
+            return rule
+        } else {
+            return .custom(eventRule)
+        }
+    }
+
+    public func convertRecurrenceRuleToCalendarEventRecurrenceRules(rule: EKRecurrenceRule) -> CalendarEventRecurrenceRules {
+        if let rule = CalendarEventRecurrenceRules.allCases.first(where: {
+            $0.rule?.frequency == rule.frequency
+                && $0.rule?.interval == rule.interval
+                && $0.rule?.daysOfTheWeek == rule.daysOfTheWeek
+                && $0.rule?.daysOfTheWeek == rule.daysOfTheWeek
+        }) {
+            return rule
+        } else {
+            return .custom(rule)
+        }
+    }
+
+    public func convertRecurrenceRuleToCalendarEventEndRecurrenceRules(ruleEnd: EKRecurrenceEnd?) -> CalendarEventEndRecurrenceRules {
+        if let endDate = ruleEnd?.endDate {
+            return .endDate(endDate)
+        } else if let count = ruleEnd?.occurrenceCount, count != 0 {
+            return .occurrenceCount(count)
+        } else {
+            return .never
         }
     }
 }
