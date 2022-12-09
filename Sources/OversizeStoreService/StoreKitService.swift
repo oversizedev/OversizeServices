@@ -6,7 +6,6 @@
 import Foundation
 import OversizeCore
 import OversizeServices
-import OversizeSettingsService
 import StoreKit
 
 public struct StoreKitProducts {

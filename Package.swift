@@ -29,12 +29,11 @@ let package = Package(
     products: [
         .library(name: "OversizeHealthService", targets: ["OversizeHealthService"]),
         .library(name: "OversizeCloudKitService", targets: ["OversizeCloudKitService"]),
-        .library(name: "OversizeSecurityService", targets: ["OversizeSecurityService"]),
         .library(name: "OversizeServices", targets: ["OversizeServices"]),
-        .library(name: "OversizeSettingsService", targets: ["OversizeSettingsService"]),
         .library(name: "OversizeStoreService", targets: ["OversizeStoreService"]),
         .library(name: "OversizeLocationService", targets: ["OversizeLocationService"]),
         .library(name: "OversizeCalendarService", targets: ["OversizeCalendarService"]),
+        .library(name: "OversizeContactsService", targets: ["OversizeContactsService"]),
     ],
     dependencies: productionDependencies,
     targets: [
@@ -44,6 +43,12 @@ let package = Package(
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
                 .product(name: "OversizeResources", package: "OversizeResources"),
+            ]
+        ),
+        .target(
+            name: "OversizeContactsService",
+            dependencies: [
+                "OversizeServices",
             ]
         ),
         .target(
@@ -75,31 +80,9 @@ let package = Package(
             ]
         ),
         .target(
-            name: "OversizeSecurityService",
-            dependencies: [
-                "OversizeServices",
-                .product(name: "OversizeCore", package: "OversizeCore"),
-                // .product(name: "OversizeServices", package: "OversizeServices"),
-            ]
-        ),
-
-        .target(
-            name: "OversizeSettingsService",
-            dependencies: [
-                "OversizeServices",
-                "OversizeSecurityService",
-                // "OversizeCraft",
-                // .product(name: "OversizeServices", package: "OversizeServices"),
-                // .product(name: "OversizeSecurityService", package: "OversizeServices"),
-                // "OversizeStore",
-                // .product(name: "OversizeUI", package: "OversizeUI"),
-            ]
-        ),
-        .target(
             name: "OversizeStoreService",
             dependencies: [
                 "OversizeServices",
-                "OversizeSettingsService",
                 .product(name: "OversizeCDN", package: "OversizeCDN"),
                 .product(name: "OversizeCore", package: "OversizeCore"),
             ]

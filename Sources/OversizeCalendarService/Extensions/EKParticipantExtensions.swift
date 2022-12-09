@@ -59,3 +59,30 @@ public extension EKParticipant {
         }
     }
 }
+
+public extension EKRecurrenceRule {
+    var calendarRecurrenceRule: CalendarEventRecurrenceRules {
+        if let rule = CalendarEventRecurrenceRules.allCases.first(where: {
+            $0.rule?.frequency == self.frequency
+                && $0.rule?.interval == self.interval
+                && $0.rule?.daysOfTheWeek == self.daysOfTheWeek
+                && $0.rule?.daysOfTheWeek == self.daysOfTheWeek
+        }) {
+            return rule
+        } else {
+            return .custom(self)
+        }
+    }
+}
+
+public extension EKRecurrenceEnd {
+    var calendarEndRecurrenceRule: CalendarEventEndRecurrenceRules {
+        if let endDate = self.endDate {
+            return .endDate(endDate)
+        } else if self.occurrenceCount != 0 {
+            return .occurrenceCount(self.occurrenceCount)
+        } else {
+            return .never
+        }
+    }
+}

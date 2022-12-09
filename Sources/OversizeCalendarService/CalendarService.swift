@@ -8,8 +8,9 @@ import Foundation
 import OversizeCore
 import OversizeServices
 
-open class CalendarService {
-    let eventStore: EKEventStore = .init()
+public actor CalendarService {
+    
+    private let eventStore: EKEventStore = .init()
     public init() {}
 
     func requestAccess() async -> Result<Bool, AppError> {
@@ -93,8 +94,10 @@ open class CalendarService {
             return .failure(.custom(title: "Not save event"))
         }
     }
+}
 
-    public func convertEventToCalendarEventRecurrenceRules(event: EKEvent) -> CalendarEventRecurrenceRules {
+extension CalendarService {
+    private func convertEventToCalendarEventRecurrenceRules(event: EKEvent) -> CalendarEventRecurrenceRules {
         let eventRule = event.recurrenceRules?.first
 
         if let rule = CalendarEventRecurrenceRules.allCases.first(where: {
@@ -109,7 +112,7 @@ open class CalendarService {
         }
     }
 
-    public func convertRecurrenceRuleToCalendarEventRecurrenceRules(rule: EKRecurrenceRule) -> CalendarEventRecurrenceRules {
+    private func convertRecurrenceRuleToCalendarEventRecurrenceRules(rule: EKRecurrenceRule) -> CalendarEventRecurrenceRules {
         if let rule = CalendarEventRecurrenceRules.allCases.first(where: {
             $0.rule?.frequency == rule.frequency
                 && $0.rule?.interval == rule.interval
@@ -122,7 +125,7 @@ open class CalendarService {
         }
     }
 
-    public func convertRecurrenceRuleToCalendarEventEndRecurrenceRules(ruleEnd: EKRecurrenceEnd?) -> CalendarEventEndRecurrenceRules {
+    private func convertRecurrenceRuleToCalendarEventEndRecurrenceRules(ruleEnd: EKRecurrenceEnd?) -> CalendarEventEndRecurrenceRules {
         if let endDate = ruleEnd?.endDate {
             return .endDate(endDate)
         } else if let count = ruleEnd?.occurrenceCount, count != 0 {

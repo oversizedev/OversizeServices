@@ -7,8 +7,6 @@
     import LocalAuthentication
 #endif
 import OversizeCore
-import OversizeSecurityService
-import OversizeServices
 import SwiftUI
 
 // MARK: SettingsServiceProtocol

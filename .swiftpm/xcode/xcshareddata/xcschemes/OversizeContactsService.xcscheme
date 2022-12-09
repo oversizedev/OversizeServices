@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "OversizeSecurityService"
-               BuildableName = "OversizeSecurityService"
-               BlueprintName = "OversizeSecurityService"
+               BlueprintIdentifier = "OversizeContactsService"
+               BuildableName = "OversizeContactsService"
+               BlueprintName = "OversizeContactsService"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "OversizeSecurityService"
-            BuildableName = "OversizeSecurityService"
-            BlueprintName = "OversizeSecurityService"
+            BlueprintIdentifier = "OversizeContactsService"
+            BuildableName = "OversizeContactsService"
+            BlueprintName = "OversizeContactsService"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

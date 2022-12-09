@@ -14,9 +14,37 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "OversizeCalendarService"
+               BuildableName = "OversizeCalendarService"
+               BlueprintName = "OversizeCalendarService"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "OversizeCloudKitService"
                BuildableName = "OversizeCloudKitService"
                BlueprintName = "OversizeCloudKitService"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "OversizeContactsService"
+               BuildableName = "OversizeContactsService"
+               BlueprintName = "OversizeContactsService"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -56,37 +84,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "OversizeSecurityService"
-               BuildableName = "OversizeSecurityService"
-               BlueprintName = "OversizeSecurityService"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
                BlueprintIdentifier = "OversizeServices"
                BuildableName = "OversizeServices"
                BlueprintName = "OversizeServices"
-               ReferencedContainer = "container:">
-            </BuildableReference>
-         </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "OversizeSettingsService"
-               BuildableName = "OversizeSettingsService"
-               BlueprintName = "OversizeSettingsService"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -158,9 +158,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "OversizeCloudKitService"
-            BuildableName = "OversizeCloudKitService"
-            BlueprintName = "OversizeCloudKitService"
+            BlueprintIdentifier = "OversizeCalendarService"
+            BuildableName = "OversizeCalendarService"
+            BlueprintName = "OversizeCalendarService"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

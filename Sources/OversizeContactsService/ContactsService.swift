@@ -7,7 +7,7 @@ import Contacts
 import Foundation
 import OversizeServices
 
-public class ContactsService {
+public actor ContactsService {
     private let contactStore: CNContactStore = .init()
     public init() {}
 
@@ -36,21 +36,4 @@ public class ContactsService {
             }
         }
     }
-
-//    let keys = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey, CNContactEmailAddressesKey]
-//                    let request = CNContactFetchRequest(keysToFetch: keys as [CNKeyDescriptor])
-//                    do {
-//                        try store.enumerateContacts(with: request, usingBlock: { (contact, stopPointer) in
-//
-//                     //       DispatchQueue.main.async {
-//                                self.contacts.append(Contact(firstName: contact.givenName, lastName: contact.familyName, phoneNumbers: contact.phoneNumbers.map { $0.value.stringValue }, emailAddresses: contact.emailAddresses.map { $0.value as String }
-//                                ))
-//
-//                                self.contacts.sort(by: { $0.firstName < $1.firstName })
-//                       //     }
-//                        })
-//
-//                    } catch let error {
-//                        print("Failed to enumerate contact", error)
-//                    }
 }
