@@ -23,7 +23,6 @@ public class LocationService: NSObject, ObservableObject {
 }
 
 extension LocationService: LocationServiceProtocol {
-
     public func currentLocation() async throws -> CLLocationCoordinate2D? {
         try await withTaskCancellationHandler(operation: {
             try await withCheckedThrowingContinuation { continuation in
@@ -44,7 +43,6 @@ extension LocationService: LocationServiceProtocol {
 }
 
 extension LocationService: CLLocationManagerDelegate {
-
     public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let locationObj = locations.last {
             // Location
@@ -58,10 +56,10 @@ extension LocationService: CLLocationManagerDelegate {
     public func locationManager(_: CLLocationManager, didFailWithError error: Error) {
         locationContinuation?.resume(throwing: error)
     }
-    
+
     /*
-    public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        locationContinuation?.resume(returning: locations.last?.coordinate)
-    }
-     */
+     public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+         locationContinuation?.resume(returning: locations.last?.coordinate)
+     }
+      */
 }

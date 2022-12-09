@@ -77,12 +77,33 @@ public extension EKRecurrenceRule {
 
 public extension EKRecurrenceEnd {
     var calendarEndRecurrenceRule: CalendarEventEndRecurrenceRules {
-        if let endDate = self.endDate {
+        if let endDate {
             return .endDate(endDate)
-        } else if self.occurrenceCount != 0 {
-            return .occurrenceCount(self.occurrenceCount)
+        } else if occurrenceCount != 0 {
+            return .occurrenceCount(occurrenceCount)
         } else {
             return .never
         }
     }
+}
+
+public extension EKParticipant {
+    static func fromEmail(_ email: String) -> EKParticipant? {
+        let clazz: AnyClass? = NSClassFromString("EKAttendee")
+        if let type = clazz as? NSObject.Type {
+            let attendee = type.init()
+            attendee.setValue(email, forKey: "emailAddress")
+            attendee.setValue(UUID().uuidString, forKey: "UUID")
+            return attendee as? EKParticipant
+        }
+        return nil
+    }
+
+//    let clazz: AnyClass? = NSClassFromString("EKAttendee")
+//    if let type = clazz as? NSObject.Type {
+//        let attendee = type.init()
+//        attendee.setValue(email, forKey: "emailAddress")
+//        return attendee as? EKParticipant
+//    }
+//    return nil
 }

@@ -6,7 +6,7 @@
 import Foundation
 import SwiftUI
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 // swiftlint:disable all

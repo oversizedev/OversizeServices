@@ -9,7 +9,6 @@ import OversizeCore
 import OversizeServices
 
 public actor CalendarService {
-    
     private let eventStore: EKEventStore = .init()
     public init() {}
 
@@ -59,6 +58,7 @@ public actor CalendarService {
         structuredLocation: EKStructuredLocation? = nil,
         alarms: [CalendarAlertsTimes]? = nil,
         url: URL? = nil,
+        memberEmails: [String] = [],
         recurrenceRules: CalendarEventRecurrenceRules = .never,
         recurrenceEndRules: CalendarEventEndRecurrenceRules = .never
     ) async -> Result<Bool, AppError> {
@@ -72,9 +72,11 @@ public actor CalendarService {
         event.isAllDay = isAllDay
         event.structuredLocation = structuredLocation
         event.url = url
+
         if let alarms {
             event.alarms = alarms.compactMap { $0.alarm }
         }
+
         if recurrenceRules != .never {
             var rule = recurrenceRules.rule
             rule?.recurrenceEnd = recurrenceEndRules.end
@@ -82,11 +84,23 @@ public actor CalendarService {
                 event.recurrenceRules = [rule]
             }
         }
+
         if let calendar {
             event.calendar = calendar
         } else {
             event.calendar = eventStore.defaultCalendarForNewEvents
         }
+
+        var attendees = [EKParticipant]()
+        if !memberEmails.isEmpty {
+            for email in memberEmails {
+                if let attendee = EKParticipant.fromEmail(email) {
+                    attendees.append(attendee)
+                }
+            }
+            event.setValue(attendees, forKey: "attendees")
+        }
+
         do {
             try eventStore.save(event, span: .thisEvent)
             return .success(true)
