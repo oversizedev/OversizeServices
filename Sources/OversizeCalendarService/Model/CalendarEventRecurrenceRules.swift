@@ -116,7 +116,7 @@ public enum CalendarEventEndRecurrenceRules: CaseIterable, Equatable, Identifiab
 
 public extension EKEvent {
     var calendarEventRecurrenceRules: CalendarEventRecurrenceRules? {
-        var eventRule = recurrenceRules?.first
+        let eventRule = recurrenceRules?.first
         eventRule?.recurrenceEnd = nil
 
         if let rule = CalendarEventRecurrenceRules.allCases.first(where: { $0.rule == eventRule }) {

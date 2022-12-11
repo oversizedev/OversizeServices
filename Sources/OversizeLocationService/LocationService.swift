@@ -10,6 +10,8 @@ import MapKit
 public protocol LocationServiceProtocol {
     func currentLocation() async throws -> CLLocationCoordinate2D?
     func permissionsStatus() -> CLAuthorizationStatus
+    func fetchCoordinateFromAddress(_ address: String) async throws -> CLLocationCoordinate2D
+    func fetchAddressFromLocation(_ location: CLLocationCoordinate2D) async throws -> LocationAddress
 }
 
 public class LocationService: NSObject, ObservableObject {
@@ -39,6 +41,30 @@ extension LocationService: LocationServiceProtocol {
     public func permissionsStatus() -> CLAuthorizationStatus {
         locationManager.requestWhenInUseAuthorization()
         return locationManager.authorizationStatus
+    }
+    
+    public func fetchCoordinateFromAddress(_ address: String) async throws -> CLLocationCoordinate2D {
+        let geocoder = CLGeocoder()
+
+        guard let location = try await geocoder.geocodeAddressString(address)
+            .compactMap( { $0.location } )
+            .first(where: { $0.horizontalAccuracy >= 0 } )
+        else {
+            throw CLError(.geocodeFoundNoResult)
+        }
+
+        return location.coordinate
+    }
+    
+    public func fetchAddressFromLocation(_ location: CLLocationCoordinate2D) async throws -> LocationAddress {
+        let geocoder = CLGeocoder()
+        let location = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        let placemarks = try await geocoder.reverseGeocodeLocation(location)
+        if let placemark = placemarks.first {
+            return LocationAddress(with: placemark)
+        } else {
+            throw CLError(.geocodeFoundNoResult)
+        }
     }
 }
 

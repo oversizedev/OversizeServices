@@ -55,6 +55,7 @@ public actor CalendarService {
         endDate: Date,
         calendar: EKCalendar? = nil,
         isAllDay: Bool = false,
+        location: String? = nil,
         structuredLocation: EKStructuredLocation? = nil,
         alarms: [CalendarAlertsTimes]? = nil,
         url: URL? = nil,
@@ -64,12 +65,13 @@ public actor CalendarService {
     ) async -> Result<Bool, AppError> {
         let access = await requestAccess()
         if case let .failure(error) = access { return .failure(error) }
-        var event: EKEvent = .init(eventStore: eventStore)
+        let event: EKEvent = .init(eventStore: eventStore)
         event.title = title
         event.notes = notes
         event.startDate = startDate
         event.endDate = endDate
         event.isAllDay = isAllDay
+        event.location = location
         event.structuredLocation = structuredLocation
         event.url = url
 
@@ -78,7 +80,7 @@ public actor CalendarService {
         }
 
         if recurrenceRules != .never {
-            var rule = recurrenceRules.rule
+            let rule = recurrenceRules.rule
             rule?.recurrenceEnd = recurrenceEndRules.end
             if let rule {
                 event.recurrenceRules = [rule]
