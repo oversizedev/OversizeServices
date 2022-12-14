@@ -42,20 +42,20 @@ extension LocationService: LocationServiceProtocol {
         locationManager.requestWhenInUseAuthorization()
         return locationManager.authorizationStatus
     }
-    
+
     public func fetchCoordinateFromAddress(_ address: String) async throws -> CLLocationCoordinate2D {
         let geocoder = CLGeocoder()
 
         guard let location = try await geocoder.geocodeAddressString(address)
-            .compactMap( { $0.location } )
-            .first(where: { $0.horizontalAccuracy >= 0 } )
+            .compactMap({ $0.location })
+            .first(where: { $0.horizontalAccuracy >= 0 })
         else {
             throw CLError(.geocodeFoundNoResult)
         }
 
         return location.coordinate
     }
-    
+
     public func fetchAddressFromLocation(_ location: CLLocationCoordinate2D) async throws -> LocationAddress {
         let geocoder = CLGeocoder()
         let location = CLLocation(latitude: location.latitude, longitude: location.longitude)

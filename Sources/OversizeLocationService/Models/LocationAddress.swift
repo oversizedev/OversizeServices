@@ -1,8 +1,6 @@
 //
-//  File.swift
-//  
-//
-//  Created by Aleksandr Romanov on 11.12.2022.
+// Copyright © 2022 Alexander Romanov
+// LocationAddress.swift
 //
 
 import Foundation
@@ -49,4 +47,3 @@ public struct LocationAddress: Codable {
         isoCountryCode = placemark.isoCountryCode ?? ""
     }
 }
-
