@@ -4,10 +4,10 @@
 import PackageDescription
 
 let productionDependencies: [PackageDescription.Package.Dependency] = { [
-    .package(url: "http://github.com/oversizedev/OversizeCore.git", branch: "main"),
-    .package(url: "http://github.com/oversizedev/OversizeLocalizable.git", branch: "main"),
-    .package(url: "http://github.com/oversizedev/OversizeResources.git", branch: "main"),
-    .package(url: "http://github.com/oversizedev/OversizeCDN.git", branch: "main"),
+    .package(url: "http://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@github.com/oversizedev/OversizeCore.git", branch: "main"),
+    .package(url: "http://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@github.com/oversizedev/OversizeLocalizable.git", branch: "main"),
+    .package(url: "http://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@github.com/oversizedev/OversizeResources.git", branch: "main"),
+    .package(url: "http://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@github.com/oversizedev/OversizeCDN.git", branch: "main"),
 ] }()
 
 let developmentDependencies: [PackageDescription.Package.Dependency] = { [
