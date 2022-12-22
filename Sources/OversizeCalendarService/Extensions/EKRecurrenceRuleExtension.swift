@@ -1,6 +1,6 @@
 //
 // Copyright © 2022 Alexander Romanov
-// EKRecurrenceRule.swift
+// EKRecurrenceRuleExtension.swift
 //
 
 import EventKit

@@ -49,6 +49,7 @@ public actor CalendarService {
     }
 
     public func createEvent(
+        event: EKEvent? = nil,
         title: String,
         notes: String? = nil,
         startDate: Date,
@@ -61,36 +62,42 @@ public actor CalendarService {
         url: URL? = nil,
         memberEmails: [String] = [],
         recurrenceRules: CalendarEventRecurrenceRules = .never,
-        recurrenceEndRules: CalendarEventEndRecurrenceRules = .never
+        recurrenceEndRules: CalendarEventEndRecurrenceRules = .never,
+        span: EKSpan = .thisEvent
     ) async -> Result<Bool, AppError> {
         let access = await requestAccess()
         if case let .failure(error) = access { return .failure(error) }
-        let event: EKEvent = .init(eventStore: eventStore)
-        event.title = title
-        event.notes = notes
-        event.startDate = startDate
-        event.endDate = endDate
-        event.isAllDay = isAllDay
-        event.location = location
-        event.structuredLocation = structuredLocation
-        event.url = url
+        let newEvent: EKEvent
+        if let event {
+            newEvent = eventStore.event(withIdentifier: event.eventIdentifier ?? "") ?? .init(eventStore: eventStore)
+        } else {
+            newEvent = .init(eventStore: eventStore)
+        }
+        newEvent.title = title
+        newEvent.notes = notes
+        newEvent.startDate = startDate
+        newEvent.endDate = endDate
+        newEvent.isAllDay = isAllDay
+        newEvent.location = location
+        newEvent.structuredLocation = structuredLocation
+        newEvent.url = url
 
         if let alarms {
-            event.alarms = alarms.compactMap { $0.alarm }
+            newEvent.alarms = alarms.compactMap { $0.alarm }
         }
 
         if recurrenceRules != .never {
             let rule = recurrenceRules.rule
             rule?.recurrenceEnd = recurrenceEndRules.end
             if let rule {
-                event.recurrenceRules = [rule]
+                newEvent.recurrenceRules = [rule]
             }
         }
 
         if let calendar {
-            event.calendar = calendar
+            newEvent.calendar = calendar
         } else {
-            event.calendar = eventStore.defaultCalendarForNewEvents
+            newEvent.calendar = eventStore.defaultCalendarForNewEvents
         }
 
         var attendees = [EKParticipant]()
@@ -100,14 +107,27 @@ public actor CalendarService {
                     attendees.append(attendee)
                 }
             }
-            event.setValue(attendees, forKey: "attendees")
+            newEvent.setValue(attendees, forKey: "attendees")
         }
 
         do {
-            try eventStore.save(event, span: .thisEvent)
+            try eventStore.save(newEvent, span: span, commit: true)
             return .success(true)
         } catch {
             return .failure(.custom(title: "Not save event"))
+        }
+    }
+
+    public func deleteEvent(identifier: String, span: EKSpan = .thisEvent) async -> Result<Bool, AppError> {
+        let access = await requestAccess()
+        if case let .failure(error) = access { return .failure(error) }
+        guard let event = eventStore.fetchEvent(identifier: identifier) else { return .failure(.custom(title: "Not deleted")) }
+
+        do {
+            try eventStore.remove(event, span: span, commit: true)
+            return .success(true)
+        } catch {
+            return .failure(.custom(title: "Not deleted"))
         }
     }
 }

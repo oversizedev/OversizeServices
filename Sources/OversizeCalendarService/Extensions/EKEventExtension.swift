@@ -5,6 +5,13 @@
 
 import EventKit
 import OversizeCore
+import SwiftUI
+
+extension EKEvent: Identifiable {
+    var color: Color {
+        Color(UIColor(cgColor: calendar.cgColor))
+    }
+}
 
 public extension EKEvent {
     var membersCount: Int {
@@ -220,7 +227,12 @@ public extension EKEvent {
         return note
     }
 
-    var listId: String {
+//    var listId: String {
+//        guard let id = eventIdentifier else { return startDate.formatted() }
+//        return id + startDate.formatted()
+//    }
+
+    var id: String {
         guard let id = eventIdentifier else { return startDate.formatted() }
         return id + startDate.formatted()
     }
