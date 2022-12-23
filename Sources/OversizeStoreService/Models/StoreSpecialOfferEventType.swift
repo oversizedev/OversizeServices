@@ -4,7 +4,6 @@
 //
 
 import Foundation
-import OversizeCDN
 
 public enum StoreSpecialOfferEventType: String, Identifiable, CaseIterable, Hashable {
     case newUser, activeUser, oldUser, newYear, christmas, halloween, blackFriday, foolsDay, backToSchool, cyberMonday
@@ -104,16 +103,16 @@ public enum StoreSpecialOfferEventType: String, Identifiable, CaseIterable, Hash
 
     public var specialOfferImageURL: String {
         switch self {
-        case .newUser: return IllustrationCDN.Objects.Christmas.Gift1.large
-        case .activeUser: return IllustrationCDN.Objects.Christmas.Gift1.large
-        case .oldUser: return IllustrationCDN.Objects.Sundry.Hand.large
-        case .newYear: return IllustrationCDN.Objects.Christmas.Snowman.large
-        case .halloween: return IllustrationCDN.Objects.Tools.Broom.large
-        case .blackFriday: return IllustrationCDN.Objects.Tools.Bolt.large
-        case .foolsDay: return IllustrationCDN.Objects.Sundry.Smile.large
-        case .backToSchool: return IllustrationCDN.Objects.Education.Pencil2a.large
-        case .christmas: return IllustrationCDN.Objects.Christmas.Sock.large
-        case .cyberMonday: return IllustrationCDN.Objects.Toys.Gamepad.large
+        case .newUser: return "objects/christmas/gift1/large.png"
+        case .activeUser: return "objects/christmas/gift1/large.png"
+        case .oldUser: return "objects/sundry/hand/large.png"
+        case .newYear: return "objects/christmas/snowman/large.png"
+        case .halloween: return "objects/tools/broom/large.png"
+        case .blackFriday: return "objects/tools/bolt/large.png"
+        case .foolsDay: return "objects/sundry/smile/large.png"
+        case .backToSchool: return "objects/education/pencil2a/large.png"
+        case .christmas: return "objects/christmas/sock/large.png"
+        case .cyberMonday: return "objects/toys/gamepad/large.png"
         }
     }
 

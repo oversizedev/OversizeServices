@@ -4,17 +4,15 @@
 import PackageDescription
 
 let productionDependencies: [PackageDescription.Package.Dependency] = { [
-    .package(url: "http://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@github.com/oversizedev/OversizeCore.git", branch: "main"),
-    .package(url: "http://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@github.com/oversizedev/OversizeLocalizable.git", branch: "main"),
-    .package(url: "http://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@github.com/oversizedev/OversizeResources.git", branch: "main"),
-    .package(url: "http://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@github.com/oversizedev/OversizeCDN.git", branch: "main"),
+    .package(url: "https://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@github.com/oversizedev/OversizeCore.git", branch: "main"),
+    .package(url: "https://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@github.com/oversizedev/OversizeLocalizable.git", branch: "main"),
+    .package(url: "https://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@github.com/oversizedev/OversizeResources.git", branch: "main"),
 ] }()
 
 let developmentDependencies: [PackageDescription.Package.Dependency] = { [
     .package(name: "OversizeCore", path: "../OversizeCore"),
     .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
     .package(name: "OversizeResources", path: "../OversizeResources"),
-    .package(name: "OversizeCDN", path: "../OversizeCDN"),
 ] }()
 
 let package = Package(
@@ -83,7 +81,6 @@ let package = Package(
             name: "OversizeStoreService",
             dependencies: [
                 "OversizeServices",
-                .product(name: "OversizeCDN", package: "OversizeCDN"),
                 .product(name: "OversizeCore", package: "OversizeCore"),
             ]
         ),
