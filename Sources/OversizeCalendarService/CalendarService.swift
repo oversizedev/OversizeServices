@@ -41,6 +41,13 @@ public actor CalendarService {
         return .success(calendars)
     }
 
+    public func fetchDefaultCalendar() async -> Result<EKCalendar?, AppError> {
+        let access = await requestAccess()
+        if case let .failure(error) = access { return .failure(error) }
+        let calendar = eventStore.defaultCalendarForNewEvents
+        return .success(calendar)
+    }
+
     public func fetchSourses() async -> Result<[EKSource], AppError> {
         let access = await requestAccess()
         if case let .failure(error) = access { return .failure(error) }

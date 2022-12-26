@@ -79,7 +79,7 @@ public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable 
         title
     }
 
-    public static var allCases: [CalendarEventRecurrenceRules] = [.never, .everyDay, .everyWorkingDay, .everyWeekend, .everyWeek, .everyTwoWeeks, .everyMonth, .everyYear, .custom(nil)]
+    public static var allCases: [CalendarEventRecurrenceRules] = [.never, .everyDay, .everyWorkingDay, .everyWeekend, .everyWeek, .everyTwoWeeks, .everyMonth, .everyYear]
 }
 
 public enum CalendarEventEndRecurrenceRules: CaseIterable, Equatable, Identifiable, Hashable {
