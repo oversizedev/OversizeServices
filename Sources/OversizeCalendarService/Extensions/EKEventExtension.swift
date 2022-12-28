@@ -8,12 +8,30 @@ import OversizeCore
 import SwiftUI
 
 extension EKEvent: Identifiable {
-    var color: Color {
+    public var color: Color {
         Color(UIColor(cgColor: calendar.cgColor))
     }
 }
 
 public extension EKEvent {
+    var locationShortTitle: String? {
+        if let meetType {
+            return meetType.title
+        } else if let location = location?.components(separatedBy: .newlines), let locationText: String = location.first {
+            if locationText.count < 16 {
+                let clean = locationText.trimmingCharacters(in: .whitespacesAndNewlines)
+                return clean
+            } else {
+                var clean = locationText.trimmingCharacters(in: .whitespacesAndNewlines)
+                let range = clean.index(clean.startIndex, offsetBy: 16) ..< clean.endIndex
+                clean.removeSubrange(range)
+                return clean + "..."
+            }
+        } else {
+            return nil
+        }
+    }
+
     var membersCount: Int {
         if organizer != nil, hasAttendees {
             return 1 + (attendees?.count ?? 0)

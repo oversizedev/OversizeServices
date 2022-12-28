@@ -21,12 +21,20 @@ public actor CalendarService {
         }
     }
 
-    public func fetchEvents(start: Date, end: Date = Date() /* , calendars: [EKCalendar]? = nil */ ) async -> Result<[EKEvent], AppError> {
+    public func fetchEvents(start: Date, end: Date = Date(), filtredCalendarsIds: [String] = []) async -> Result<[EKEvent], AppError> {
         let access = await requestAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendars = eventStore.calendars(for: .event)
-        var events: [EKEvent] = []
+        var filtredCalendars: [EKCalendar] = []
         for calendar in calendars {
+            if let _ = filtredCalendarsIds.first(where: { calendar.calendarIdentifier == $0 }) {
+                break
+            } else {
+                filtredCalendars.append(calendar)
+            }
+        }
+        var events: [EKEvent] = []
+        for calendar in filtredCalendars {
             let predicate = eventStore.predicateForEvents(withStart: start, end: end, calendars: [calendar])
             let matchingEvents = eventStore.events(matching: predicate)
             events += matchingEvents
