@@ -14,10 +14,14 @@ public actor CalendarService {
 
     func requestAccess() async -> Result<Bool, AppError> {
         do {
-            try await eventStore.requestAccess(to: .event)
-            return .success(true)
+            let status = try await eventStore.requestAccess(to: .event)
+            if status {
+                return .success(true)
+            } else {
+                return .failure(AppError.eventKit(type: .notAccess))
+            }
         } catch {
-            return .failure(AppError.custom(title: "Not Access"))
+            return .failure(AppError.eventKit(type: .notAccess))
         }
     }
 
@@ -129,7 +133,7 @@ public actor CalendarService {
             try eventStore.save(newEvent, span: span, commit: true)
             return .success(true)
         } catch {
-            return .failure(.custom(title: "Not save event"))
+            return .failure(.eventKit(type: .savingItem))
         }
     }
 
@@ -142,7 +146,7 @@ public actor CalendarService {
             try eventStore.remove(event, span: span, commit: true)
             return .success(true)
         } catch {
-            return .failure(.custom(title: "Not deleted"))
+            return .failure(.eventKit(type: .deleteItem))
         }
     }
 }

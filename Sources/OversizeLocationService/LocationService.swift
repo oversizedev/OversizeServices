@@ -6,10 +6,12 @@
 import CoreLocation
 import Foundation
 import MapKit
+import OversizeServices
 
 public protocol LocationServiceProtocol {
     func currentLocation() async throws -> CLLocationCoordinate2D?
-    func permissionsStatus() -> CLAuthorizationStatus
+    func systemPermissionsStatus() -> CLAuthorizationStatus
+    func permissionsStatus() -> Result<Bool, AppError>
     func fetchCoordinateFromAddress(_ address: String) async throws -> CLLocationCoordinate2D
     func fetchAddressFromLocation(_ location: CLLocationCoordinate2D) async throws -> LocationAddress
 }
@@ -38,9 +40,23 @@ extension LocationService: LocationServiceProtocol {
         })
     }
 
-    public func permissionsStatus() -> CLAuthorizationStatus {
+    public func systemPermissionsStatus() -> CLAuthorizationStatus {
         locationManager.requestWhenInUseAuthorization()
         return locationManager.authorizationStatus
+    }
+
+    public func permissionsStatus() -> Result<Bool, AppError> {
+        locationManager.requestWhenInUseAuthorization()
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            return .failure(.location(type: .notDetermined))
+        case .denied:
+            return .failure(.location(type: .notAccess))
+        case .restricted, .authorizedAlways, .authorizedWhenInUse:
+            return .success(true)
+        @unknown default:
+            return .failure(.location(type: .unknown))
+        }
     }
 
     public func fetchCoordinateFromAddress(_ address: String) async throws -> CLLocationCoordinate2D {

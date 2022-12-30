@@ -13,10 +13,14 @@ public actor ContactsService {
 
     public func requestAccess() async -> Result<Bool, AppError> {
         do {
-            try await contactStore.requestAccess(for: .contacts)
-            return .success(true)
+            let status = try await contactStore.requestAccess(for: .contacts)
+            if status {
+                return .success(true)
+            } else {
+                return .failure(AppError.contacts(type: .notAccess))
+            }
         } catch {
-            return .failure(AppError.custom(title: "Not Access"))
+            return .failure(AppError.contacts(type: .notAccess))
         }
     }
 
@@ -32,7 +36,7 @@ public actor ContactsService {
                 }
                 continuation.resume(returning: .success(contacts))
             } catch {
-                continuation.resume(throwing: error)
+                continuation.resume(throwing: AppError.contacts(type: .unknown))
             }
         }
     }
