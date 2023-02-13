@@ -185,7 +185,7 @@ public enum Info {
         }
     }
 
-    public static var apps: [App] {
+    public static var apps: [PlistConfiguration.App] {
         guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
             fatalError("Couldn't find file \(configName).plist'.")
         }
@@ -199,7 +199,7 @@ public enum Info {
         }
     }
 
-    public static var links: Links? {
+    public static var links: PlistConfiguration.Links? {
         guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
             fatalError("Couldn't find file \(configName).plist'.")
         }
@@ -214,7 +214,7 @@ public enum Info {
     }
 
     public enum store {
-        public static var features: [Store.StoreFeature] {
+        public static var features: [PlistConfiguration.Store.StoreFeature] {
             guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
                 fatalError("Couldn't find file \(configName).plist'.")
             }
