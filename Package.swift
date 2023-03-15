@@ -32,6 +32,7 @@ let package = Package(
         .library(name: "OversizeLocationService", targets: ["OversizeLocationService"]),
         .library(name: "OversizeCalendarService", targets: ["OversizeCalendarService"]),
         .library(name: "OversizeContactsService", targets: ["OversizeContactsService"]),
+        .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
     ],
     dependencies: productionDependencies,
     targets: [
@@ -84,7 +85,12 @@ let package = Package(
                 .product(name: "OversizeCore", package: "OversizeCore"),
             ]
         ),
-
+        .target(
+            name: "OversizeNotificationService",
+            dependencies: [
+                "OversizeServices",
+            ]
+        ),
         .testTarget(
             name: "OversizeServicesTests",
             dependencies: ["OversizeServices"]

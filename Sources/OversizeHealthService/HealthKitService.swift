@@ -100,7 +100,8 @@ extension HealthKitService: HealthKitServiceProtocol {
             let query = HKSampleQuery(sampleType: sampleType!,
                                       predicate: predicate,
                                       limit: HKObjectQueryNoLimit,
-                                      sortDescriptors: nil) { _, results, _ in
+                                      sortDescriptors: nil)
+            { _, results, _ in
 
                 // When the query ends, check for errors.
                 if let samples = results as? [HKQuantitySample] { // , error != nil {
@@ -127,7 +128,8 @@ extension HealthKitService: HealthKitServiceProtocol {
             let query = HKSampleQuery(sampleType: sampleType!,
                                       predicate: predicate,
                                       limit: HKObjectQueryNoLimit,
-                                      sortDescriptors: nil) { _, results, error in
+                                      sortDescriptors: nil)
+            { _, results, error in
 
                 // When the query ends, check for errors.
                 if let error {
@@ -222,7 +224,8 @@ extension HealthKitService: HealthKitServiceProtocol {
             let query = HKSampleQuery(sampleType: sampleType!,
                                       predicate: predicate,
                                       limit: 1,
-                                      sortDescriptors: nil) { _, results, error in
+                                      sortDescriptors: nil)
+            { _, results, error in
 
                 if let error {
                     continuation.resume(throwing: error) // 👈🏻
