@@ -34,7 +34,7 @@ let package = Package(
         .library(name: "OversizeContactsService", targets: ["OversizeContactsService"]),
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
     ],
-    dependencies: productionDependencies,
+    dependencies: developmentDependencies,
     targets: [
         .target(
             name: "OversizeServices",
@@ -89,6 +89,7 @@ let package = Package(
             name: "OversizeNotificationService",
             dependencies: [
                 "OversizeServices",
+                .product(name: "OversizeCore", package: "OversizeCore"),
             ]
         ),
         .testTarget(

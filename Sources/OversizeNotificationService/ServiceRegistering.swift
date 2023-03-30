@@ -1,16 +1,11 @@
 //
 // Copyright © 2023 Alexander Romanov
-// ServiceRegistering.swift
+// ServiceRegistering.swift, created 02.03.2023
 //
 
-//
-//
-// Copyright © 02.03.2023 Aleksandr Romanov
-// File.swift, created on 02.03.2023
-//
 import Foundation
 import OversizeServices
 
 public extension Container {
-    static var notificationService = Factory { NotificationService() }
+    static var localNotificationService = Factory<LocalNotificationServiceProtocol> { LocalNotificationService() }
 }
