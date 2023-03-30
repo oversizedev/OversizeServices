@@ -16,9 +16,9 @@ public protocol LocationServiceProtocol {
     func fetchAddressFromLocation(_ location: CLLocationCoordinate2D) async throws -> LocationAddress
 }
 
-public class LocationService: NSObject, ObservableObject {
-    fileprivate lazy var locationManager = CLLocationManager()
-    var locationContinuation: CheckedContinuation<CLLocationCoordinate2D?, Error>?
+public final class LocationService: NSObject {
+    private lazy var locationManager = CLLocationManager()
+    private var locationContinuation: CheckedContinuation<CLLocationCoordinate2D?, Error>?
 
     override init() {
         super.init()
