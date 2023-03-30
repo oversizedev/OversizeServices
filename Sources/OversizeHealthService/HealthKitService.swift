@@ -35,7 +35,7 @@ open class HealthKitService {
 
 extension HealthKitService: HealthKitServiceProtocol {
     public func requestAuthorization() async -> Result<Bool, AppError> {
-        guard let healthStore, let type = bodyMassType else { return .failure(AppError.custom(title: "Not StoreKit")) }
+        guard let healthStore, let type = bodyMassType else { return .failure(AppError.custom(title: "Not authorization")) }
 
         do {
             try await healthStore.requestAuthorization(toShare: [type], read: [type])
