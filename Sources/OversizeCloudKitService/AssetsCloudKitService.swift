@@ -9,7 +9,7 @@ import OversizeServices
 import SwiftUI
 import UIKit
 
-open class AssetsCloudKitService {
+public final class AssetsCloudKitService {
     private var database: CKDatabase
     private var container: CKContainer
 

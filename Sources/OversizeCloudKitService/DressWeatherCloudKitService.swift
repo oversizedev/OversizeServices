@@ -23,7 +23,7 @@ public protocol DressWeatherCloudKitServiceProtocol {
     func saveDress(_ dress: WeatherDress) async -> Result<WeatherDress, AppError>
 }
 
-open class DressWeatherCloudKitService {
+final class DressWeatherCloudKitService {
     private var database: CKDatabase
     private var container: CKContainer
 
@@ -171,64 +171,3 @@ extension DressWeatherCloudKitService: DressWeatherCloudKitServiceProtocol {
         }
     }
 }
-
-//    public func savePlace(_ cityRecordId: CKRecord.ID,
-//                          place: WeatherPlace) async -> Result<WeatherPlace, CloudKitError> {
-//        do {
-//            let record = CKRecord(recordType: place.recordType)
-//            record.setValue(place.name, forKey: "name")
-//            record.setValue(place.icon, forKey: "icon")
-//            record.setValue(place.location, forKey: "location")
-//            let cityReference = CKRecord.Reference(recordID: cityRecordId, action: .deleteSelf)
-//            record.setObject(cityReference, forKey: CloudKitSheme.city.rawValue)
-//            let result = try await database.save(record)
-//            let place = WeatherPlace(record: result)
-//            return .success(place)
-//        } catch {
-//            return .failure(.unknown)
-//        }
-//    }
-
-/*
-public func fetchCitiesWithPlaces() async -> Result<[WeatherCity], CloudKitError> {
-    do {
-        let query = CKQuery(recordType: CloudKitSheme.city.rawValue, predicate: NSPredicate(value: true))
-        var items: [WeatherCity] = []
-        if #available(iOS 15.0, *) {
-            let data = try await database.records(matching: query)
-            
-//                let dataItems = data.matchResults.compactMap { $0.1 }
-//                return await withTaskGroup(of: Void.self) { group in
-//                    var cities: [WeatherCity] = []
-//                    for item in dataItems {
-//                        group.addTask(priority: .background) {
-//
-//                            if case let .success(record) = item {
-//                                var city = WeatherCity(record: record)
-//                                if let recordId = city.recordId {
-//                                    let response = await self.fetchPlaces(for: recordId)
-//                                    switch response {
-//                                    case let .success(data):
-//                                        city.places = data
-//                                    case .failure:
-//                                        break
-//                                    }
-//                                }
-//                                //await store.append(ids: ids)
-//                                await cities.append(city)
-//                            }
-//
-//
-//                        }
-//                        return .success(cities)
-//                    }
-//                    return .success(cities)
-//                }
-        } else {
-            print("🔴 Method FetchCities dont work in iOS 14")
-        }
-        return .success(items)
-    } catch {
-        return .failure(.unknown)
-    }
-}*/
