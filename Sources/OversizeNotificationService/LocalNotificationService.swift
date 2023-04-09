@@ -1,6 +1,6 @@
 //
 // Copyright © 2023 Alexander Romanov
-// LocalNotificationService.swift, created 02.03.2023
+// LocalNotificationService.swift
 //
 
 import OversizeCore

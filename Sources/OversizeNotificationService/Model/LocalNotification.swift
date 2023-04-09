@@ -1,6 +1,6 @@
 //
 // Copyright © 2023 Alexander Romanov
-// LocalNotification.swift, created 02.03.2023
+// LocalNotification.swift
 //
 
 import Foundation
