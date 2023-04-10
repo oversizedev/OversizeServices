@@ -46,9 +46,7 @@ extension HealthKitService: HealthKitServiceProtocol {
     }
 
     public func getWeightData(forDay days: Int, completion: @escaping ((_ weight: Double?, _ date: Date?) -> Void)) {
-        // Getting quantityType as stepCount
         guard let bodyMassType = HKObjectType.quantityType(forIdentifier: .bodyMass) else {
-            log("*** Unable to create a bodyMass type ***")
             return
         }
 
@@ -62,7 +60,6 @@ extension HealthKitService: HealthKitServiceProtocol {
         anchorComponents.hour = 0
         let anchorDate = Calendar.current.date(from: anchorComponents)!
 
-        // Note to myself:: StatisticsQuery!! Nicht Collection! Option .mostRecent. Achtung, unten auch setzen!!
         let query = HKStatisticsCollectionQuery(quantityType: bodyMassType,
                                                 quantitySamplePredicate: nil,
                                                 options: [.discreteMax, .separateBySource],
@@ -70,12 +67,10 @@ extension HealthKitService: HealthKitServiceProtocol {
                                                 intervalComponents: interval)
         query.initialResultsHandler = { _, results, _ in
             guard let results else {
-                log("ERROR")
                 return
             }
 
             results.enumerateStatistics(from: startDate, to: now) { statistics, _ in
-                // hier wieder .mostRecent!
                 if let sum = statistics.maximumQuantity() {
                     let bodyMassValue = sum.doubleValue(for: HKUnit.gramUnit(with: .kilo))
                     completion(bodyMassValue, statistics.startDate)
@@ -87,8 +82,7 @@ extension HealthKitService: HealthKitServiceProtocol {
     }
 
     public func fetchBodyMass(forDay days: Int) async throws -> [HKQuantitySample]? {
-        try await withCheckedThrowingContinuation { continuation in // 👈🏻
-            // Create a predicate that only returns samples created within the last 24 hours.
+        try await withCheckedThrowingContinuation { continuation in
             let sampleType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
 
             let today: Date = .init()
@@ -96,15 +90,13 @@ extension HealthKitService: HealthKitServiceProtocol {
 
             let predicate = HKQuery.predicateForSamples(withStart: startDate, end: today, options: HKQueryOptions.strictEndDate)
 
-            // Create the query.
             let query = HKSampleQuery(sampleType: sampleType!,
                                       predicate: predicate,
                                       limit: HKObjectQueryNoLimit,
                                       sortDescriptors: nil)
             { _, results, _ in
 
-                // When the query ends, check for errors.
-                if let samples = results as? [HKQuantitySample] { // , error != nil {
+                if let samples = results as? [HKQuantitySample] {
                     continuation.resume(returning: samples)
                 } else {
                     continuation.resume(returning: nil)
@@ -115,8 +107,7 @@ extension HealthKitService: HealthKitServiceProtocol {
     }
 
     private func queryHealthKit(forDay days: Int) async throws -> [HKSample]? {
-        try await withCheckedThrowingContinuation { continuation in // 👈🏻
-            // Create a predicate that only returns samples created within the last 24 hours.
+        try await withCheckedThrowingContinuation { continuation in
             let sampleType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
 
             let today: Date = .init()
@@ -124,18 +115,16 @@ extension HealthKitService: HealthKitServiceProtocol {
 
             let predicate = HKQuery.predicateForSamples(withStart: startDate, end: today, options: HKQueryOptions.strictEndDate)
 
-            // Create the query.
             let query = HKSampleQuery(sampleType: sampleType!,
                                       predicate: predicate,
                                       limit: HKObjectQueryNoLimit,
                                       sortDescriptors: nil)
             { _, results, error in
 
-                // When the query ends, check for errors.
                 if let error {
-                    continuation.resume(throwing: error) // 👈🏻
+                    continuation.resume(throwing: error)
                 } else {
-                    continuation.resume(returning: results) // 👈🏻
+                    continuation.resume(returning: results)
                 }
             }
             healthStore?.execute(query)
@@ -216,7 +205,7 @@ extension HealthKitService: HealthKitServiceProtocol {
     }
 
     public func deleteBodyMass(userWeightUUID: UUID) async throws -> Bool {
-        try await withCheckedThrowingContinuation { continuation in // 👈🏻
+        try await withCheckedThrowingContinuation { continuation in
 
             let sampleType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
             let predicate = HKQuery.predicateForObject(with: userWeightUUID)
@@ -228,7 +217,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             { _, results, error in
 
                 if let error {
-                    continuation.resume(throwing: error) // 👈🏻
+                    continuation.resume(throwing: error)
                 } else if let deleteObject = results?.first {
                     self.healthStore?.delete(deleteObject, withCompletion: { _, error in
                         if let error {
@@ -293,67 +282,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             }
         }
     }
-
-    /*
-     func saveBodyMass(date: Date, bodyMass: Double) {
-         let quantityType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
-         let bodyMass = HKQuantitySample(type: quantityType!,
-                                         quantity: HKQuantity(unit: HKUnit.pound(), doubleValue: bodyMass),
-                                         start: date,
-                                         end: date)
-         healthStore?.save(bodyMass) { success, error in
-             if error != nil {
-                 log("Error: \(String(describing: error))")
-             }
-             if success {
-                 log("Saved: \(success)")
-             }
-         }
-     }
-      */
-
-//    func waterConsumptionGraphData(completion: @escaping ([WaterGraphData]?) -> Void) throws {
-//        guard let healthStore = healthStore else {
-//            throw HKError(.errorHealthDataUnavailable)
-//        }
-//
-//        // 1
-//        var start = Calendar.current.date(
-//            byAdding: .day, value: -6, to: Date.now
-//        )!
-//        start = Calendar.current.startOfDay(for: start)
-//
-//        let predicate = HKQuery.predicateForSamples(
-//            withStart: start,
-//            end: nil,
-//            options: .strictStartDate
-//        )
-//
-//        // 2
-//        let query = HKStatisticsCollectionQuery(
-//            quantityType: waterQuantityType,
-//            quantitySamplePredicate: predicate,
-//            options: .cumulativeSum,
-//            anchorDate: start,
-//            intervalComponents: .init(day: 1)
-//        )
-//
-//        query.initialResultsHandler = { _, results, _ in
-//          self.updateGraph(
-//            start: start, results: results, completion: completion
-//          )
-//        }
-//
-//        query.statisticsUpdateHandler = { _, _, results, _ in
-//          self.updateGraph(
-//            start: start, results: results, completion: completion
-//          )
-//        }
-//
-//
-//        healthStore.execute(query)
-//    }
-
+    
     public func fetchBodyMass() async throws -> HKStatisticsCollection? {
         guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)

@@ -5,8 +5,13 @@
 
 import Foundation
 import OversizeServices
+import Factory
 
 public extension Container {
-    static var appStoreReviewService = Factory<AppStoreReviewServiceProtocol> { AppStoreReviewService() }
-    static var storeKitService = Factory { StoreKitService() }
+    var appStoreReviewService: Factory<AppStoreReviewServiceProtocol> {
+        self { AppStoreReviewService() }
+    }
+    var storeKitService: Factory<StoreKitService> {
+        self { StoreKitService() }
+    }
 }

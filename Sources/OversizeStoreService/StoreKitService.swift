@@ -28,7 +28,6 @@ public enum StoreError: Error {
     case failedVerification
 }
 
-// Define our app's subscription tiers by level of service, in ascending order.
 public enum SubscriptionTier: Int, Comparable {
     case none = 0
     case monthly = 1
@@ -53,7 +52,6 @@ public final class StoreKitService: ObservableObject {
             var newNonRenewables: [Product] = []
             var newConsumable: [Product] = []
 
-            // Filter the products into categories based on their type.
             for product in storeProducts {
                 switch product.type {
                 case .consumable:
@@ -65,7 +63,6 @@ public final class StoreKitService: ObservableObject {
                 case .nonRenewable:
                     newNonRenewables.append(product)
                 default:
-                    // Ignore this product.
                     log("Unknown product")
                 }
             }
@@ -76,8 +73,6 @@ public final class StoreKitService: ObservableObject {
                                             nonRenewable: sortByPrice(newNonRenewables))
 
             return .success(products)
-            // Sort each product category by price, lowest to highest, to update the store.
-
         } catch {
             log("Failed product request from the App Store server: \(error)")
             return .failure(.custom(title: "Failed product request from the App Store server"))
@@ -85,16 +80,11 @@ public final class StoreKitService: ObservableObject {
     }
 
     public func purchase(_ product: Product) async throws -> Result<Transaction, AppError> {
-        // Begin purchasing the `Product` the user selects.
         let result = try await product.purchase()
 
         switch result {
         case let .success(verification):
-            // Check whether the transaction is verified. If it isn't,
-            // this function rethrows the verification error.
             let transaction = try checkVerified(verification)
-
-            // Always finish a transaction.
             await transaction.finish()
 
             return .success(transaction)
@@ -120,13 +110,10 @@ public final class StoreKitService: ObservableObject {
     }
 
     public func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
-        // Check whether the JWS passes StoreKit verification.
         switch result {
         case .unverified:
-            // StoreKit parses the JWS, but it fails verification.
             throw StoreError.failedVerification
         case let .verified(safe):
-            // The result is verified. Return the unwrapped value.
             return safe
         }
     }
@@ -136,14 +123,10 @@ public final class StoreKitService: ObservableObject {
         var purchasedNonConsumable: [Product] = []
         var purchasedAutoRenewable: [Product] = []
         var purchasedNonRenewable: [Product] = []
-
-        // Iterate through all of the user's purchased products.
         for await result in Transaction.currentEntitlements {
             do {
-                // Check whether the transaction is verified. If it isn’t, catch `failedVerification` error.
                 let transaction = try checkVerified(result)
 
-                // Check the `productType` of the transaction and get the corresponding product from the store.
                 switch transaction.productType {
                 case .nonConsumable:
                     if let nonConsumable = products.nonConsumable.first(where: { $0.id == transaction.productID }) {
@@ -153,11 +136,6 @@ public final class StoreKitService: ObservableObject {
                     if let nonRenewable = products.nonRenewable.first(where: { $0.id == transaction.productID }),
                        transaction.productID == "nonRenewing.standard"
                     {
-                        // Non-renewing subscriptions have no inherent expiration date, so they're always
-                        // contained in `Transaction.currentEntitlements` after the user purchases them.
-                        // This app defines this non-renewing subscription's expiration date to be one year after purchase.
-                        // If the current date is within one year of the `purchaseDate`, the user is still entitled to this
-                        // product.
                         let currentDate: Date = .init()
                         let expirationDate = Calendar(identifier: .gregorian).date(byAdding: DateComponents(year: 1),
                                                                                    to: transaction.purchaseDate)!
@@ -180,17 +158,9 @@ public final class StoreKitService: ObservableObject {
         }
 
         var prushedPrducts = products
-        // Update the store information with the purchased products.
         prushedPrducts.purchasedNonConsumable = purchasedNonConsumable
         prushedPrducts.purchasedNonRenewable = purchasedNonRenewable
-
-        // Update the store information with auto-renewable subscription products.
         prushedPrducts.purchasedAutoRenewable = purchasedAutoRenewable
-
-        // Check the `subscriptionGroupStatus` to learn the auto-renewable subscription state to determine whether the customer
-        // is new (never subscribed), active, or inactive (expired subscription). This app has only one subscription
-        // group, so products in the subscriptions array all belong to the same group. The statuses that
-        // `product.subscription.status` returns apply to the entire subscription group.
         prushedPrducts.subscriptionGroupStatus = try? await prushedPrducts.autoRenewable.first?.subscription?.status.first?.state
 
         return .success(prushedPrducts)

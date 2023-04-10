@@ -25,27 +25,3 @@ public struct Credentials: DynamicProperty {
         }
     }
 }
-
-/* Use code
- Code form https://habr.com/ru/post/670490/
- final class SecureSettings {
-     @Credentials("account")
-     var account: SecureStorage.Credentials?
-
-     @Credentials("subAccount")
-     var subAccount: SecureStorage.Credentials?
-
-     @Password("authToken")
-     var authToken: String?
-
-     @Password("refreshToken")
-     var refreshToken: String?
-
-     func clear() {
-         account = nil
-         subAccount = nil
-         accessToken = nil
-         refreshToken = nil
-     }
- }
- */

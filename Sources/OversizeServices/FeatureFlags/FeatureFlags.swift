@@ -6,7 +6,7 @@
 import Foundation
 
 // swiftlint:disable line_length type_name
-public enum FeatureFlags /*: ObservableObject */ {
+public enum FeatureFlags {
     private static let configName = "AppConfig"
     private static let dictonaryName = "FeatureFlags"
 

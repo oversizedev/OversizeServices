@@ -5,7 +5,10 @@
 
 import Foundation
 import OversizeServices
+import Factory
 
 public extension Container {
-    static var contactsService = Factory { ContactsService() }
+    var contactsService: Factory<ContactsService> {
+         self { ContactsService() }
+     }
 }

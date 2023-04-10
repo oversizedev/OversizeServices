@@ -4,9 +4,16 @@
 //
 
 import Foundation
+import Factory
 
 public extension Container {
-    static var appStateService = Factory { AppStateService() }
-    static var settingsService = Factory<SettingsServiceProtocol> { SettingsService() }
-    static var biometricService = Factory<BiometricServiceProtocol> { BiometricService() }
+    var appStateService: Factory<AppStateService> {
+        Factory(self) { AppStateService() }
+    }
+    var settingsService: Factory<SettingsServiceProtocol> {
+        self { SettingsService() }
+    }
+    var biometricService: Factory<BiometricServiceProtocol> {
+        self { BiometricService() }
+    }
 }

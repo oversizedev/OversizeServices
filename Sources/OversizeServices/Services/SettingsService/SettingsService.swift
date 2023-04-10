@@ -8,6 +8,7 @@
 #endif
 import OversizeCore
 import SwiftUI
+import Factory
 
 // MARK: SettingsServiceProtocol
 
@@ -40,7 +41,7 @@ public protocol SettingsServiceProtocol {
 }
 
 public final class SettingsService: ObservableObject, SettingsServiceProtocol {
-    @Injected(Container.biometricService) var biometricService
+    @Injected(\.biometricService) var biometricService
 
     public init() {}
 

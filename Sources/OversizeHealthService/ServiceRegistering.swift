@@ -5,7 +5,10 @@
 
 import Foundation
 import OversizeServices
+import Factory
 
 public extension Container {
-    static var healthKitService = Factory<HealthKitServiceProtocol> { HealthKitService() }
+    var healthKitService: Factory<HealthKitServiceProtocol> {
+        self { HealthKitService() }
+    }
 }

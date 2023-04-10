@@ -5,7 +5,10 @@
 
 import Foundation
 import OversizeServices
+import Factory
 
 public extension Container {
-    static var localNotificationService = Factory<LocalNotificationServiceProtocol> { LocalNotificationService() }
+    var localNotificationService: Factory<LocalNotificationServiceProtocol> {
+        self { LocalNotificationService() }
+    }
 }

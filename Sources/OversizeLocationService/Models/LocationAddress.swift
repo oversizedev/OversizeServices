@@ -5,6 +5,7 @@
 
 import Foundation
 import MapKit
+import OversizeCore
 
 public struct LocationAddress: Codable {
     public let streetNumber: String // eg. 1
@@ -38,12 +39,12 @@ public struct LocationAddress: Codable {
     }
 
     public init(with placemark: CLPlacemark) {
-        streetName = placemark.thoroughfare ?? ""
-        streetNumber = placemark.subThoroughfare ?? ""
-        city = placemark.locality ?? ""
-        state = placemark.administrativeArea ?? ""
-        zipCode = placemark.postalCode ?? ""
-        country = placemark.country ?? ""
-        isoCountryCode = placemark.isoCountryCode ?? ""
+        streetName = placemark.thoroughfare.valueOrEmpty
+        streetNumber = placemark.subThoroughfare.valueOrEmpty
+        city = placemark.locality.valueOrEmpty
+        state = placemark.administrativeArea.valueOrEmpty
+        zipCode = placemark.postalCode.valueOrEmpty
+        country = placemark.country.valueOrEmpty
+        isoCountryCode = placemark.isoCountryCode.valueOrEmpty
     }
 }

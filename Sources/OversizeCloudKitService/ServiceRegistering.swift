@@ -5,7 +5,10 @@
 
 import Foundation
 import OversizeServices
+import Factory
 
 public extension Container {
-    static var dressWeatherCloudKitService = Factory<DressWeatherCloudKitServiceProtocol> { DressWeatherCloudKitService() }
+     var dressWeatherCloudKitService: Factory<DressWeatherCloudKitServiceProtocol> {
+         self { DressWeatherCloudKitService() }
+     }
 }

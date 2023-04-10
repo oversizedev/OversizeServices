@@ -5,7 +5,10 @@
 
 import Foundation
 import OversizeServices
+import Factory
 
 public extension Container {
-    static var locationService = Factory<LocationServiceProtocol> { LocationService() }
+    var locationService: Factory<LocationServiceProtocol> {
+        self { LocationService() }
+    }
 }

@@ -5,7 +5,10 @@
 
 import Foundation
 import OversizeServices
+import Factory
 
 public extension Container {
-    static var calendarService = Factory { CalendarService() }
+    var calendarService: Factory<CalendarService> {
+        self { CalendarService() }
+    }
 }
