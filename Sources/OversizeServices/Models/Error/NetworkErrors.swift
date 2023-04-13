@@ -4,7 +4,7 @@
 //
 
 import OversizeLocalizable
-import OversizeResources
+import OversizeUI
 import SwiftUI
 
 public extension AppError.Enums {
@@ -43,8 +43,7 @@ extension AppError.Enums.NetworkError: AppErrorProtocol {
 
     public var image: Image? {
         switch self {
-        case .decode, .invalidURL: return Illustration.Objects.Globe.medium
-        default: return Illustration.Objects.Error.medium
+        default: return Images.Status.error
         }
     }
 

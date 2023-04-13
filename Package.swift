@@ -4,16 +4,16 @@
 import PackageDescription
 
 let productionDependencies: [PackageDescription.Package.Dependency] = { [
-    .package(url: "https://github.com/oversizedev/OversizeCore.git", branch: "main"),
-    .package(url: "https://github.com/oversizedev/OversizeLocalizable.git", branch: "main"),
-    .package(url: "https://github.com/oversizedev/OversizeResources.git", branch: "main"),
+    .package(url: "https://github.com/oversizedev/OversizeCore.git", .upToNextMajor(from: "1.2.0")),
+    .package(url: "https://github.com/oversizedev/OversizeLocalizable.git", .upToNextMajor(from: "1.3.0")),
+    .package(url: "https://github.com/oversizedev/OversizeUI.git", .upToNextMajor(from: "3.0.2")),
     .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3"))
 ] }()
 
 let developmentDependencies: [PackageDescription.Package.Dependency] = { [
     .package(name: "OversizeCore", path: "../OversizeCore"),
     .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
-    .package(name: "OversizeResources", path: "../OversizeResources"),
+    .package(name: "OversizeUI", path: "../OversizeUI"),
     .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3"))
 ] }()
 
@@ -36,14 +36,14 @@ let package = Package(
         .library(name: "OversizeContactsService", targets: ["OversizeContactsService"]),
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
     ],
-    dependencies: developmentDependencies,
+    dependencies: productionDependencies,
     targets: [
         .target(
             name: "OversizeServices",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
-                .product(name: "OversizeResources", package: "OversizeResources"),
+                .product(name: "OversizeUI", package: "OversizeUI"),
                 .product(name: "Factory", package: "Factory")
             ]
         ),

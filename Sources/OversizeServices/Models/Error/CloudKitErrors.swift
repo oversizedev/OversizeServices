@@ -4,7 +4,7 @@
 //
 
 import OversizeLocalizable
-import OversizeResources
+import OversizeUI
 import SwiftUI
 
 public extension AppError.Enums {
@@ -36,12 +36,7 @@ extension AppError.Enums.CloudKit: AppErrorProtocol {
     }
 
     public var image: Image? {
-        switch self {
-        case .decode:
-            return Illustration.Objects.Cloud.medium
-        default:
-            return Illustration.Objects.Error.medium
-        }
+        return Images.Status.error
     }
 
     public var icon: Image? {

@@ -4,7 +4,7 @@
 //
 
 import OversizeLocalizable
-import OversizeResources
+import OversizeUI
 import SwiftUI
 
 public extension AppError.Enums {
@@ -30,7 +30,7 @@ extension AppError.Enums.Contacts: AppErrorProtocol {
     }
 
     public var image: Image? {
-        Illustration.Objects.Error.medium
+        return Images.Status.error
     }
 
     public var icon: Image? {

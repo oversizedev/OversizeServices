@@ -4,7 +4,7 @@
 //
 
 import OversizeLocalizable
-import OversizeResources
+import OversizeUI
 import SwiftUI
 
 public extension AppError.Enums {
@@ -34,12 +34,7 @@ extension AppError.Enums.Location: AppErrorProtocol {
 
     public var image: Image? {
         switch self {
-        case .notDetermined:
-            return Illustration.Objects.Pin.medium
-        case .notAccess:
-            return Illustration.Objects.Pin.medium
-        case .unknown:
-            return Illustration.Objects.Error.medium
+        default: return Images.Status.error
         }
     }
 
