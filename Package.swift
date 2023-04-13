@@ -10,13 +10,15 @@ let productionDependencies: [PackageDescription.Package.Dependency] = { [
     .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3"))
 ] }()
 
-//let developmentDependencies: [PackageDescription.Package.Dependency] = { [
-//    .package(name: "OversizeCore", path: "../OversizeCore"),
-//    .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
-//    .package(name: "OversizeUI", path: "../OversizeUI"),
-//    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3"))
-//] }()
-
+/*
+let developmentDependencies: [PackageDescription.Package.Dependency] = { [
+    .package(name: "OversizeCore", path: "../OversizeCore"),
+    .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
+    .package(name: "OversizeUI", path: "../OversizeUI"),
+    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3"))
+] }()
+*/
+ 
 let package = Package(
     name: "OversizeServices",
     defaultLocalization: "en",
