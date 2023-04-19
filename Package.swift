@@ -7,18 +7,16 @@ let productionDependencies: [PackageDescription.Package.Dependency] = { [
     .package(url: "https://github.com/oversizedev/OversizeUI.git", .upToNextMajor(from: "3.0.2")),
     .package(url: "https://github.com/oversizedev/OversizeCore.git", .upToNextMajor(from: "1.3.0")),
     .package(url: "https://github.com/oversizedev/OversizeLocalizable.git", .upToNextMajor(from: "1.4.0")),
-    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3"))
+    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3")),
 ] }()
 
-/*
 let developmentDependencies: [PackageDescription.Package.Dependency] = { [
     .package(name: "OversizeCore", path: "../OversizeCore"),
     .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
     .package(name: "OversizeUI", path: "../OversizeUI"),
-    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3"))
+    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3")),
 ] }()
-*/
- 
+
 let package = Package(
     name: "OversizeServices",
     defaultLocalization: "en",
@@ -38,7 +36,7 @@ let package = Package(
         .library(name: "OversizeContactsService", targets: ["OversizeContactsService"]),
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
     ],
-    dependencies: productionDependencies,
+    dependencies: developmentDependencies,
     targets: [
         .target(
             name: "OversizeServices",
@@ -46,14 +44,14 @@ let package = Package(
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
                 .product(name: "OversizeUI", package: "OversizeUI"),
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
             ]
         ),
         .target(
             name: "OversizeContactsService",
             dependencies: [
                 "OversizeServices",
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
             ]
         ),
         .target(
@@ -61,7 +59,7 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
             ]
         ),
         .target(
@@ -69,7 +67,7 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
             ]
         ),
         .target(
@@ -77,7 +75,7 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
             ]
         ),
         .target(
@@ -85,7 +83,7 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
             ]
         ),
         .target(
@@ -93,7 +91,7 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
             ]
         ),
         .target(
@@ -101,7 +99,7 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "Factory", package: "Factory")
+                .product(name: "Factory", package: "Factory"),
             ]
         ),
         .testTarget(

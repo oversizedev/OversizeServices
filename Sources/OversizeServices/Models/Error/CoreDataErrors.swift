@@ -39,7 +39,7 @@ extension AppError.Enums.CoreData: AppErrorProtocol {
     }
 
     public var image: Image? {
-        return Images.Status.error
+        Images.Status.error
     }
 
     public var icon: Image? {

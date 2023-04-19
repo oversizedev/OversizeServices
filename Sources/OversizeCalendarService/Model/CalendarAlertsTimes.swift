@@ -61,7 +61,7 @@ public enum CalendarAlertsTimes: CaseIterable, Equatable, Identifiable {
 
     public var id: String {
         if case let .custom(alarm) = self {
-            return self.title + String(alarm.relativeOffset)
+            return title + String(alarm.relativeOffset)
         } else {
             return title
         }

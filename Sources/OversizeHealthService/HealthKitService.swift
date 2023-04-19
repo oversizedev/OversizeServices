@@ -282,7 +282,7 @@ extension HealthKitService: HealthKitServiceProtocol {
             }
         }
     }
-    
+
     public func fetchBodyMass() async throws -> HKStatisticsCollection? {
         guard let healthStore else {
             throw HKError(.errorHealthDataUnavailable)
