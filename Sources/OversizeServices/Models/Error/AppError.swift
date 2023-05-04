@@ -20,6 +20,8 @@ public enum AppError: Error {
     case eventKit(type: Enums.EventKit)
     case contacts(type: Enums.Contacts)
     case notifications(type: Enums.Notification)
+    case cloudDocuments(type: Enums.CloudDocuments)
+    case fileManager(type: Enums.FileManager)
     case custom(title: String, subtitle: String? = nil, image: Image? = nil)
     public class Enums {}
 }
@@ -34,6 +36,8 @@ extension AppError: AppErrorProtocol {
         case let .eventKit(type): return type.title
         case let .contacts(type): return type.title
         case let .notifications(type): return type.title
+        case let .cloudDocuments(type): return type.title
+        case let .fileManager(type): return type.title
         case let .custom(title, _, _): return title
         }
     }
@@ -47,6 +51,8 @@ extension AppError: AppErrorProtocol {
         case let .eventKit(type): return type.subtitle
         case let .contacts(type): return type.subtitle
         case let .notifications(type): return type.subtitle
+        case let .cloudDocuments(type): return type.subtitle
+        case let .fileManager(type): return type.subtitle
         case let .custom(_, subtitle, _): return subtitle
         }
     }
@@ -60,6 +66,8 @@ extension AppError: AppErrorProtocol {
         case let .eventKit(type): return type.image
         case let .contacts(type): return type.image
         case let .notifications(type): return type.image
+        case let .cloudDocuments(type): return type.image
+        case let .fileManager(type): return type.image
         case let .custom(_, _, image): return image
         }
     }
@@ -73,6 +81,8 @@ extension AppError: AppErrorProtocol {
         case let .eventKit(type): return type.image
         case let .contacts(type): return type.image
         case let .notifications(type): return type.icon
+        case let .cloudDocuments(type): return type.icon
+        case let .fileManager(type): return type.icon
         case let .custom(_, _, image): return image
         }
     }

@@ -3,12 +3,12 @@
 // ServiceRegistering.swift
 //
 
+import Factory
 import Foundation
 import OversizeServices
-import Factory
 
 public extension Container {
     var contactsService: Factory<ContactsService> {
-         self { ContactsService() }
-     }
+        self { ContactsService() }
+    }
 }

@@ -3,9 +3,9 @@
 // ServiceRegistering.swift
 //
 
+import Factory
 import Foundation
 import OversizeServices
-import Factory
 
 public extension Container {
     var locationService: Factory<LocationServiceProtocol> {

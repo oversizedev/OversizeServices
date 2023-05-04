@@ -6,9 +6,9 @@
 #if os(iOS)
     import LocalAuthentication
 #endif
+import Factory
 import OversizeCore
 import SwiftUI
-import Factory
 
 // MARK: SettingsServiceProtocol
 
