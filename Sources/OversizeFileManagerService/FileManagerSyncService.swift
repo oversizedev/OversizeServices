@@ -23,7 +23,7 @@ public class FileManagerSyncService {
 }
 
 extension FileManagerSyncService: FileManagerSyncServiceProtocol {
-    private func downloadFromCloud(url: URL?) async throws  {
+    private func downloadFromCloud(url: URL?) async throws {
         if let url, url.fileExists() == false {
             try FileManager.default.startDownloadingUbiquitousItem(at: url)
         }
