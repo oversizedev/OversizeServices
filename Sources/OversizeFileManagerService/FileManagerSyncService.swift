@@ -23,16 +23,9 @@ public class FileManagerSyncService {
 }
 
 extension FileManagerSyncService: FileManagerSyncServiceProtocol {
-    private func downloadFromCloud(url: URL?) async -> Result<Bool, AppError> {
-        do {
-            if let url, url.fileExists() == false {
-                try FileManager.default.startDownloadingUbiquitousItem(at: url)
-                return .success(true)
-            } else {
-                return .failure(.cloudDocuments(type: .fetchItems))
-            }
-        } catch {
-            return .failure(.cloudDocuments(type: .fetchItems))
+    private func downloadFromCloud(url: URL?) async throws  {
+        if let url, url.fileExists() == false {
+            try FileManager.default.startDownloadingUbiquitousItem(at: url)
         }
     }
 
@@ -53,9 +46,11 @@ extension FileManagerSyncService: FileManagerSyncServiceProtocol {
         }
         if location == .iCloud {
             let url = await cloudDocumentsService.giveURL(folder: folder, file: file ?? "file", containerId: nil)
-            let _ = await downloadFromCloud(url: url)
-            guard let url else { return .failure(.cloudDocuments(type: .fetchItems)) }
-            return .success(url)
+            do {
+                try await downloadFromCloud(url: url)
+            } catch {
+                return .failure(.cloudDocuments(type: .fetchItems))
+            }
         } else {
             let url = await fileManagerService.giveURL(folder: folder, file: file ?? "file")
             if url?.fileExists() ?? false {
