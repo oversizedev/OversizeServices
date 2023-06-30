@@ -9,7 +9,7 @@ import SwiftUI
 
 extension EKEvent: Identifiable {
     public var color: Color {
-        Color(UIColor(cgColor: calendar.cgColor))
+        Color(calendar.cgColor)
     }
 }
 

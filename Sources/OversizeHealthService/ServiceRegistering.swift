@@ -8,6 +8,7 @@ import Foundation
 import OversizeServices
 
 public extension Container {
+    @available(iOS 15, macOS 13.0, *)
     var healthKitService: Factory<HealthKitServiceProtocol> {
         self { HealthKitService() }
     }

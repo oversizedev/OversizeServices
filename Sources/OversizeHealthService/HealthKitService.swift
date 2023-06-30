@@ -8,6 +8,7 @@ import HealthKit
 import OversizeCore
 import OversizeServices
 
+@available(iOS 15, macOS 13.0, *)
 public protocol HealthKitServiceProtocol {
     func requestAuthorization() async -> Result<Bool, AppError>
     func fetchBodyMass() async throws -> HKStatisticsCollection?
@@ -19,6 +20,7 @@ public protocol HealthKitServiceProtocol {
     func deleteBodyMass(userWeightUUID: UUID) async throws -> Bool
 }
 
+@available(iOS 15, macOS 13.0, *)
 open class HealthKitService {
     private var healthStore: HKHealthStore?
 
@@ -33,6 +35,7 @@ open class HealthKitService {
     }
 }
 
+@available(iOS 15, macOS 13.0, *)
 extension HealthKitService: HealthKitServiceProtocol {
     public func requestAuthorization() async -> Result<Bool, AppError> {
         guard let healthStore, let type = bodyMassType else { return .failure(AppError.custom(title: "Not authorization")) }

@@ -27,6 +27,7 @@ public final class LocationService: NSObject {
 }
 
 extension LocationService: LocationServiceProtocol {
+    
     public func currentLocation() async throws -> CLLocationCoordinate2D? {
         try await withTaskCancellationHandler(operation: {
             try await withCheckedThrowingContinuation { continuation in
@@ -36,7 +37,9 @@ extension LocationService: LocationServiceProtocol {
                 self.locationManager.requestLocation()
             }
         }, onCancel: {
+            #if os(iOS)
             self.locationManager.stopUpdatingHeading()
+            #endif
         })
     }
 

@@ -7,7 +7,9 @@ import CloudKit
 import Foundation
 import OversizeServices
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 public final class AssetsCloudKitService {
     private var database: CKDatabase

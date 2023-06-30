@@ -12,6 +12,8 @@ extension EKCalendar: Identifiable {
     }
 
     public var color: Color {
-        Color(UIColor(cgColor: cgColor))
+
+        Color(cgColor)
+
     }
 }

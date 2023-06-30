@@ -121,7 +121,7 @@ public extension Product {
     var displayPriceWithPeriod: String {
         var price = displayPrice
         if let unit = subscription?.subscriptionPeriod.unit {
-            if #available(iOS 15.4, *) {
+            if #available(iOS 15.4, macOS 12.3, *) {
                 price = self.displayPrice + " / " + unit.localizedDescription.lowercased()
             } else {
                 switch unit {
@@ -153,7 +153,7 @@ public extension Product {
     var displayPeriod: String {
         var period = ""
         if let unit = subscription?.subscriptionPeriod.unit {
-            if #available(iOS 15.4, *) {
+            if #available(iOS 15.4, macOS 12.3, *) {
                 period = " / " + unit.localizedDescription.lowercased()
             } else {
                 switch unit {
