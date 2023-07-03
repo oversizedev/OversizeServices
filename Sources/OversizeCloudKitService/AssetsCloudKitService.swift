@@ -8,7 +8,7 @@ import Foundation
 import OversizeServices
 import SwiftUI
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 public final class AssetsCloudKitService {

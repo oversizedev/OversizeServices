@@ -183,3 +183,24 @@ public extension Product {
         }
     }
 }
+
+public extension Product {
+    var trialDaysCount: Int? {
+        guard let value = subscription?.introductoryOffer?.period.value,
+              let unit = subscription?.introductoryOffer?.period.unit else {
+            return nil
+        }
+        switch unit {
+        case .day:
+            return 1 * value
+        case .week:
+            return 7 * value
+        case .month:
+            return 30 * value
+        case .year:
+            return 366 * value
+        default:
+            return nil
+        }
+    }
+}
