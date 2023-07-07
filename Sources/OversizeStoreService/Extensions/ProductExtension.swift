@@ -187,7 +187,8 @@ public extension Product {
 public extension Product {
     var trialDaysCount: Int? {
         guard let value = subscription?.introductoryOffer?.period.value,
-              let unit = subscription?.introductoryOffer?.period.unit else {
+              let unit = subscription?.introductoryOffer?.period.unit
+        else {
             return nil
         }
         switch unit {

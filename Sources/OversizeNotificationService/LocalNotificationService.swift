@@ -42,6 +42,7 @@ extension LocalNotificationService: LocalNotificationServiceProtocol {
     }
 
     public func requestAccess() async -> Result<Bool, AppError> {
+        let _ = try? await requestAuthorization()
         let currentSettings = await notificationCenter.notificationSettings()
         switch currentSettings.authorizationStatus {
         case .notDetermined:
