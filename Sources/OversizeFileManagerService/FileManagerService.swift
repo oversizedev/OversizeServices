@@ -20,10 +20,8 @@ public final class FileManagerService: FileManagerServiceProtocol {
     public init() {
         do {
             rootUrl = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            log(rootUrl)
         } catch {
             rootUrl = nil
-            log(error)
         }
     }
 

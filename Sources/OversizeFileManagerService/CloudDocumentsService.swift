@@ -66,7 +66,6 @@ public final class CloudDocumentsService: CloudDocumentsServiceProtocol {
         }
 
         do {
-            log(localDocumentsURL.absoluteString)
             guard localDocumentsURL.startAccessingSecurityScopedResource() else { return .failure(.cloudKit(type: .notAccess)) }
             defer {
                 localDocumentsURL.stopAccessingSecurityScopedResource()
