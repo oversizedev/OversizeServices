@@ -11,7 +11,7 @@ concurrency:
 jobs: 
 
   swiftpm:
-    name: Build SwiftPM
+    name: Build
     runs-on: macOS-latest
     strategy:
         matrix:
