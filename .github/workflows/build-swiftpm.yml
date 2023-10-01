@@ -16,9 +16,9 @@ jobs:
   swiftpm:
     name: Build
     runs-on: macOS-13
-     strategy:
-         matrix:
-           packages: [OversizeServices, OversizeHealthService, OversizeCloudKitService, OversizeStoreService, OversizeLocationService, OversizeCalendarService, OversizeContactsService, OversizeNotificationService, OversizeFileManagerService]
+    strategy:
+      matrix:
+        packages: [OversizeServices, OversizeHealthService, OversizeCloudKitService, OversizeStoreService, OversizeLocationService, OversizeCalendarService, OversizeContactsService, OversizeNotificationService, OversizeFileManagerService]
 
     steps:
       - name: Checkout
