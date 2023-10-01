@@ -9,18 +9,18 @@ jobs:
 
   build-swiftpm:
     name: Build SwiftPM
-    uses: ./.github/workflows/actions/build-swiftpm/build-swiftpm.yml
+    uses: ./.github/workflows/build-swiftpm.yml
     secrets: inherit
     
   tests:
     name: Test
     needs: build-swiftpm
-    uses: ./.github/workflows/actions/test/test.yml
+    uses: ./.github/workflows/test.yml
     secrets: inherit
     
   bump:
     name: Bump version
     needs: tests
-    uses: ./.github/workflows/actions/bump/bump.yml
+    uses: ./.github/workflows/bump.yml
     secrets: inherit
     
