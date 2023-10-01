@@ -3,14 +3,19 @@
 // OversizeServicesTests.swift
 //
 
+import Factory
 @testable import OversizeServices
 import XCTest
 
 final class OversizeServicesTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        // XCTAssertEqual(OversizeServices().text, "Hello, World!")
+    override func setUpWithError() throws {
+        Container.shared.appStateService.reset()
+    }
+
+    func testAppRunCount() throws {
+        Container.shared.appStateService.register { AppStateService() }
+        let newRunCount = Container.shared.appStateService().appRunCount + 1
+        Container.shared.appStateService().appRun()
+        XCTAssertEqual(Container.shared.appStateService().appRunCount, newRunCount)
     }
 }

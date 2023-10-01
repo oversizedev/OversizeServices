@@ -3,7 +3,7 @@
 // SettingsService.swift
 //
 
-#if os(iOS)
+#if canImport(LocalAuthentication)
     import LocalAuthentication
 #endif
 import Factory

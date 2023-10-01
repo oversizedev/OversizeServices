@@ -113,7 +113,10 @@ let package = Package(
         ),
         .testTarget(
             name: "OversizeServicesTests",
-            dependencies: ["OversizeServices"]
+            dependencies: [
+                "OversizeServices",
+                .product(name: "Factory", package: "Factory"),
+            ]
         ),
     ]
 )

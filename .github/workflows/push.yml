@@ -1,0 +1,26 @@
+name: CI - Push
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+  
+jobs:
+
+  build-swiftpm:
+    name: Build SwiftPM
+    uses: ./.github/actions/build-swiftpm.yml
+    secrets: inherit
+    
+  tests:
+    name: Test
+    needs: build-swiftpm
+    uses: ./.github/actions/test.yml
+    secrets: inherit
+    
+  bump:
+    name: Bump version
+    needs: tests
+    uses: ./.github/actions/bump.yml
+    secrets: inherit
+    
