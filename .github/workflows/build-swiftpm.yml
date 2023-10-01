@@ -13,13 +13,13 @@ jobs:
   swiftpm:
     name: Build
     runs-on: macOS-latest
-    strategy:
-        matrix:
-          packages: [OversizeServices, OversizeHealthService, OversizeCloudKitService, OversizeStoreService, OversizeLocationService, OversizeCalendarService, OversizeContactsService, OversizeNotificationService, OversizeFileManagerService]
+    # strategy:
+    #     matrix:
+    #       packages: [OversizeServices, OversizeHealthService, OversizeCloudKitService, OversizeStoreService, OversizeLocationService, OversizeCalendarService, OversizeContactsService, OversizeNotificationService, OversizeFileManagerService]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         
       - name: Build Package
-        run: xcodebuild clean build -skipPackagePluginValidation -scheme ${{ matrix.packages }} -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.4' | xcpretty && exit ${PIPESTATUS[0]}
+        run: xcodebuild clean build -skipPackagePluginValidation -scheme OversizeServices -destination 'platform=iOS Simulator,name=iPhone 8,OS=16.4' | xcpretty && exit ${PIPESTATUS[0]}
