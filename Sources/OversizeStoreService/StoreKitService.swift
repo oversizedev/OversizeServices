@@ -38,8 +38,7 @@ public enum SubscriptionTier: Int, Comparable {
     }
 }
 
-public final class StoreKitService: ObservableObject {
-    public init() {}
+public final class StoreKitService {
 
     public func requestProducts() async -> Result<StoreKitProducts, AppError> {
         do {
@@ -66,11 +65,13 @@ public final class StoreKitService: ObservableObject {
                     log("Unknown product")
                 }
             }
-
-            let products = StoreKitProducts(consumable: sortByPrice(newConsumable),
-                                            nonConsumable: sortByPrice(newNonConsumable),
-                                            autoRenewable: sortByPrice(newAutoRenewable),
-                                            nonRenewable: sortByPrice(newNonRenewables))
+            
+            let products = StoreKitProducts(
+                consumable: sortByPrice(newConsumable),
+                nonConsumable: sortByPrice(newNonConsumable),
+                autoRenewable: sortByPrice(newAutoRenewable),
+                nonRenewable: sortByPrice(newNonRenewables)
+            )
 
             return .success(products)
         } catch {
