@@ -14,7 +14,13 @@ public actor CalendarService {
 
     func requestAccess() async -> Result<Bool, AppError> {
         do {
-            let status = try await eventStore.requestAccess(to: .event)
+            let status: Bool
+            if #available(iOS 17.0, *) {
+                status = try await eventStore.requestFullAccessToEvents()
+            } else {
+                status = try await eventStore.requestAccess(to: .event)
+                
+            }
             if status {
                 return .success(true)
             } else {

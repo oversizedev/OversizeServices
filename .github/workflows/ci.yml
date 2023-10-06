@@ -9,18 +9,23 @@ jobs:
 
   build-swiftpm:
     name: Build SwiftPM
-    uses: ./.github/workflows/build-swiftpm.yml
+    uses: oversizedev/GithubWorkflows/.github/workflows/build-swiftpm.yml@main
+    strategy:
+      matrix:
+        packages: ["OversizeServices", "OversizeHealthService", "OversizeCloudKitService", "OversizeStoreService", "OversizeLocationService", "OversizeCalendarService", "OversizeContactsService", "OversizeNotificationService", "OversizeFileManagerService"]
+    with:
+      package: ${{ matrix.packages }}
     secrets: inherit
     
   tests:
     name: Test
     needs: build-swiftpm
-    uses: ./.github/workflows/test.yml
+    uses: oversizedev/GithubWorkflows/.github/workflows/test.yml@main
     secrets: inherit
     
   bump:
     name: Bump version
     needs: tests
-    uses: ./.github/workflows/bump.yml
+    uses: oversizedev/GithubWorkflows/.github/workflows/bump.yml@main
     secrets: inherit
     
