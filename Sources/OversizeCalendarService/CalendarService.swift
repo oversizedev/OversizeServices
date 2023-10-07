@@ -12,7 +12,7 @@ public actor CalendarService {
     private let eventStore: EKEventStore = .init()
     public init() {}
 
-    func requestAccess() async -> Result<Bool, AppError> {
+    func requestFullAccess() async -> Result<Bool, AppError> {
         do {
             let status: Bool
             if #available(iOS 17.0, macOS 14.0, *) {
@@ -30,9 +30,28 @@ public actor CalendarService {
             return .failure(AppError.eventKit(type: .notAccess))
         }
     }
+    
+    func requestWriteOnlyAccess() async -> Result<Bool, AppError> {
+        do {
+            let status: Bool
+            if #available(iOS 17.0, macOS 14.0, *) {
+                status = try await eventStore.requestWriteOnlyAccessToEvents()
+            } else {
+                status = try await eventStore.requestAccess(to: .event)
+                
+            }
+            if status {
+                return .success(true)
+            } else {
+                return .failure(AppError.eventKit(type: .notAccess))
+            }
+        } catch {
+            return .failure(AppError.eventKit(type: .notAccess))
+        }
+    }
 
     public func fetchEvents(start: Date, end: Date = Date(), filtredCalendarsIds: [String] = []) async -> Result<[EKEvent], AppError> {
-        let access = await requestAccess()
+        let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendars = eventStore.calendars(for: .event)
         var filtredCalendars: [EKCalendar] = []
@@ -53,21 +72,21 @@ public actor CalendarService {
     }
 
     public func fetchCalendars() async -> Result<[EKCalendar], AppError> {
-        let access = await requestAccess()
+        let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendars = eventStore.calendars(for: .event)
         return .success(calendars)
     }
 
     public func fetchDefaultCalendar() async -> Result<EKCalendar?, AppError> {
-        let access = await requestAccess()
+        let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendar = eventStore.defaultCalendarForNewEvents
         return .success(calendar)
     }
 
     public func fetchSourses() async -> Result<[EKSource], AppError> {
-        let access = await requestAccess()
+        let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendars = eventStore.sources
         return .success(calendars)
@@ -90,7 +109,7 @@ public actor CalendarService {
         recurrenceEndRules: CalendarEventEndRecurrenceRules = .never,
         span: EKSpan = .thisEvent
     ) async -> Result<Bool, AppError> {
-        let access = await requestAccess()
+        let access = await requestWriteOnlyAccess()
         if case let .failure(error) = access { return .failure(error) }
         let newEvent: EKEvent
         if let event {
@@ -144,7 +163,7 @@ public actor CalendarService {
     }
 
     public func deleteEvent(identifier: String, span: EKSpan = .thisEvent) async -> Result<Bool, AppError> {
-        let access = await requestAccess()
+        let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         guard let event = eventStore.fetchEvent(identifier: identifier) else { return .failure(.custom(title: "Not deleted")) }
 
