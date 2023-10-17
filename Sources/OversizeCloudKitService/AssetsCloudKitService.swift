@@ -5,7 +5,7 @@
 
 import CloudKit
 import Foundation
-import OversizeServices
+import OversizeModels
 import SwiftUI
 #if canImport(UIKit)
     import UIKit

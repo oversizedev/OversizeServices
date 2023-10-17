@@ -5,6 +5,7 @@
 
 import Foundation
 import OversizeCore
+import OversizeModels
 import OversizeServices
 import StoreKit
 
@@ -39,7 +40,6 @@ public enum SubscriptionTier: Int, Comparable {
 }
 
 public final class StoreKitService {
-
     public func requestProducts() async -> Result<StoreKitProducts, AppError> {
         do {
             let productsIds = Info.store.productIdentifiers
@@ -65,7 +65,7 @@ public final class StoreKitService {
                     log("Unknown product")
                 }
             }
-            
+
             let products = StoreKitProducts(
                 consumable: sortByPrice(newConsumable),
                 nonConsumable: sortByPrice(newNonConsumable),

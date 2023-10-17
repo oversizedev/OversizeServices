@@ -6,7 +6,7 @@
 import Foundation
 import HealthKit
 import OversizeCore
-import OversizeServices
+import OversizeModels
 
 @available(iOS 15, macOS 13.0, *)
 public protocol HealthKitServiceProtocol {

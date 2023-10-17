@@ -4,7 +4,7 @@
 //
 
 import OversizeCore
-import OversizeServices
+import OversizeModels
 import SwiftUI
 import UserNotifications
 

@@ -5,7 +5,7 @@
 
 import Contacts
 import Foundation
-import OversizeServices
+import OversizeModels
 
 public actor ContactsService {
     private let contactStore: CNContactStore = .init()

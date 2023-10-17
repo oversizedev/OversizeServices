@@ -6,7 +6,7 @@
 import EventKit
 import Foundation
 import OversizeCore
-import OversizeServices
+import OversizeModels
 
 public actor CalendarService {
     private let eventStore: EKEventStore = .init()
@@ -19,7 +19,6 @@ public actor CalendarService {
                 status = try await eventStore.requestFullAccessToEvents()
             } else {
                 status = try await eventStore.requestAccess(to: .event)
-                
             }
             if status {
                 return .success(true)
@@ -30,7 +29,7 @@ public actor CalendarService {
             return .failure(AppError.eventKit(type: .notAccess))
         }
     }
-    
+
     func requestWriteOnlyAccess() async -> Result<Bool, AppError> {
         do {
             let status: Bool
@@ -38,7 +37,6 @@ public actor CalendarService {
                 status = try await eventStore.requestWriteOnlyAccessToEvents()
             } else {
                 status = try await eventStore.requestAccess(to: .event)
-                
             }
             if status {
                 return .success(true)

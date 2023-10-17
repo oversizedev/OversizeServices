@@ -5,7 +5,7 @@
 
 import Foundation
 import OversizeCore
-import OversizeServices
+import OversizeModels
 
 public protocol FileManagerServiceProtocol {
     func saveDocument(pickedURL: URL, folder: String?) async -> Result<URL, AppError>

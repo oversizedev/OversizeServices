@@ -5,7 +5,6 @@
 
 import Factory
 import Foundation
-import OversizeServices
 
 public extension Container {
     @available(iOS 15, macOS 13.0, *)

@@ -6,7 +6,7 @@
 import CoreLocation
 import Foundation
 import MapKit
-import OversizeServices
+import OversizeModels
 
 public protocol LocationServiceProtocol {
     func currentLocation() async throws -> CLLocationCoordinate2D?

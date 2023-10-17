@@ -5,7 +5,7 @@
 
 import Foundation
 import OversizeCore
-import OversizeServices
+import OversizeModels
 
 public protocol CloudDocumentsServiceProtocol {
     func saveDocument(localDocumentsURL: URL, folder: String?, containerId: String?) async -> Result<URL, AppError>
@@ -15,7 +15,7 @@ public protocol CloudDocumentsServiceProtocol {
 }
 
 public final class CloudDocumentsService: CloudDocumentsServiceProtocol {
-    public func saveDocument(localDocumentsURL: URL, folder: String?, containerId: String? = nil) async -> Result<URL, OversizeServices.AppError> {
+    public func saveDocument(localDocumentsURL: URL, folder: String?, containerId: String? = nil) async -> Result<URL, AppError> {
         if let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: containerId)?.appendingPathComponent("Documents", isDirectory: true) {
             if !FileManager.default.fileExists(atPath: iCloudDocumentsURL.path, isDirectory: nil) {
                 do {

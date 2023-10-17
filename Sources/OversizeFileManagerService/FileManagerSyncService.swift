@@ -6,7 +6,7 @@
 import Factory
 import Foundation
 import OversizeCore
-import OversizeServices
+import OversizeModels
 
 public protocol FileManagerSyncServiceProtocol {
     func isICloudContainerAvailable() -> Result<Bool, AppError>
