@@ -45,7 +45,7 @@ public extension Product {
                 case .week:
                     return "\((price * 4).rounded(2))"
                 case .month:
-                    return "\(price)"
+                    return "\(price.rounded(2))"
                 case .year:
                     return "\((price / 12).rounded(2))"
                 @unknown default:

@@ -279,4 +279,14 @@ public final class StoreKitService {
         }
         return trialTypeLabel
     }
+
+    public func salePercent(product: Product, products: StoreKitProducts) -> Decimal {
+        if let monthSubscriptionProduct = products.autoRenewable.first(where: { $0.subscription?.subscriptionPeriod.unit == .month }) {
+            let yearPriceMonthly = monthSubscriptionProduct.price * 12
+            let procent = (yearPriceMonthly - product.price) / yearPriceMonthly
+            return (procent * 100).rounded(0)
+        } else {
+            return 0
+        }
+    }
 }

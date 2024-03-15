@@ -31,7 +31,7 @@ public enum StoreSpecialOfferEventType: String, Identifiable, CaseIterable, Hash
             let dateComponents = DateComponents(calendar: caledar, year: currentYear, month: 11, day: 28)
             return caledar.date(from: dateComponents)
         case .christmas:
-            let dateComponents = DateComponents(calendar: caledar, year: currentYear, month: 12, day: 25)
+            let dateComponents = DateComponents(calendar: caledar, year: currentYear, month: 12, day: 21)
             return caledar.date(from: dateComponents)
         default: return nil
         }

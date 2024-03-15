@@ -13,6 +13,7 @@ public enum BiometricType: String {
     case none = ""
     case touchID = "Touch ID"
     case faceID = "Face ID"
+    case opticID = "Optic ID"
 }
 
 public protocol BiometricServiceProtocol {
@@ -35,6 +36,8 @@ public class BiometricService {
                 return .touchID
             case .faceID:
                 return .faceID
+            case .opticID:
+                return .opticID
             @unknown default:
                 return .none
             }
