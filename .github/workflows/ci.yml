@@ -6,10 +6,15 @@ on:
   workflow_dispatch:
   
 jobs:
-
+    
   build-swiftpm:
-    name: Build SwiftPM
-    uses: ./.github/workflows/build-swiftpm.yml
+    name: Build packages
+    uses: oversizedev/GithubWorkflows/.github/workflows/build-swiftpm.yml@main
+    strategy:
+      matrix:
+        packages: [OversizeServices, OversizeHealthService, OversizeCloudKitService, OversizeStoreService, OversizeLocationService, OversizeCalendarService, OversizeContactsService, OversizeNotificationService, OversizeFileManagerService]
+    with:
+      package: ${{ matrix.packages }}
     secrets: inherit
     
   # tests:
