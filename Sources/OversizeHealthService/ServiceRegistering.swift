@@ -8,7 +8,11 @@ import Foundation
 
 public extension Container {
     @available(iOS 15, macOS 13.0, *)
-    var healthKitService: Factory<HealthKitServiceProtocol> {
-        self { HealthKitService() }
+    var bodyMassService: Factory<BodyMassServiceProtocol> {
+        self { BodyMassService() }
+    }
+
+    var bloodPressureService: Factory<BloodPressureService> {
+        self { BloodPressureService() }
     }
 }
