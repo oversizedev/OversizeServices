@@ -8,6 +8,7 @@ import HealthKit
 import OversizeCore
 import OversizeModels
 
+@available(iOS 15, macOS 13.0, *)
 open class HealthKitService {
     var healthStore: HKHealthStore?
 
@@ -18,6 +19,7 @@ open class HealthKitService {
     }
 }
 
+@available(iOS 15, macOS 13.0, *)
 extension HealthKitService {
     func deleteObject(_ object: HKObject) async -> Result<HKObject, AppError> {
         await withCheckedContinuation { continuation in

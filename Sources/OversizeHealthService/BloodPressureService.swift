@@ -8,6 +8,7 @@ import HealthKit
 import OversizeCore
 import OversizeModels
 
+@available(iOS 15, macOS 13.0, *)
 public class BloodPressureService: HealthKitService {
     private let bloodPressureType = HKQuantityType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)
     private let bloodPressureSystolicType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)
@@ -15,6 +16,7 @@ public class BloodPressureService: HealthKitService {
     private let heartRateType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)
 }
 
+@available(iOS 15, macOS 13.0, *)
 public extension BloodPressureService {
     func requestAuthorization() async -> Result<Bool, AppError> {
         guard let healthStore,

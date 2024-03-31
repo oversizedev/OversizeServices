@@ -12,6 +12,7 @@ public extension Container {
         self { BodyMassService() }
     }
 
+    @available(iOS 15, macOS 13.0, *)
     var bloodPressureService: Factory<BloodPressureService> {
         self { BloodPressureService() }
     }
