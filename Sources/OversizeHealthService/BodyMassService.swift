@@ -1,6 +1,6 @@
 //
 // Copyright © 2022 Alexander Romanov
-// HealthKitService.swift
+// BodyMassService.swift
 //
 
 import Foundation
