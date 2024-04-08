@@ -21,27 +21,42 @@ open class HealthKitService {
 
 @available(iOS 15, macOS 13.0, *)
 extension HealthKitService {
-    func deleteObject(_ object: HKObject) async -> Result<HKObject, AppError> {
-        await withCheckedContinuation { continuation in
-            self.healthStore?.delete(object, withCompletion: { _, error in
+    func saveQuantitySample(_ quantitySample: HKQuantitySample) async -> Result<HKQuantitySample, AppError> {
+        guard let healthStore else {
+            return .failure(AppError.healthKit(type: .savingItem))
+        }
+        return await withCheckedContinuation { continuation in
+            healthStore.save(quantitySample) { _, error in
                 if error != nil {
-                    continuation.resume(returning: .failure(AppError.healthKit(type: .deleteItem)))
+                    continuation.resume(returning: .failure(AppError.healthKit(type: .savingItem)))
                 } else {
-                    continuation.resume(returning: .success(object))
+                    continuation.resume(returning: .success(quantitySample))
                 }
-            })
+            }
         }
     }
 
-    func deleteObjects(_ objects: [HKObject]) async -> Result<[HKObject], AppError> {
-        await withCheckedContinuation { continuation in
-            self.healthStore?.delete(objects, withCompletion: { _, error in
+    func saveCorrelation(_ correlation: HKCorrelation) async -> Result<HKCorrelation, AppError> {
+        guard let healthStore else {
+            return .failure(AppError.healthKit(type: .savingItem))
+        }
+        return await withCheckedContinuation { continuation in
+            healthStore.save(correlation) { _, error in
                 if error != nil {
-                    continuation.resume(returning: .failure(AppError.healthKit(type: .deleteItem)))
+                    continuation.resume(returning: .failure(AppError.healthKit(type: .savingItem)))
                 } else {
-                    continuation.resume(returning: .success(objects))
+                    continuation.resume(returning: .success(correlation))
                 }
-            })
+            }
+        }
+    }
+
+    func saveObjects(_ objects: [HKObject]) async -> Result<[HKObject], AppError> {
+        do {
+            let _ = try await healthStore?.save(objects)
+            return .success(objects)
+        } catch {
+            return .failure(.healthKit(type: .deleteItem))
         }
     }
 
@@ -129,48 +144,40 @@ extension HealthKitService {
         }
     }
 
-    func saveQuantitySample(_ quantitySample: HKQuantitySample) async -> Result<HKQuantitySample, AppError> {
-        guard let healthStore else {
-            return .failure(AppError.healthKit(type: .savingItem))
-        }
-        return await withCheckedContinuation { continuation in
-            healthStore.save(quantitySample) { _, error in
-                if error != nil {
-                    continuation.resume(returning: .failure(AppError.healthKit(type: .savingItem)))
-                } else {
-                    continuation.resume(returning: .success(quantitySample))
-                }
-            }
+    func delete(type: HKObjectType, syncId: UUID) async -> Result<Bool, AppError> {
+        let predicate = HKQuery.predicateForObjects(
+            withMetadataKey: HKMetadataKeySyncIdentifier,
+            allowedValues: [syncId.uuidString]
+        )
+        do {
+            let _ = try await healthStore?.deleteObjects(of: type, predicate: predicate)
+            return .success(true)
+        } catch {
+            return .failure(.healthKit(type: .deleteItem))
         }
     }
 
-    func saveCorrelation(_ correlation: HKCorrelation) async -> Result<HKCorrelation, AppError> {
-        guard let healthStore else {
-            return .failure(AppError.healthKit(type: .savingItem))
-        }
-        return await withCheckedContinuation { continuation in
-            healthStore.save(correlation) { _, error in
+    func deleteObject(_ object: HKObject) async -> Result<HKObject, AppError> {
+        await withCheckedContinuation { continuation in
+            self.healthStore?.delete(object, withCompletion: { _, error in
                 if error != nil {
-                    continuation.resume(returning: .failure(AppError.healthKit(type: .savingItem)))
+                    continuation.resume(returning: .failure(AppError.healthKit(type: .deleteItem)))
                 } else {
-                    continuation.resume(returning: .success(correlation))
+                    continuation.resume(returning: .success(object))
                 }
-            }
+            })
         }
     }
 
-    func saveObjects(_ objects: [HKObject]) async -> Result<[HKObject], AppError> {
-        guard let healthStore else {
-            return .failure(AppError.healthKit(type: .savingItem))
-        }
-        return await withCheckedContinuation { continuation in
-            healthStore.save(objects) { _, error in
+    func deleteObjects(_ objects: [HKObject]) async -> Result<[HKObject], AppError> {
+        await withCheckedContinuation { continuation in
+            self.healthStore?.delete(objects, withCompletion: { _, error in
                 if error != nil {
-                    continuation.resume(returning: .failure(AppError.healthKit(type: .savingItem)))
+                    continuation.resume(returning: .failure(AppError.healthKit(type: .deleteItem)))
                 } else {
                     continuation.resume(returning: .success(objects))
                 }
-            }
+            })
         }
     }
 }

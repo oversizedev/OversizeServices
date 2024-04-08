@@ -34,7 +34,7 @@ public final class AppStateService: ObservableObject { //: AppStateServiceProtoc
     @AppStorage(Keys.isShowOnbarding) public var isShowOnbarding: Bool = .init(false)
     @AppStorage(Keys.isCompletedOnbarding) public var isCompletedOnbarding: Bool = .init(false)
     @AppStorage(Keys.onbardingPage) public var onbardingPage: Int = .init(0)
-    @AppStorage(Keys.lastRunDate) private var lastRunDate: Date = .init()
+    @AppStorage(Keys.lastRunDate) public var lastRunDate: Date = .init()
     @AppStorage(Keys.firstRunDate) private var firstRunDate: Date = .init()
 
     public func appRun() {
