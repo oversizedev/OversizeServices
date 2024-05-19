@@ -263,7 +263,7 @@ public final class StoreKitService {
 
     public func paymentTypeLabel(paymentMode: Product.SubscriptionOffer.PaymentMode) -> String {
         let trialTypeLabel: String
-        if #available(iOS 15.4, macOS 12.3, *) {
+        if #available(iOS 15.4, macOS 12.3, tvOS 15.4, *) {
             trialTypeLabel = paymentMode.localizedDescription
         } else {
             switch paymentMode {

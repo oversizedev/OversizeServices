@@ -6,8 +6,10 @@
 import Factory
 import Foundation
 
-public extension Container {
-    var localNotificationService: Factory<LocalNotificationServiceProtocol> {
-        self { LocalNotificationService() }
+#if !os(tvOS)
+    public extension Container {
+        var localNotificationService: Factory<LocalNotificationServiceProtocol> {
+            self { LocalNotificationService() }
+        }
     }
-}
+#endif

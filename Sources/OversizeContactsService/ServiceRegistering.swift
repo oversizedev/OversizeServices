@@ -6,8 +6,10 @@
 import Factory
 import Foundation
 
-public extension Container {
-    var contactsService: Factory<ContactsService> {
-        self { ContactsService() }
+#if os(iOS) || os(macOS)
+    public extension Container {
+        var contactsService: Factory<ContactsService> {
+            self { ContactsService() }
+        }
     }
-}
+#endif

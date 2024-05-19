@@ -3,10 +3,14 @@
 // EKEventStoreExtensions.swift
 //
 
-import EventKit
+#if canImport(EventKit)
+    import EventKit
+#endif
 
-public extension EKEventStore {
-    func fetchEvent(identifier: String) -> EKEvent? {
-        event(withIdentifier: identifier)
+#if os(iOS) || os(macOS)
+    public extension EKEventStore {
+        func fetchEvent(identifier: String) -> EKEvent? {
+            event(withIdentifier: identifier)
+        }
     }
-}
+#endif

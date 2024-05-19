@@ -6,14 +6,16 @@
 import Factory
 import Foundation
 
-public extension Container {
-    @available(iOS 15, macOS 13.0, *)
-    var bodyMassService: Factory<BodyMassServiceProtocol> {
-        self { BodyMassService() }
-    }
+#if !os(tvOS)
+    public extension Container {
+        @available(iOS 15, macOS 13.0, *)
+        var bodyMassService: Factory<BodyMassServiceProtocol> {
+            self { BodyMassService() }
+        }
 
-    @available(iOS 15, macOS 13.0, *)
-    var bloodPressureService: Factory<BloodPressureService> {
-        self { BloodPressureService() }
+        @available(iOS 15, macOS 13.0, *)
+        var bloodPressureService: Factory<BloodPressureService> {
+            self { BloodPressureService() }
+        }
     }
-}
+#endif
