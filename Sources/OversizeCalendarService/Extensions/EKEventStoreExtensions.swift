@@ -7,7 +7,7 @@
     import EventKit
 #endif
 
-#if os(iOS) || os(macOS)
+#if !os(tvOS)
     public extension EKEventStore {
         func fetchEvent(identifier: String) -> EKEvent? {
             event(withIdentifier: identifier)

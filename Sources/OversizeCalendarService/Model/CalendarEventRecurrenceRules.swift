@@ -8,7 +8,7 @@
 #endif
 import Foundation
 
-#if os(iOS) || os(macOS)
+#if !os(tvOS)
     public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable {
         case never, everyDay, everyWorkingDay, everyWeekend, everyWeek, everyTwoWeeks, everyMonth, everyYear, custom(EKRecurrenceRule?)
 

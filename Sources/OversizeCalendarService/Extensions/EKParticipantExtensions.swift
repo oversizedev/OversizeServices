@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-#if os(iOS) || os(macOS)
+#if os(iOS) || os(macOS) || os(watchOS)
     public extension EKParticipantRole {
         var title: String? {
             switch self {

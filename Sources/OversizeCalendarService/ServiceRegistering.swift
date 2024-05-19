@@ -6,7 +6,7 @@
 import Factory
 import Foundation
 
-#if os(iOS) || os(macOS)
+#if !os(tvOS)
     public extension Container {
         var calendarService: Factory<CalendarService> {
             self { CalendarService() }

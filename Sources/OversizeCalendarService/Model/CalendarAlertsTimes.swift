@@ -8,7 +8,7 @@
 #endif
 import Foundation
 
-#if os(iOS) || os(macOS)
+#if !os(tvOS)
     public enum CalendarAlertsTimes: CaseIterable, Equatable, Identifiable {
         case oneMinuteBefore, fiveMinutesBefore, tenMinutesBefore, thirtyMinutesBefore, oneHourBefore, twoHoursBefore, oneDayBefore, twoDaysBefore, oneWeekBefore, custom(EKAlarm)
 

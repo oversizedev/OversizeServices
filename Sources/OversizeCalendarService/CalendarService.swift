@@ -18,7 +18,7 @@ import OversizeModels
         func requestFullAccess() async -> Result<Bool, AppError> {
             do {
                 let status: Bool
-                if #available(iOS 17.0, macOS 14.0, *) {
+                if #available(iOS 17.0, macOS 14.0, watchOS 10.0, *) {
                     status = try await eventStore.requestFullAccessToEvents()
                 } else {
                     status = try await eventStore.requestAccess(to: .event)
@@ -36,7 +36,7 @@ import OversizeModels
         func requestWriteOnlyAccess() async -> Result<Bool, AppError> {
             do {
                 let status: Bool
-                if #available(iOS 17.0, macOS 14.0, *) {
+                if #available(iOS 17.0, macOS 14.0, watchOS 10.0, *) {
                     status = try await eventStore.requestWriteOnlyAccessToEvents()
                 } else {
                     status = try await eventStore.requestAccess(to: .event)
@@ -93,6 +93,7 @@ import OversizeModels
             return .success(calendars)
         }
 
+        @available(iOS 15.0, macOS 13.0, visionOS 1.0, *)
         public func createEvent(
             event: EKEvent? = nil,
             title: String,
@@ -156,20 +157,25 @@ import OversizeModels
             }
 
             do {
-                try eventStore.save(newEvent, span: span, commit: true)
+                #if !os(watchOS)
+                    try eventStore.save(newEvent, span: span, commit: true)
+                #endif
                 return .success(true)
             } catch {
                 return .failure(.eventKit(type: .savingItem))
             }
         }
 
+        @available(iOS 15.0, macOS 13.0, visionOS 1.0, *)
         public func deleteEvent(identifier: String, span: EKSpan = .thisEvent) async -> Result<Bool, AppError> {
             let access = await requestFullAccess()
             if case let .failure(error) = access { return .failure(error) }
             guard let event = eventStore.fetchEvent(identifier: identifier) else { return .failure(.custom(title: "Not deleted")) }
 
             do {
-                try eventStore.remove(event, span: span, commit: true)
+                #if !os(watchOS)
+                    try eventStore.remove(event, span: span, commit: true)
+                #endif
                 return .success(true)
             } catch {
                 return .failure(.eventKit(type: .deleteItem))

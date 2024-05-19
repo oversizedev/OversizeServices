@@ -7,7 +7,7 @@
     import EventKit
 #endif
 
-#if os(iOS) || os(macOS)
+#if !os(tvOS)
     public extension EKRecurrenceRule {
         var calendarRecurrenceRule: CalendarEventRecurrenceRules {
             if let rule = CalendarEventRecurrenceRules.allCases.first(where: {

@@ -9,7 +9,7 @@
 import Foundation
 import OversizeModels
 
-#if os(iOS) || os(macOS)
+#if !os(tvOS)
     public actor ContactsService {
         private let contactStore: CNContactStore = .init()
         public init() {}
