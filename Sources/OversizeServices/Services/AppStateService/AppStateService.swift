@@ -47,11 +47,13 @@ public final class AppStateService: ObservableObject { //: AppStateServiceProtoc
 
     public func completedOnbarding() {
         isCompletedOnbarding = true
+        logSuccess("Onbarding completed")
     }
 
     public func restOnbarding() {
         onbardingPage = 0
         isCompletedOnbarding = false
+        logSuccess("Onbarding rested")
     }
 
     public func restAppRunCount() {

@@ -3,8 +3,8 @@
 // Password.swift
 //
 
+import Foundation
 import Security
-import SwiftUI
 
 public extension SecureStorageService {
     func addPassword(_ password: String, for account: String) {

@@ -8,8 +8,6 @@ import OversizeCore
 import Security
 
 public final class SecureStorageService {
-    // let accessGroup = AppInfo.app.bundleID.valueOrEmpty
-
     enum KeychainError: Error {
         case itemAlreadyExist
         case itemNotFound
