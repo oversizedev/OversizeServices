@@ -9,7 +9,7 @@ import OversizeModels
 import OversizeServices
 import StoreKit
 
-public struct StoreKitProducts {
+public struct StoreKitProducts: Sendable {
     public var consumable: [Product] = []
     public var nonConsumable: [Product] = []
     public var autoRenewable: [Product] = []
@@ -25,11 +25,11 @@ public typealias Transaction = StoreKit.Transaction
 public typealias RenewalInfo = StoreKit.Product.SubscriptionInfo.RenewalInfo
 public typealias RenewalState = StoreKit.Product.SubscriptionInfo.RenewalState
 
-public enum StoreError: Error {
+public enum StoreError: Error, Sendable {
     case failedVerification
 }
 
-public enum SubscriptionTier: Int, Comparable {
+public enum SubscriptionTier: Int, Comparable, Sendable {
     case none = 0
     case monthly = 1
     case yearly = 2
@@ -39,10 +39,10 @@ public enum SubscriptionTier: Int, Comparable {
     }
 }
 
-public final class StoreKitService {
+public final class StoreKitService: Sendable {
     public func requestProducts() async -> Result<StoreKitProducts, AppError> {
         do {
-            let productsIds = Info.store.productIdentifiers
+            let productsIds = await Info.store.productIdentifiers
 
             let storeProducts = try await Product.products(for: productsIds)
 

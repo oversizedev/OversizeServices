@@ -61,9 +61,11 @@ import UserNotifications
             }
         }
 
+        @MainActor
         public func scheduleNotification(
             id: UUID = UUID(),
-            title: String, body: String,
+            title: String,
+            body: String,
             timeInterval: Double = 5,
             repeatNotification: Bool = false,
             scheduleType: LocalNotification.ScheduleType,
@@ -72,18 +74,22 @@ import UserNotifications
             Task {
                 switch scheduleType {
                 case .time:
-                    let localNotification = LocalNotification(id: id,
-                                                              title: title,
-                                                              body: body,
-                                                              timeInterval: timeInterval,
-                                                              repeats: repeatNotification)
+                    let localNotification = LocalNotification(
+                        id: id,
+                        title: title,
+                        body: body,
+                        timeInterval: timeInterval,
+                        repeats: repeatNotification
+                    )
                     await schedule(localNotification: localNotification)
                 case .calendar:
-                    let localNotification = LocalNotification(id: id,
-                                                              title: title,
-                                                              body: body,
-                                                              dateComponents: dateComponents,
-                                                              repeats: repeatNotification)
+                    let localNotification = LocalNotification(
+                        id: id,
+                        title: title,
+                        body: body,
+                        dateComponents: dateComponents,
+                        repeats: repeatNotification
+                    )
                     await schedule(localNotification: localNotification)
                 }
             }
@@ -169,9 +175,11 @@ import UserNotifications
         }
 
         public func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
-            DispatchQueue.main.async {
-                NotificationCenter.default.post(name: Notification.Name("Deeplink"), object: nil, userInfo: response.notification.request.content.userInfo)
-            }
+            NotificationCenter.default.post(
+                name: Notification.Name("Deeplink"),
+                object: nil,
+                userInfo: response.notification.request.content.userInfo
+            )
         }
     }
 #endif

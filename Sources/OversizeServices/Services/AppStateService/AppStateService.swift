@@ -6,17 +6,7 @@
 import OversizeCore
 import SwiftUI
 
-// public protocol AppStateServiceProtocol: ObservableObject {
-//    var appRunCount: Int { get }
-//    var isShowOnbarding: Bool { get set }
-//    var isCompletedOnbarding: Bool { get set }
-//    var onbardingPage: Int { get set }
-//    func appRun()
-//    func completedOnbarding()
-//    func restOnbarding()
-// }
-
-public final class AppStateService: ObservableObject { //: AppStateServiceProtocol {
+public final class AppStateService: ObservableObject {
     public init() {}
 
     private enum Keys {
@@ -27,7 +17,6 @@ public final class AppStateService: ObservableObject { //: AppStateServiceProtoc
         static let onbardingPage = "AppState.onbardingPage"
         static let lastRunDate = "AppState.lastRunDate"
         static let firstRunDate = "AppState.firstRunDate"
-        // static let lastClosedSpecialOffer = "AppState.lastClosedSpecialOffer"
     }
 
     @AppStorage(Keys.appRunCount) public var appRunCount: Int = .init(0)

@@ -5,7 +5,8 @@
 
 import SwiftUI
 
-public enum TapticEngine {
+@MainActor
+public enum TapticEngine: Sendable {
     case error
     case success
     case warning

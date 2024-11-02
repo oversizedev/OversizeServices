@@ -5,7 +5,7 @@
 
 import Foundation
 
-public struct LocalNotification {
+public struct LocalNotification: Sendable {
     public init(
         id: UUID,
         categoryIdentifier: String = "notification",
@@ -15,7 +15,7 @@ public struct LocalNotification {
         timeInterval: Double,
         repeats: Bool = false,
         bundleImageName _: String? = nil,
-        userInfo: [AnyHashable: Any]? = nil
+        userInfo: [String: String]? = nil
     ) {
         self.id = id
         scheduleType = .time
@@ -39,7 +39,7 @@ public struct LocalNotification {
         dateComponents: DateComponents,
         repeats: Bool,
         bundleImageName _: String? = nil,
-        userInfo: [AnyHashable: Any]? = nil
+        userInfo: [String: String]? = nil
     ) {
         self.id = id
         scheduleType = .calendar
@@ -63,7 +63,7 @@ public struct LocalNotification {
         date: Date,
         repeats: Bool,
         bundleImageName _: String? = nil,
-        userInfo: [AnyHashable: Any]? = nil
+        userInfo: [String: String]? = nil
     ) {
         self.id = id
         scheduleType = .calendar
@@ -78,7 +78,7 @@ public struct LocalNotification {
         self.categoryIdentifier = categoryIdentifier
     }
 
-    public enum ScheduleType {
+    public enum ScheduleType: Sendable {
         case time, calendar
     }
 
@@ -88,7 +88,7 @@ public struct LocalNotification {
     public let body: String
     public let subtitle: String?
     public let bundleImageName: String?
-    public let userInfo: [AnyHashable: Any]?
+    public let userInfo: [String: String]?
     public let timeInterval: Double?
     public let dateComponents: DateComponents?
     public let repeats: Bool

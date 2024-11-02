@@ -9,7 +9,7 @@ import OversizeCore
     import LocalAuthentication
 #endif
 
-public enum BiometricType: String {
+public enum BiometricType: String, Sendable {
     case none = ""
     case touchID = "Touch ID"
     case faceID = "Face ID"
@@ -22,7 +22,7 @@ public protocol BiometricServiceProtocol {
     func authenticating(reason: String) async -> Bool
 }
 
-public class BiometricService {
+public class BiometricService: @unchecked Sendable {
     public init() {}
 
     public var biometricType: BiometricType {
@@ -49,7 +49,7 @@ public class BiometricService {
 
 extension BiometricService: BiometricServiceProtocol {
     public func checkIfBioMetricAvailable() -> Bool {
-#if canImport(LocalAuthentication)
+        #if canImport(LocalAuthentication)
             var error: NSError?
             let laContext: LAContext = .init()
 
@@ -65,7 +65,7 @@ extension BiometricService: BiometricServiceProtocol {
     }
 
     public func authenticating(reason: String) async -> Bool {
-#if canImport(LocalAuthentication)
+        #if canImport(LocalAuthentication)
             do {
                 let laContext: LAContext = .init()
                 if checkIfBioMetricAvailable() {

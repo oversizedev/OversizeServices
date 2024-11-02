@@ -11,11 +11,13 @@ import SwiftUI
 #endif
 
 // swiftlint:disable all
-public enum Info {
+
+public enum Info: Sendable {
     private static let configName = "AppConfig"
     private static let storeDictonaryName = "Store"
 
-    public enum app {
+    @MainActor
+    public enum app: Sendable {
         public static var verstion: String? {
             Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         }
@@ -70,7 +72,7 @@ public enum Info {
         }
     }
 
-    public enum developer {
+    public enum developer: Sendable {
         public static var url: String? {
             links?.developer.url
         }
@@ -84,7 +86,7 @@ public enum Info {
         }
     }
 
-    public enum company {
+    public enum company: Sendable {
         public static var url: URL? {
             links?.company.url
         }
@@ -114,7 +116,8 @@ public enum Info {
         }
     }
 
-    public enum url {
+    @MainActor
+    public enum url: Sendable {
         public static var appStoreReview: URL? {
             guard app.appStoreID != nil else { return nil }
             let url = URL(string: "itms-apps:itunes.apple.com/us/app/apple-store/id\(app.appStoreID!)?mt=8&action=write-review")
@@ -214,7 +217,8 @@ public enum Info {
         }
     }
 
-    public enum store {
+    @MainActor
+    public enum store: Sendable {
         public static var features: [PlistConfiguration.Store.StoreFeature] {
             guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
                 fatalError("Couldn't find file \(configName).plist'.")

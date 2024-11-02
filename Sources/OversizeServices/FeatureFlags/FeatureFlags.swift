@@ -6,11 +6,13 @@
 import Foundation
 
 // swiftlint:disable line_length type_name
-public enum FeatureFlags {
+
+public enum FeatureFlags: Sendable {
     private static let configName = "AppConfig"
     private static let dictonaryName = "FeatureFlags"
 
-    public enum app {
+    @MainActor
+    public enum app: Sendable {
         public static var apperance: Bool? {
             let value = PlistService.shared.getBoolFromDictionary(field: "Apperance", dictionary: dictonaryName, plist: configName)
             return value
@@ -57,6 +59,7 @@ public enum FeatureFlags {
         }
     }
 
+    @MainActor
     public enum secure {
         public static var faceID: Bool? {
             let value = PlistService.shared.getBoolFromDictionary(field: "FaceID", dictionary: dictonaryName, plist: configName)

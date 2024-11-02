@@ -5,7 +5,8 @@
 
 import Foundation
 
-public class PlistService {
+@MainActor
+public class PlistService: Sendable {
     public static let shared: PlistService = .init()
     public init() {}
 

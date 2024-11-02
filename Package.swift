@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -37,7 +37,7 @@ let package = Package(
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
     ],
-    dependencies: productionDependencies,
+    dependencies: developmentDependencies,
     targets: [
         .target(
             name: "OversizeServices",

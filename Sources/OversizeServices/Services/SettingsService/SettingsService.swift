@@ -33,14 +33,14 @@ public protocol SettingsServiceProtocol {
     var askPasswordWhenInactiveEnabend: Bool { get set }
     var askPasswordAfterMinimizeEnabend: Bool { get set }
     func getPINCode() -> String
-    func setPINCode(pin: String) -> Void
+    func setPINCode(pin: String)
     func updatePINCode(oldPIN: String, newPIN: String) async -> Bool
     func isSetedPinCode() -> Bool
     func biometricChange(_ newState: Bool) async
     func biometricWhenGetCVVChange(_ newState: Bool) async
 }
 
-public final class SettingsService: ObservableObject, SettingsServiceProtocol {
+public final class SettingsService: ObservableObject, SettingsServiceProtocol, @unchecked Sendable {
     @Injected(\.biometricService) var biometricService
 
     public init() {}

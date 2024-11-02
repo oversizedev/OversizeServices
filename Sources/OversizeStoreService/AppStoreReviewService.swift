@@ -10,8 +10,8 @@ import SwiftUI
 // MARK: AppStoreReviewServiceProtocol
 
 public protocol AppStoreReviewServiceProtocol {
-    func launchEvent()
-    func actionEvent()
+    func launchEvent() async
+    func actionEvent() async
     func rewiewBunnerClosed()
     func estimate(goodRating: Bool)
     var isShowReviewBanner: Bool { get }
@@ -65,6 +65,7 @@ extension AppStoreReviewService: AppStoreReviewServiceProtocol {
         }
     }
 
+    @MainActor
     public func launchEvent() {
         if launchReviewCount.contains(appRunCount) {
             showSystemRewiewAlert()
@@ -74,6 +75,7 @@ extension AppStoreReviewService: AppStoreReviewServiceProtocol {
         }
     }
 
+    @MainActor
     public func actionEvent() {
         if rewiewAfterEventCount.contains(appStoreReviewRequestCount) {
             showSystemRewiewAlert()
@@ -95,6 +97,7 @@ extension AppStoreReviewService: AppStoreReviewServiceProtocol {
 }
 
 private extension AppStoreReviewService {
+    @MainActor
     func showSystemRewiewAlert() {
         #if os(iOS)
             if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
