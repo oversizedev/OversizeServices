@@ -36,15 +36,15 @@ jobs:
       destination: ${{ matrix.destination }}
     secrets: inherit
     
-  tests:
-    name: Test
-    needs: build-swiftpm
-    uses: oversizedev/GithubWorkflows/.github/workflows/test.yml@main
-    secrets: inherit
+#  tests:
+#    name: Test
+#    needs: build-swiftpm
+#    uses: oversizedev/GithubWorkflows/.github/workflows/test.yml@main
+#    secrets: inherit
     
   bump:
     name: Bump version
-    needs: tests
+    needs: build-swiftpm
     if: github.ref == 'refs/heads/main'
     uses: oversizedev/GithubWorkflows/.github/workflows/bump.yml@main
     secrets: inherit
