@@ -1,31 +1,52 @@
-name: CI - Push
+name: CI
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - '**'
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   
 jobs:
     
   build-swiftpm:
-    name: Build packages
+    name: Build SwiftPM
     uses: oversizedev/GithubWorkflows/.github/workflows/build-swiftpm.yml@main
     strategy:
       matrix:
-        packages: [OversizeServices, OversizeHealthService, OversizeCloudKitService, OversizeStoreService, OversizeLocationService, OversizeCalendarService, OversizeContactsService, OversizeNotificationService, OversizeFileManagerService]
+        packages:
+          - OversizeServices
+          - OversizeHealthService
+          - OversizeStoreService
+          - OversizeLocationService
+          - OversizeCalendarService
+          - OversizeContactsService
+          - OversizeNotificationService
+          - OversizeFileManagerService
+        destination:
+          - platform=iOS Simulator,name=iPhone 16,OS=18.1
+          - platform=watchOS Simulator,name=Apple Watch SE (40mm) (2nd generation),OS=11.1
+          - platform=tvOS Simulator,name=Apple TV 4K (3rd generation) (at 1080p),OS=18.1
+          - platform=macOS,arch=arm64
+          
     with:
       package: ${{ matrix.packages }}
+      destination: ${{ matrix.destination }}
     secrets: inherit
     
-  # tests:
-  #   name: Test
-  #   needs: build-swiftpm
-  #   uses: oversizedev/GithubWorkflows/.github/workflows/test.yml@main
-  #   secrets: inherit
+   tests:
+     name: Test
+     needs: build-swiftpm
+     uses: oversizedev/GithubWorkflows/.github/workflows/test.yml@main
+     secrets: inherit
     
   bump:
     name: Bump version
-    needs: build-swiftpm
+    needs: tests
+    if: github.ref == 'refs/heads/main'
     uses: oversizedev/GithubWorkflows/.github/workflows/bump.yml@main
     secrets: inherit
     
