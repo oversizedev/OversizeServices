@@ -10,7 +10,7 @@ import Foundation
 import OversizeCore
 import OversizeModels
 
-#if canImport(HealthKit)
+#if os(iOS) || os(macOS)
     @available(iOS 15, macOS 13.0, *)
     public class BloodPressureService: HealthKitService, @unchecked Sendable {
         private let bloodPressureType = HKQuantityType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)
