@@ -16,7 +16,7 @@ public protocol LocationServiceProtocol {
     func fetchAddressFromLocation(_ location: CLLocationCoordinate2D) async throws -> LocationAddress
 }
 
-public final class LocationService: NSObject {
+public final class LocationService: NSObject, @unchecked Sendable {
     private lazy var locationManager = CLLocationManager()
     private var locationContinuation: CheckedContinuation<CLLocationCoordinate2D?, Error>?
 

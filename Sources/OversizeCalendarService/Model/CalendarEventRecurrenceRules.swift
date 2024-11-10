@@ -4,12 +4,12 @@
 //
 
 #if canImport(EventKit)
-    import EventKit
+    @preconcurrency import EventKit
 #endif
 import Foundation
 
 #if !os(tvOS)
-    public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable {
+    public enum CalendarEventRecurrenceRules: @preconcurrency CaseIterable, Equatable, Identifiable, Sendable {
         case never, everyDay, everyWorkingDay, everyWeekend, everyWeek, everyTwoWeeks, everyMonth, everyYear, custom(EKRecurrenceRule?)
 
         public var rule: EKRecurrenceRule? {
@@ -82,10 +82,10 @@ import Foundation
             title
         }
 
-        public static var allCases: [CalendarEventRecurrenceRules] = [.never, .everyDay, .everyWorkingDay, .everyWeekend, .everyWeek, .everyTwoWeeks, .everyMonth, .everyYear]
+        public static let allCases: [CalendarEventRecurrenceRules] = [.never, .everyDay, .everyWorkingDay, .everyWeekend, .everyWeek, .everyTwoWeeks, .everyMonth, .everyYear]
     }
 
-    public enum CalendarEventEndRecurrenceRules: CaseIterable, Equatable, Identifiable, Hashable {
+    public enum CalendarEventEndRecurrenceRules: CaseIterable, Equatable, Identifiable, Hashable, Sendable {
         case never, occurrenceCount(Int), endDate(Date)
 
         public var end: EKRecurrenceEnd? {
@@ -114,7 +114,11 @@ import Foundation
             title
         }
 
-        public static var allCases: [CalendarEventEndRecurrenceRules] = [.never, .occurrenceCount(1), .endDate(Date())]
+        public static let allCases: [CalendarEventEndRecurrenceRules] = [
+            .never,
+            .occurrenceCount(1),
+            .endDate(Date()),
+        ]
     }
 
     public extension EKEvent {

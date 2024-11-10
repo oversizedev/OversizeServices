@@ -4,12 +4,12 @@
 //
 
 #if canImport(EventKit)
-    import EventKit
+    @preconcurrency import EventKit
 #endif
 import Foundation
 
 #if !os(tvOS)
-    public enum CalendarAlertsTimes: CaseIterable, Equatable, Identifiable {
+    public enum CalendarAlertsTimes: @preconcurrency CaseIterable, Equatable, Identifiable, Sendable {
         case oneMinuteBefore, fiveMinutesBefore, tenMinutesBefore, thirtyMinutesBefore, oneHourBefore, twoHoursBefore, oneDayBefore, twoDaysBefore, oneWeekBefore, custom(EKAlarm)
 
         public var title: String {
@@ -70,7 +70,17 @@ import Foundation
             }
         }
 
-        public static var allCases: [CalendarAlertsTimes] = [.oneMinuteBefore, .fiveMinutesBefore, .tenMinutesBefore, .thirtyMinutesBefore, .oneHourBefore, .twoHoursBefore, .oneDayBefore, .twoDaysBefore, .oneWeekBefore]
+        public static let allCases: [CalendarAlertsTimes] = [
+            .oneMinuteBefore,
+            .fiveMinutesBefore,
+            .tenMinutesBefore,
+            .thirtyMinutesBefore,
+            .oneHourBefore,
+            .twoHoursBefore,
+            .oneDayBefore,
+            .twoDaysBefore,
+            .oneWeekBefore,
+        ]
     }
 
     public extension EKAlarm {

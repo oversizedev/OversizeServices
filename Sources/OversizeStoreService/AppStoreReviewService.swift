@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: AppStoreReviewServiceProtocol
 
-public protocol AppStoreReviewServiceProtocol {
+public protocol AppStoreReviewServiceProtocol: Sendable {
     func launchEvent() async
     func actionEvent() async
     func rewiewBunnerClosed()
@@ -20,7 +20,7 @@ public protocol AppStoreReviewServiceProtocol {
 
 // MARK: AppStoreReviewService
 
-public class AppStoreReviewService {
+public class AppStoreReviewService: @unchecked Sendable {
     private enum Keys {
         static let appRunCount = "AppState.appRunCount"
         static let appStoreReviewRequestCount = "AppState.appStoreReviewRequestCount"

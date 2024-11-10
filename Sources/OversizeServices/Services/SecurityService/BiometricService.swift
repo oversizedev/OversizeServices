@@ -16,7 +16,7 @@ public enum BiometricType: String, Sendable {
     case opticID = "Optic ID"
 }
 
-public protocol BiometricServiceProtocol {
+public protocol BiometricServiceProtocol: Sendable {
     var biometricType: BiometricType { get }
     func checkIfBioMetricAvailable() -> Bool
     func authenticating(reason: String) async -> Bool

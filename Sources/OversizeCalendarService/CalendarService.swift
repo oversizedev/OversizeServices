@@ -4,7 +4,7 @@
 //
 
 #if canImport(EventKit)
-    import EventKit
+    @preconcurrency import EventKit
 #endif
 import Foundation
 import OversizeCore

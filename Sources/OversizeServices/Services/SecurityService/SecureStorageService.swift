@@ -7,8 +7,8 @@ import Foundation
 import OversizeCore
 import Security
 
-public final class SecureStorageService {
-    enum KeychainError: Error {
+public final class SecureStorageService: @unchecked Sendable {
+    enum KeychainError: Error, Sendable {
         case itemAlreadyExist
         case itemNotFound
         case errorStatus(String?)
@@ -25,6 +25,8 @@ public final class SecureStorageService {
             }
         }
     }
+
+    public init() {}
 
     func addItem(query: [CFString: Any]) throws {
         let status = SecItemAdd(query as CFDictionary, nil)

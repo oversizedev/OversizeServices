@@ -9,8 +9,8 @@
 import Foundation
 import OversizeModels
 
-#if !os(tvOS)
-    public actor ContactsService {
+#if canImport(Contacts)
+    public class ContactsService: @unchecked Sendable {
         private let contactStore: CNContactStore = .init()
         public init() {}
 
@@ -27,20 +27,22 @@ import OversizeModels
             }
         }
 
-        public func fetchContacts(keysToFetch: [CNKeyDescriptor] = [CNContactVCardSerialization.descriptorForRequiredKeys()], order: CNContactSortOrder = .none, unifyResults: Bool = true) async throws -> Result<[CNContact], AppError> {
-            try await withCheckedThrowingContinuation { continuation in
-                do {
-                    var contacts: [CNContact] = []
-                    let fetchRequest = CNContactFetchRequest(keysToFetch: keysToFetch)
-                    fetchRequest.unifyResults = unifyResults
-                    fetchRequest.sortOrder = order
-                    try contactStore.enumerateContacts(with: fetchRequest) { contact, _ in
-                        contacts.append(contact)
-                    }
-                    continuation.resume(returning: .success(contacts))
-                } catch {
-                    continuation.resume(throwing: AppError.contacts(type: .unknown))
+        public func fetchContacts(
+            keysToFetch: [CNKeyDescriptor] = [CNContactVCardSerialization.descriptorForRequiredKeys()],
+            order: CNContactSortOrder = .none,
+            unifyResults: Bool = true
+        ) async -> Result<[CNContact], AppError> {
+            var contacts: [CNContact] = []
+            let fetchRequest = CNContactFetchRequest(keysToFetch: keysToFetch)
+            fetchRequest.unifyResults = unifyResults
+            fetchRequest.sortOrder = order
+            do {
+                try contactStore.enumerateContacts(with: fetchRequest) { contact, _ in
+                    contacts.append(contact)
                 }
+                return .success(contacts)
+            } catch {
+                return .failure(AppError.contacts(type: .unknown))
             }
         }
     }

@@ -18,4 +18,8 @@ public extension Container {
     var biometricService: Factory<BiometricServiceProtocol> {
         self { BiometricService() }
     }
+
+    var secureStorageService: Factory<SecureStorageService> {
+        self { SecureStorageService() }
+    }
 }

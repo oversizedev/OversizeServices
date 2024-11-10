@@ -9,14 +9,14 @@ import SwiftUI
 public final class AppStateService: ObservableObject {
     public init() {}
 
-    private enum Keys {
-        static let appRunCount = "AppState.appRunCount"
-        static let appRunDate = "AppState.appRunDate"
-        static let isShowOnbarding = "AppState.isShowOnbarding"
-        static let isCompletedOnbarding = "AppState.isCompletedOnbarding"
-        static let onbardingPage = "AppState.onbardingPage"
-        static let lastRunDate = "AppState.lastRunDate"
-        static let firstRunDate = "AppState.firstRunDate"
+    public enum Keys {
+        public static let appRunCount = "AppState.appRunCount"
+        public static let appRunDate = "AppState.appRunDate"
+        public static let isShowOnbarding = "AppState.isShowOnbarding"
+        public static let isCompletedOnbarding = "AppState.isCompletedOnbarding"
+        public static let onbardingPage = "AppState.onbardingPage"
+        public static let lastRunDate = "AppState.lastRunDate"
+        public static let firstRunDate = "AppState.firstRunDate"
     }
 
     @AppStorage(Keys.appRunCount) public var appRunCount: Int = .init(0)

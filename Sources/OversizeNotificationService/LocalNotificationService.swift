@@ -6,10 +6,10 @@
 import OversizeCore
 import OversizeModels
 import SwiftUI
-import UserNotifications
+@preconcurrency import UserNotifications
 
 #if !os(tvOS)
-    public protocol LocalNotificationServiceProtocol {
+    public protocol LocalNotificationServiceProtocol: Sendable {
         func requestAuthorization() async throws
         func fetchCurrentSettings() async
         func schedule(localNotification: LocalNotification) async
@@ -19,7 +19,7 @@ import UserNotifications
         func requestAccess() async -> Result<Bool, AppError>
     }
 
-    public final class LocalNotificationService: NSObject {
+    public final class LocalNotificationService: NSObject, @unchecked Sendable {
         let notificationCenter = UNUserNotificationCenter.current()
         var isGranted = false
         var pendingRequests: [UNNotificationRequest] = []
@@ -32,6 +32,7 @@ import UserNotifications
     }
 
     extension LocalNotificationService: LocalNotificationServiceProtocol {
+        @MainActor
         public func requestAuthorization() async throws {
             try await notificationCenter.requestAuthorization(options: [.sound, .badge, .alert])
             await fetchCurrentSettings()
@@ -95,6 +96,7 @@ import UserNotifications
             }
         }
 
+        @MainActor
         public func schedule(localNotification: LocalNotification) async {
             let content = UNMutableNotificationContent()
             content.title = localNotification.title

@@ -6,7 +6,7 @@
 import Foundation
 
 public extension SecureStorageService {
-    struct Credentials {
+    struct Credentials: Sendable {
         public var login: String
         public var password: String
 
