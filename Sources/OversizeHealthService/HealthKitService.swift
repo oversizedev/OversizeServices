@@ -12,7 +12,7 @@ import OversizeModels
 
 #if !os(tvOS)
     @available(iOS 15, macOS 13.0, *)
-    open class HealthKitService {
+    open class HealthKitService: @unchecked Sendable {
         var healthStore: HKHealthStore?
 
         init() {
