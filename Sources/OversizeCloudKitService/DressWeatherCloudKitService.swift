@@ -33,7 +33,6 @@ final class DressWeatherCloudKitService {
     }
 }
 
-@MainActor
 extension DressWeatherCloudKitService: DressWeatherCloudKitServiceProtocol {
     public func fetchAccountStatus() async -> Result<CKAccountStatus, AppError> {
         do {

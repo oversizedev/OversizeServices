@@ -9,7 +9,7 @@
 import SwiftUI
 
 #if os(iOS) || os(macOS)
-extension EKCalendar: @retroactive Identifiable {
+    extension EKCalendar: @retroactive Identifiable {
         public var id: String {
             calendarIdentifier
         }

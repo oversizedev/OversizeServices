@@ -9,7 +9,7 @@
 import Foundation
 
 #if !os(tvOS)
-public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable, Sendable {
+    public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable, Sendable {
         case never, everyDay, everyWorkingDay, everyWeekend, everyWeek, everyTwoWeeks, everyMonth, everyYear, custom(EKRecurrenceRule?)
 
         public var rule: EKRecurrenceRule? {

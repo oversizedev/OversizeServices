@@ -15,8 +15,8 @@ import OversizeModels
     public protocol BodyMassServiceProtocol {
         func requestAuthorization() async -> Result<Bool, AppError>
         func fetchBodyMass() async throws -> HKStatisticsCollection?
-        func calculateSteps(completion: @escaping (HKStatisticsCollection?) -> Void)
-        func getWeightData(forDay days: Int, completion: @escaping ((_ weight: Double?, _ date: Date?) -> Void))
+        func calculateSteps(completion: @Sendable @escaping (HKStatisticsCollection?) -> Void)
+        func getWeightData(forDay days: Int, completion: @Sendable @escaping (_ weight: Double?, _ date: Date?) -> Void)
         func fetchBodyMass(forDay days: Int) async throws -> [HKQuantitySample]?
         func saveMass(date: Date, bodyMass: Double, unit: HKUnit) async throws
         func saveBodyMass(date: Date, bodyMass: Double, unit: HKUnit) async throws -> HKQuantitySample
@@ -24,7 +24,7 @@ import OversizeModels
     }
 
     @available(iOS 15, macOS 13.0, *)
-    open class BodyMassService {
+    open class BodyMassService: @unchecked Sendable {
         private var healthStore: HKHealthStore?
 
         private let bodyMassType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
@@ -51,7 +51,7 @@ import OversizeModels
             }
         }
 
-        public func getWeightData(forDay days: Int, completion: @escaping ((_ weight: Double?, _ date: Date?) -> Void)) {
+        public func getWeightData(forDay days: Int, completion: @Sendable @escaping (_ weight: Double?, _ date: Date?) -> Void) {
             guard let bodyMassType = HKObjectType.quantityType(forIdentifier: .bodyMass) else {
                 return
             }
@@ -169,7 +169,7 @@ import OversizeModels
             }
         }
 
-        public func calculateSteps(completion: @escaping (HKStatisticsCollection?) -> Void) {
+        public func calculateSteps(completion: @Sendable @escaping (HKStatisticsCollection?) -> Void) {
             let stepType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)!
 
             let startDate = Calendar.current.date(byAdding: .day, value: -100, to: Date())
