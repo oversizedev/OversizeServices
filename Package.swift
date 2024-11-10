@@ -3,7 +3,7 @@
 
 import PackageDescription
 
-let productionDependencies: [PackageDescription.Package.Dependency] = [
+let remoteDependencies: [PackageDescription.Package.Dependency] = [
     .package(url: "https://github.com/oversizedev/OversizeCore.git", .upToNextMajor(from: "1.3.0")),
     .package(url: "https://github.com/oversizedev/OversizeLocalizable.git", .upToNextMajor(from: "1.5.0")),
     .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3")),
@@ -16,6 +16,12 @@ let developmentDependencies: [PackageDescription.Package.Dependency] = [
     .package(name: "OversizeModels", path: "../OversizeModels"),
     .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3")),
 ]
+
+var dependencies: [PackageDescription.Package.Dependency] = developmentDependencies
+
+if ProcessInfo.processInfo.environment["BUILD_MODE"] == "PRODUCTION" {
+    dependencies = remoteDependencies
+}
 
 let package = Package(
     name: "OversizeServices",
@@ -37,7 +43,7 @@ let package = Package(
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
     ],
-    dependencies: developmentDependencies,
+    dependencies: dependencies,
     targets: [
         .target(
             name: "OversizeServices",
