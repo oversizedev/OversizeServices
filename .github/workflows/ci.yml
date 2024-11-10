@@ -19,7 +19,6 @@ jobs:
       matrix:
         packages:
           - OversizeServices
-          - OversizeHealthService
           - OversizeStoreService
           - OversizeLocationService
           - OversizeCalendarService
