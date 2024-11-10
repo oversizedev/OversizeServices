@@ -18,10 +18,10 @@ let developmentDependencies: [PackageDescription.Package.Dependency] = [
     .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3")),
 ]
 
-var dependencies: [PackageDescription.Package.Dependency] = developmentDependencies
+var dependencies: [PackageDescription.Package.Dependency] = remoteDependencies
 
-if ProcessInfo.processInfo.environment["BUILD_MODE"] == "PRODUCTION" {
-    dependencies = remoteDependencies
+if ProcessInfo.processInfo.environment["BUILD_MODE"] == "DEV" {
+    dependencies = developmentDependencies
 }
 
 let package = Package(
@@ -43,7 +43,7 @@ let package = Package(
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
     ],
-    dependencies: dependencies,
+    dependencies: remoteDependencies,
     targets: [
         .target(
             name: "OversizeServices",
