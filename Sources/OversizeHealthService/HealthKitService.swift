@@ -10,9 +10,9 @@ import Foundation
 import OversizeCore
 import OversizeModels
 
-#if !os(tvOS)
+#if os(iOS) || os(macOS)
     @available(iOS 15, macOS 13.0, *)
-    open class HealthKitService {
+    open class HealthKitService: @unchecked Sendable {
         var healthStore: HKHealthStore?
 
         init() {
@@ -28,14 +28,11 @@ import OversizeModels
             guard let healthStore else {
                 return .failure(AppError.healthKit(type: .savingItem))
             }
-            return await withCheckedContinuation { continuation in
-                healthStore.save(quantitySample) { _, error in
-                    if error != nil {
-                        continuation.resume(returning: .failure(AppError.healthKit(type: .savingItem)))
-                    } else {
-                        continuation.resume(returning: .success(quantitySample))
-                    }
-                }
+            do {
+                try await healthStore.save(quantitySample)
+                return .success(quantitySample)
+            } catch {
+                return .failure(AppError.healthKit(type: .savingItem))
             }
         }
 
@@ -43,14 +40,11 @@ import OversizeModels
             guard let healthStore else {
                 return .failure(AppError.healthKit(type: .savingItem))
             }
-            return await withCheckedContinuation { continuation in
-                healthStore.save(correlation) { _, error in
-                    if error != nil {
-                        continuation.resume(returning: .failure(AppError.healthKit(type: .savingItem)))
-                    } else {
-                        continuation.resume(returning: .success(correlation))
-                    }
-                }
+            do {
+                try await healthStore.save(correlation)
+                return .success(correlation)
+            } catch {
+                return .failure(AppError.healthKit(type: .savingItem))
             }
         }
 
@@ -161,26 +155,27 @@ import OversizeModels
         }
 
         func deleteObject(_ object: HKObject) async -> Result<HKObject, AppError> {
-            await withCheckedContinuation { continuation in
-                self.healthStore?.delete(object, withCompletion: { _, error in
-                    if error != nil {
-                        continuation.resume(returning: .failure(AppError.healthKit(type: .deleteItem)))
-                    } else {
-                        continuation.resume(returning: .success(object))
-                    }
-                })
+            guard let healthStore else {
+                return .failure(AppError.healthKit(type: .deleteItem))
+            }
+            do {
+                try await healthStore.delete(object)
+                return .success(object)
+            } catch {
+                return .failure(AppError.healthKit(type: .deleteItem))
             }
         }
 
+
         func deleteObjects(_ objects: [HKObject]) async -> Result<[HKObject], AppError> {
-            await withCheckedContinuation { continuation in
-                self.healthStore?.delete(objects, withCompletion: { _, error in
-                    if error != nil {
-                        continuation.resume(returning: .failure(AppError.healthKit(type: .deleteItem)))
-                    } else {
-                        continuation.resume(returning: .success(objects))
-                    }
-                })
+            guard let healthStore else {
+                return .failure(AppError.healthKit(type: .deleteItem))
+            }
+            do {
+                try await healthStore.delete(objects)
+                return .success(objects)
+            } catch {
+                return .failure(AppError.healthKit(type: .deleteItem))
             }
         }
     }

@@ -10,7 +10,7 @@ import Foundation
 import OversizeCore
 import OversizeModels
 
-#if !os(tvOS)
+#if os(iOS) || os(macOS)
     @available(iOS 15, macOS 13.0, *)
     public protocol BodyMassServiceProtocol {
         func requestAuthorization() async -> Result<Bool, AppError>

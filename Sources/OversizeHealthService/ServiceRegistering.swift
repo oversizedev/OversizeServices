@@ -6,7 +6,7 @@
 import Factory
 import Foundation
 
-#if !os(tvOS)
+#if os(iOS) || os(macOS)
     public extension Container {
         @available(iOS 15, macOS 13.0, *)
         var bodyMassService: Factory<BodyMassServiceProtocol> {

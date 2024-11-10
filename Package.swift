@@ -18,10 +18,10 @@ let developmentDependencies: [PackageDescription.Package.Dependency] = [
     .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3")),
 ]
 
-var dependencies: [PackageDescription.Package.Dependency] = developmentDependencies
+var dependencies: [PackageDescription.Package.Dependency] = remoteDependencies
 
-if ProcessInfo.processInfo.environment["BUILD_MODE"] == "PRODUCTION" {
-    dependencies = remoteDependencies
+if ProcessInfo.processInfo.environment["BUILD_MODE"] == "DEV" {
+    dependencies = developmentDependencies
 }
 
 let package = Package(
@@ -35,7 +35,6 @@ let package = Package(
     ],
     products: [
         .library(name: "OversizeHealthService", targets: ["OversizeHealthService"]),
-        .library(name: "OversizeCloudKitService", targets: ["OversizeCloudKitService"]),
         .library(name: "OversizeServices", targets: ["OversizeServices"]),
         .library(name: "OversizeStoreService", targets: ["OversizeStoreService"]),
         .library(name: "OversizeLocationService", targets: ["OversizeLocationService"]),
@@ -44,7 +43,7 @@ let package = Package(
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
     ],
-    dependencies: dependencies,
+    dependencies: remoteDependencies,
     targets: [
         .target(
             name: "OversizeServices",
@@ -88,14 +87,6 @@ let package = Package(
         ),
         .target(
             name: "OversizeLocationService",
-            dependencies: [
-                .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
-        ),
-        .target(
-            name: "OversizeCloudKitService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeModels", package: "OversizeModels"),

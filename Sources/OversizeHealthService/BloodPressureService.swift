@@ -10,9 +10,9 @@ import Foundation
 import OversizeCore
 import OversizeModels
 
-#if !os(tvOS)
+#if os(iOS) || os(macOS)
     @available(iOS 15, macOS 13.0, *)
-    public class BloodPressureService: HealthKitService {
+    public class BloodPressureService: HealthKitService, @unchecked Sendable {
         private let bloodPressureType = HKQuantityType.correlationType(forIdentifier: HKCorrelationTypeIdentifier.bloodPressure)
         private let bloodPressureSystolicType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureSystolic)
         private let bloodPressureDiastolicType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bloodPressureDiastolic)
