@@ -26,7 +26,7 @@ public class BiometricService: @unchecked Sendable {
     public init() {}
 
     public var biometricType: BiometricType {
-        #if canImport(LocalAuthentication)
+        #if os(iOS) || os(macOS)
             let authContext: LAContext = .init()
             _ = authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
             switch authContext.biometryType {
@@ -49,7 +49,7 @@ public class BiometricService: @unchecked Sendable {
 
 extension BiometricService: BiometricServiceProtocol {
     public func checkIfBioMetricAvailable() -> Bool {
-        #if canImport(LocalAuthentication)
+        #if os(iOS) || os(macOS)
             var error: NSError?
             let laContext: LAContext = .init()
 
@@ -65,7 +65,7 @@ extension BiometricService: BiometricServiceProtocol {
     }
 
     public func authenticating(reason: String) async -> Bool {
-        #if canImport(LocalAuthentication)
+        #if os(iOS) || os(macOS)
             do {
                 let laContext: LAContext = .init()
                 if checkIfBioMetricAvailable() {
