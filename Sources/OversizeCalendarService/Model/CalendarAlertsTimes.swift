@@ -9,7 +9,7 @@
 import Foundation
 
 #if !os(tvOS)
-    public enum CalendarAlertsTimes: CaseIterable, Equatable, Identifiable, Sendable {
+    public enum CalendarAlertsTimes: CaseIterable, Equatable, Identifiable, @unchecked Sendable {
         case oneMinuteBefore, fiveMinutesBefore, tenMinutesBefore, thirtyMinutesBefore, oneHourBefore, twoHoursBefore, oneDayBefore, twoDaysBefore, oneWeekBefore, custom(EKAlarm)
 
         public var title: String {

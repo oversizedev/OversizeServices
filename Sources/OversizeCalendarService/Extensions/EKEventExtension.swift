@@ -10,7 +10,7 @@ import OversizeCore
 import SwiftUI
 
 #if os(iOS) || os(macOS)
-    extension EKEvent: @retroactive Identifiable {
+    extension EKEvent: Identifiable {
         public var color: Color {
             Color(calendar.cgColor)
         }

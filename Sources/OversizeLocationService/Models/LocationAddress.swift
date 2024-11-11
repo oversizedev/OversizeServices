@@ -7,7 +7,7 @@ import Foundation
 import MapKit
 import OversizeCore
 
-public struct LocationAddress: Codable, Sendable {
+public struct LocationAddress: Codable, @unchecked Sendable {
     public let streetNumber: String // eg. 1
     public let streetName: String // eg. Infinite Loop
     public let city: String // eg. Cupertino

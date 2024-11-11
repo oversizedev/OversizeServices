@@ -6,7 +6,7 @@
 import Foundation
 import MapKit
 
-public struct MapPoint: Identifiable {
+public struct MapPoint: Identifiable, @unchecked Sendable {
     public let id: UUID
     public let name: String
     public let coordinate: CLLocationCoordinate2D

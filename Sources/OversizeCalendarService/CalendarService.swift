@@ -11,7 +11,7 @@ import OversizeCore
 import OversizeModels
 
 #if !os(tvOS)
-    public actor CalendarService {
+public class CalendarService: @unchecked Sendable {
         private let eventStore: EKEventStore = .init()
         public init() {}
 
