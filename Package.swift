@@ -43,7 +43,7 @@ let package = Package(
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
     ],
-    dependencies: remoteDependencies,
+    dependencies: dependencies,
     targets: [
         .target(
             name: "OversizeServices",
