@@ -8,7 +8,7 @@ import Foundation
 import MapKit
 import OversizeModels
 
-public protocol LocationServiceProtocol {
+public protocol LocationServiceProtocol: Sendable {
     func currentLocation() async throws -> CLLocationCoordinate2D?
     func systemPermissionsStatus() -> CLAuthorizationStatus
     func permissionsStatus() -> Result<Bool, AppError>

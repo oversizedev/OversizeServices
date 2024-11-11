@@ -7,7 +7,7 @@ import Foundation
 import MapKit
 import OversizeCore
 
-public struct LocationAddress: Codable {
+public struct LocationAddress: Codable, @unchecked Sendable {
     public let streetNumber: String // eg. 1
     public let streetName: String // eg. Infinite Loop
     public let city: String // eg. Cupertino
@@ -28,7 +28,7 @@ public struct LocationAddress: Codable {
         """
     }
 
-    public enum CardKeys: CodingKey {
+    public enum CardKeys: CodingKey, Sendable {
         case streetNumber
         case streetName
         case city
