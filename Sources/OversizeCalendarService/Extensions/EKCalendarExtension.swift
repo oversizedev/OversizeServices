@@ -4,18 +4,18 @@
 //
 
 #if canImport(EventKit)
-    import EventKit
+import EventKit
 #endif
 import SwiftUI
 
 #if os(iOS) || os(macOS)
 extension EKCalendar: Identifiable {
-        public var id: String {
-            calendarIdentifier
-        }
-
-        public var color: Color {
-            Color(cgColor)
-        }
+    public var id: String {
+        calendarIdentifier
     }
+
+    public var color: Color {
+        Color(cgColor)
+    }
+}
 #endif

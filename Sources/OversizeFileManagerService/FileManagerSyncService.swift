@@ -31,9 +31,9 @@ extension FileManagerSyncService: FileManagerSyncServiceProtocol {
 
     public func isICloudContainerAvailable() -> Result<Bool, AppError> {
         if FileManager.default.ubiquityIdentityToken != nil {
-            return .success(true)
+            .success(true)
         } else {
-            return .failure(.cloudDocuments(type: .notAccess))
+            .failure(.cloudDocuments(type: .notAccess))
         }
     }
 

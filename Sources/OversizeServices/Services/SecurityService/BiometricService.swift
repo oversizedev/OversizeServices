@@ -6,7 +6,7 @@
 import Foundation
 import OversizeCore
 #if canImport(LocalAuthentication)
-    import LocalAuthentication
+import LocalAuthentication
 #endif
 
 public enum BiometricType: String, Sendable {
@@ -27,22 +27,22 @@ public class BiometricService: @unchecked Sendable {
 
     public var biometricType: BiometricType {
         #if os(iOS) || os(macOS)
-            let authContext: LAContext = .init()
-            _ = authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
-            switch authContext.biometryType {
-            case .none:
-                return .none
-            case .touchID:
-                return .touchID
-            case .faceID:
-                return .faceID
-            case .opticID:
-                return .opticID
-            @unknown default:
-                return .none
-            }
-        #else
+        let authContext: LAContext = .init()
+        _ = authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        switch authContext.biometryType {
+        case .none:
             return .none
+        case .touchID:
+            return .touchID
+        case .faceID:
+            return .faceID
+        case .opticID:
+            return .opticID
+        @unknown default:
+            return .none
+        }
+        #else
+        return .none
         #endif
     }
 }
@@ -50,34 +50,34 @@ public class BiometricService: @unchecked Sendable {
 extension BiometricService: BiometricServiceProtocol {
     public func checkIfBioMetricAvailable() -> Bool {
         #if os(iOS) || os(macOS)
-            var error: NSError?
-            let laContext: LAContext = .init()
+        var error: NSError?
+        let laContext: LAContext = .init()
 
-            let isBimetricAvailable = laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
-            if let error {
-                log(error.localizedDescription)
-            }
+        let isBimetricAvailable = laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+        if let error {
+            log(error.localizedDescription)
+        }
 
-            return isBimetricAvailable
+        return isBimetricAvailable
         #else
-            return false
+        return false
         #endif
     }
 
     public func authenticating(reason: String) async -> Bool {
         #if os(iOS) || os(macOS)
-            do {
-                let laContext: LAContext = .init()
-                if checkIfBioMetricAvailable() {
-                    return try await laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason)
-                } else {
-                    return false
-                }
-            } catch {
+        do {
+            let laContext: LAContext = .init()
+            if checkIfBioMetricAvailable() {
+                return try await laContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason)
+            } else {
                 return false
             }
-        #else
+        } catch {
             return false
+        }
+        #else
+        return false
         #endif
     }
 }

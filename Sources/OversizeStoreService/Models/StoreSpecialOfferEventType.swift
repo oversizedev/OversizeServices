@@ -56,62 +56,62 @@ public enum StoreSpecialOfferEventType: String, Identifiable, CaseIterable, Hash
 
     public var specialOfferSubtitle: String {
         switch self {
-        case .activeUser, .oldUser: return "You have a gift"
-        case .newUser: return "Special introductory Offer"
-        case .newYear: return "Special New Year's offer"
-        case .halloween: return "Halloween Special"
-        case .blackFriday: return "Black Friday Special"
-        default: return "Special offer"
+        case .activeUser, .oldUser: "You have a gift"
+        case .newUser: "Special introductory Offer"
+        case .newYear: "Special New Year's offer"
+        case .halloween: "Halloween Special"
+        case .blackFriday: "Black Friday Special"
+        default: "Special offer"
         }
     }
 
     public var isNeedTrialDescription: Bool {
         switch self {
-        case .activeUser, .oldUser: return false
-        default: return true
+        case .activeUser, .oldUser: false
+        default: true
         }
     }
 
     public var specialOfferTitle: String {
         switch self {
-        case .newUser: return "Free full access\nfor" // \(trialDaysPeriodText)"
-        case .activeUser: return "Special Offer\nfor active Users"
-        case .oldUser: return "Special Offer\nfor Longtime Users"
-        default: return "Free full access\nfor" // \(trialDaysPeriodText)"
+        case .newUser: "Free full access\nfor" // \(trialDaysPeriodText)"
+        case .activeUser: "Special Offer\nfor active Users"
+        case .oldUser: "Special Offer\nfor Longtime Users"
+        default: "Free full access\nfor" // \(trialDaysPeriodText)"
         }
     }
 
     public var specialOfferBannerTitle: String {
         switch self {
-        case .activeUser, .oldUser: return "You have a gift"
-        case .newUser: return "Special introductory Offer"
-        case .newYear: return "Special New Year's offer"
-        case .halloween: return "Halloween Special Offer"
-        case .blackFriday: return "Black Friday Special Offer"
-        default: return "Special offer"
+        case .activeUser, .oldUser: "You have a gift"
+        case .newUser: "Special introductory Offer"
+        case .newYear: "Special New Year's offer"
+        case .halloween: "Halloween Special Offer"
+        case .blackFriday: "Black Friday Special Offer"
+        default: "Special offer"
         }
     }
 
     public var specialOfferDescription: String {
         switch self {
-        case .newUser: return "Use the offer at low price\n and long trial periods for new users"
-        case .activeUser: return "Take advantage of the low price\n offer and long trial periods"
-        default: return "Take advantage of the low price\n offer and long trial periods"
+        case .newUser: "Use the offer at low price\n and long trial periods for new users"
+        case .activeUser: "Take advantage of the low price\n offer and long trial periods"
+        default: "Take advantage of the low price\n offer and long trial periods"
         }
     }
 
     public var specialOfferImageURL: String {
         switch self {
-        case .newUser: return "objects/christmas/gift1/large.png"
-        case .activeUser: return "objects/christmas/gift1/large.png"
-        case .oldUser: return "objects/sundry/hand/large.png"
-        case .newYear: return "objects/christmas/snowman/large.png"
-        case .halloween: return "objects/tools/broom/large.png"
-        case .blackFriday: return "objects/tools/bolt/large.png"
-        case .foolsDay: return "objects/sundry/smile/large.png"
-        case .backToSchool: return "objects/education/pencil2a/large.png"
-        case .christmas: return "objects/christmas/sock/large.png"
-        case .cyberMonday: return "objects/toys/gamepad/large.png"
+        case .newUser: "objects/christmas/gift1/large.png"
+        case .activeUser: "objects/christmas/gift1/large.png"
+        case .oldUser: "objects/sundry/hand/large.png"
+        case .newYear: "objects/christmas/snowman/large.png"
+        case .halloween: "objects/tools/broom/large.png"
+        case .blackFriday: "objects/tools/bolt/large.png"
+        case .foolsDay: "objects/sundry/smile/large.png"
+        case .backToSchool: "objects/education/pencil2a/large.png"
+        case .christmas: "objects/christmas/sock/large.png"
+        case .cyberMonday: "objects/toys/gamepad/large.png"
         }
     }
 

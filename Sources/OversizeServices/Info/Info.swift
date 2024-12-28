@@ -7,7 +7,7 @@ import Foundation
 import OversizeModels
 import SwiftUI
 #if canImport(UIKit)
-    import UIKit
+import UIKit
 #endif
 
 // swiftlint:disable all
@@ -28,17 +28,17 @@ public enum Info: Sendable {
 
         public static var device: String? {
             #if os(iOS)
-                return UIDevice.current.model
+            return UIDevice.current.model
             #else
-                return nil
+            return nil
             #endif
         }
 
         public static var system: String? {
             #if os(iOS)
-                return UIDevice.current.systemName + " " + UIDevice.current.systemVersion
+            return UIDevice.current.systemName + " " + UIDevice.current.systemVersion
             #else
-                return nil
+            return nil
             #endif
         }
 

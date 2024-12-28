@@ -4,7 +4,7 @@
 //
 
 #if canImport(LocalAuthentication)
-    import LocalAuthentication
+import LocalAuthentication
 #endif
 import Factory
 import OversizeCore
