@@ -100,13 +100,13 @@ public final class StoreKitService: Sendable {
         // Determine whether the user purchases a given product.
         switch product.type {
         case .nonRenewable:
-            return prducts.purchasedNonRenewable.contains(product)
+            prducts.purchasedNonRenewable.contains(product)
         case .nonConsumable:
-            return prducts.purchasedNonConsumable.contains(product)
+            prducts.purchasedNonConsumable.contains(product)
         case .autoRenewable:
-            return prducts.purchasedAutoRenewable.contains(product)
+            prducts.purchasedAutoRenewable.contains(product)
         default:
-            return false
+            false
         }
     }
 
@@ -138,8 +138,10 @@ public final class StoreKitService: Sendable {
                        transaction.productID == "nonRenewing.standard"
                     {
                         let currentDate: Date = .init()
-                        let expirationDate = Calendar(identifier: .gregorian).date(byAdding: DateComponents(year: 1),
-                                                                                   to: transaction.purchaseDate)!
+                        let expirationDate = Calendar(identifier: .gregorian).date(
+                            byAdding: DateComponents(year: 1),
+                            to: transaction.purchaseDate
+                        )!
 
                         if currentDate < expirationDate {
                             purchasedNonRenewable.append(nonRenewable)
@@ -217,11 +219,11 @@ public final class StoreKitService: Sendable {
     // Get a subscription's level of service using the product ID.
     public func tier(for productId: String) -> SubscriptionTier {
         if productId.contains(".yearly") {
-            return .yearly
+            .yearly
         } else if productId.contains(".monthly") {
-            return .monthly
+            .monthly
         } else {
-            return .none
+            .none
         }
     }
 
@@ -262,19 +264,18 @@ public final class StoreKitService: Sendable {
     }
 
     public func paymentTypeLabel(paymentMode: Product.SubscriptionOffer.PaymentMode) -> String {
-        let trialTypeLabel: String
-        if #available(iOS 15.4, macOS 12.3, tvOS 15.4, *) {
-            trialTypeLabel = paymentMode.localizedDescription
+        let trialTypeLabel: String = if #available(iOS 15.4, macOS 12.3, tvOS 15.4, *) {
+            paymentMode.localizedDescription
         } else {
             switch paymentMode {
             case .freeTrial:
-                trialTypeLabel = "Free trial"
+                "Free trial"
             case .payAsYouGo:
-                trialTypeLabel = "PayAsYouGo"
+                "PayAsYouGo"
             case .payUpFront:
-                trialTypeLabel = "PayUpFront"
+                "PayUpFront"
             default:
-                trialTypeLabel = ""
+                ""
             }
         }
         return trialTypeLabel

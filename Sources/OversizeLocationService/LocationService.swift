@@ -37,7 +37,7 @@ extension LocationService: LocationServiceProtocol {
             }
         }, onCancel: {
             #if os(iOS)
-                self.locationManager.stopUpdatingHeading()
+            self.locationManager.stopUpdatingHeading()
             #endif
         })
     }

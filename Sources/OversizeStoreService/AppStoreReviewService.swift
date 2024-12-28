@@ -51,17 +51,17 @@ public class AppStoreReviewService: @unchecked Sendable {
 extension AppStoreReviewService: AppStoreReviewServiceProtocol {
     public var isShowReviewBanner: Bool {
         if !isAppReviewBannerClosed, appRunCount > 1 /*  appReviewBannerClosedDate.dayAfter < Date()*/, !isAppReviewd {
-            return rewiewBannerShowingCount.contains(appRunCount)
+            rewiewBannerShowingCount.contains(appRunCount)
         } else {
-            return false
+            false
         }
     }
 
     public var isShowReviewSheet: Bool {
         if !isAppReviewd {
-            return rewiewSheetShowingCount.contains(appRunCount)
+            rewiewSheetShowingCount.contains(appRunCount)
         } else {
-            return false
+            false
         }
     }
 
@@ -100,9 +100,9 @@ private extension AppStoreReviewService {
     @MainActor
     func showSystemRewiewAlert() {
         #if os(iOS)
-            if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-                SKStoreReviewController.requestReview(in: scene)
-            }
+        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+            SKStoreReviewController.requestReview(in: scene)
+        }
         #endif
     }
 }

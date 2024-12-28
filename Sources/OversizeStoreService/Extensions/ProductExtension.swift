@@ -64,17 +64,17 @@ public extension Product {
 public extension Product {
     var perMonthLabel: String {
         if displayPrice.count < 6 {
-            return " / month"
+            " / month"
         } else {
-            return " / mo"
+            " / mo"
         }
     }
 
     var perYearLabel: String {
         if displayPrice.count < 6 {
-            return " / year"
+            " / year"
         } else {
-            return " / yr"
+            " / yr"
         }
     }
 }
@@ -83,9 +83,9 @@ public extension Product {
     var displayMonthPricePeriod: String {
         switch type {
         case .autoRenewable, .nonRenewable:
-            return " / month"
+            " / month"
         default:
-            return ""
+            ""
         }
     }
 }
@@ -177,9 +177,9 @@ public extension Product {
 public extension Product {
     var isOffer: Bool {
         if id.contains(".offerYearly") {
-            return true
+            true
         } else {
-            return false
+            false
         }
     }
 }
