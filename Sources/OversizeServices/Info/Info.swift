@@ -37,6 +37,9 @@ public enum Info: Sendable {
         public static var system: String? {
             #if os(iOS)
             return UIDevice.current.systemName + " " + UIDevice.current.systemVersion
+            #elseif os(macOS)
+            let osVersion = ProcessInfo.processInfo.operatingSystemVersion
+            return "macOS \(osVersion.majorVersion).\(osVersion.minorVersion).\(osVersion.patchVersion)"
             #else
             return nil
             #endif
@@ -52,6 +55,11 @@ public enum Info: Sendable {
 
         public static var appStoreID: String? {
             links?.app.appStoreId
+        }
+
+        public static var appStoreIDInt: Int? {
+            guard let appStoreID = links?.app.appStoreId else { return nil }
+            return Int(appStoreID)
         }
 
         public static var bundleID: String? {
