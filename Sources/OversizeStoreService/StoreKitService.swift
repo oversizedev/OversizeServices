@@ -40,11 +40,9 @@ public enum SubscriptionTier: Int, Comparable, Sendable {
 }
 
 public final class StoreKitService: Sendable {
-    public func requestProducts() async -> Result<StoreKitProducts, AppError> {
+    public func requestProducts(productIds: [String]) async -> Result<StoreKitProducts, AppError> {
         do {
-            let productsIds = await Info.store.productIdentifiers
-
-            let storeProducts = try await Product.products(for: productsIds)
+            let storeProducts = try await Product.products(for: productIds)
 
             var newNonConsumable: [Product] = []
             var newAutoRenewable: [Product] = []
@@ -169,8 +167,8 @@ public final class StoreKitService: Sendable {
         return .success(prushedPrducts)
     }
 
-    public func fetchPremiumStatus() async -> Bool {
-        let products = await requestProducts()
+    public func fetchPremiumStatus(productIds: [String]) async -> Bool {
+        let products = await requestProducts(productIds: productIds)
         switch products {
         case let .success(preProducts):
 
@@ -190,8 +188,8 @@ public final class StoreKitService: Sendable {
         }
     }
 
-    public func fetchPremiumAndSubscriptionsStatus() async -> (Bool?, RenewalState?) {
-        let products = await requestProducts()
+    public func fetchPremiumAndSubscriptionsStatus(productIds: [String]) async -> (Bool?, RenewalState?) {
+        let products = await requestProducts(productIds: productIds)
 
         switch products {
         case let .success(preProducts):

@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import OversizeCore
 import Security
 
 public extension SecureStorageService {
@@ -17,6 +18,7 @@ public extension SecureStorageService {
         do {
             try addItem(query: query)
         } catch {
+            logError("Failed to add password with label \(account)", error: error)
             return
         }
     }
@@ -37,6 +39,7 @@ public extension SecureStorageService {
         do {
             try updateItem(query: query, attributesToUpdate: attributesToUpdate)
         } catch {
+            logError("Failed to update password with label \(account)", error: error)
             return
         }
     }
@@ -51,6 +54,7 @@ public extension SecureStorageService {
         do {
             result = try findItem(query: query)
         } catch {
+            logError("Failed to get password with label \(account)", error: error)
             return nil
         }
 
@@ -69,6 +73,7 @@ public extension SecureStorageService {
         do {
             try deleteItem(query: query)
         } catch {
+            logError("Failed to delete password with label \(account)", error: error)
             return
         }
     }
