@@ -64,7 +64,7 @@ extension HealthKitService {
                 sampleType: type,
                 predicate: predicate,
                 limit: 1,
-                sortDescriptors: nil
+                sortDescriptors: nil,
             ) { _, results, error in
                 if error != nil {
                     continuation.resume(returning: .failure(AppError.healthKit(type: .fetchItems)))
@@ -80,16 +80,14 @@ extension HealthKitService {
 
     func fetchHKQuantitySample(startDate: Date, endDate: Date = Date(), type: HKQuantityType) async -> Result<[HKQuantitySample], AppError> {
         await withCheckedContinuation { continuation in
-
             let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: HKQueryOptions.strictEndDate)
 
             let query = HKSampleQuery(
                 sampleType: type,
                 predicate: predicate,
                 limit: HKObjectQueryNoLimit,
-                sortDescriptors: nil
+                sortDescriptors: nil,
             ) { _, results, _ in
-
                 if let samples = results as? [HKQuantitySample] {
                     continuation.resume(returning: .success(samples))
                 } else {
@@ -107,9 +105,8 @@ extension HealthKitService {
                 sampleType: type,
                 predicate: predicate,
                 limit: HKObjectQueryNoLimit,
-                sortDescriptors: nil
+                sortDescriptors: nil,
             ) { _, results, _ in
-
                 if let samples = results as? [HKCorrelation] {
                     continuation.resume(returning: .success(samples))
                 } else {
@@ -127,7 +124,7 @@ extension HealthKitService {
                 sampleType: type,
                 predicate: predicate,
                 limit: 1,
-                sortDescriptors: nil
+                sortDescriptors: nil,
             ) { _, results, error in
                 if error != nil {
                     continuation.resume(returning: .failure(AppError.healthKit(type: .fetchItems)))
@@ -144,7 +141,7 @@ extension HealthKitService {
     func delete(type: HKObjectType, syncId: UUID) async -> Result<Bool, AppError> {
         let predicate = HKQuery.predicateForObjects(
             withMetadataKey: HKMetadataKeySyncIdentifier,
-            allowedValues: [syncId.uuidString]
+            allowedValues: [syncId.uuidString],
         )
         do {
             let _ = try await healthStore?.deleteObjects(of: type, predicate: predicate)

@@ -107,7 +107,7 @@ public class CalendarService: @unchecked Sendable {
         memberEmails: [String] = [],
         recurrenceRules: CalendarEventRecurrenceRules = .never,
         recurrenceEndRules: CalendarEventEndRecurrenceRules = .never,
-        span: EKSpan = .thisEvent
+        span: EKSpan = .thisEvent,
     ) async -> Result<Bool, AppError> {
         let access = await requestWriteOnlyAccess()
         if case let .failure(error) = access { return .failure(error) }

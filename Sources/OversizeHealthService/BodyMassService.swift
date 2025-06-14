@@ -71,7 +71,7 @@ extension BodyMassService: BodyMassServiceProtocol {
             quantitySamplePredicate: nil,
             options: [.discreteMax, .separateBySource],
             anchorDate: anchorDate,
-            intervalComponents: interval
+            intervalComponents: interval,
         )
         query.initialResultsHandler = { _, results, _ in
             guard let results else {
@@ -102,9 +102,8 @@ extension BodyMassService: BodyMassServiceProtocol {
                 sampleType: sampleType!,
                 predicate: predicate,
                 limit: HKObjectQueryNoLimit,
-                sortDescriptors: nil
+                sortDescriptors: nil,
             ) { _, results, _ in
-
                 if let samples = results as? [HKQuantitySample] {
                     continuation.resume(returning: samples)
                 } else {
@@ -128,9 +127,8 @@ extension BodyMassService: BodyMassServiceProtocol {
                 sampleType: sampleType!,
                 predicate: predicate,
                 limit: HKObjectQueryNoLimit,
-                sortDescriptors: nil
+                sortDescriptors: nil,
             ) { _, results, error in
-
                 if let error {
                     continuation.resume(throwing: error)
                 } else {
@@ -148,18 +146,16 @@ extension BodyMassService: BodyMassServiceProtocol {
 
         let sort = NSSortDescriptor(
             key: HKSampleSortIdentifierStartDate,
-            ascending: false
+            ascending: false,
         )
 
         return try await withCheckedThrowingContinuation { continuation in
-
             let query = HKSampleQuery(
                 sampleType: bodyMassType!,
                 predicate: nil,
                 limit: 1,
-                sortDescriptors: [sort]
+                sortDescriptors: [sort],
             ) { _, samples, _ in
-
                 guard let latest = samples?.first as? HKQuantitySample else {
                     continuation.resume(returning: nil)
                     return
@@ -202,7 +198,6 @@ extension BodyMassService: BodyMassServiceProtocol {
 
         let _: Bool = try await withCheckedThrowingContinuation {
             continuation in
-
             healthStore.save(sample) { _, error in
                 if let error {
                     continuation.resume(throwing: error)
@@ -216,7 +211,6 @@ extension BodyMassService: BodyMassServiceProtocol {
 
     public func deleteBodyMass(userWeightUUID: UUID) async throws -> Bool {
         try await withCheckedThrowingContinuation { continuation in
-
             let sampleType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.bodyMass)
             let predicate = HKQuery.predicateForObject(with: userWeightUUID)
 
@@ -224,9 +218,8 @@ extension BodyMassService: BodyMassServiceProtocol {
                 sampleType: sampleType!,
                 predicate: predicate,
                 limit: 1,
-                sortDescriptors: nil
+                sortDescriptors: nil,
             ) { _, results, error in
-
                 if let error {
                     continuation.resume(throwing: error)
                 } else if let deleteObject = results?.first {
@@ -256,12 +249,11 @@ extension BodyMassService: BodyMassServiceProtocol {
             type: quantityType!,
             quantity: HKQuantity(unit: unit, doubleValue: bodyMass),
             start: date,
-            end: date
+            end: date,
         )
 
         let _: Bool = try await withCheckedThrowingContinuation {
             continuation in
-
             healthStore.save(bodyMass) { _, error in
                 if let error {
                     continuation.resume(throwing: error)
@@ -283,11 +275,10 @@ extension BodyMassService: BodyMassServiceProtocol {
             type: quantityType!,
             quantity: HKQuantity(unit: unit, doubleValue: bodyMass),
             start: date,
-            end: date
+            end: date,
         )
 
         return try await withCheckedThrowingContinuation { continuation in
-
             healthStore.save(bodyMass) { _, error in
                 if let error {
                     continuation.resume(throwing: error)
@@ -314,17 +305,15 @@ extension BodyMassService: BodyMassServiceProtocol {
         let predicate = HKQuery.predicateForSamples(withStart: startDate, end: Date(), options: .strictStartDate)
 
         return try await withCheckedThrowingContinuation { continuation in
-
             let query = HKStatisticsCollectionQuery(
                 quantityType: stepType,
                 quantitySamplePredicate: predicate,
                 options: .mostRecent,
                 anchorDate: anchorDate,
-                intervalComponents: daily
+                intervalComponents: daily,
             )
 
             query.initialResultsHandler = { _, statisticsCollection, _ in
-
                 continuation.resume(returning: statisticsCollection)
             }
 

@@ -3,7 +3,7 @@
 // FileManagerSync.swift, created on 01.05.2023
 //
 
-import Factory
+import FactoryKit
 import Foundation
 import OversizeCore
 import OversizeModels

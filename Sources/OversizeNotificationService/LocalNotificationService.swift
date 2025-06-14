@@ -70,7 +70,7 @@ extension LocalNotificationService: LocalNotificationServiceProtocol {
         timeInterval: Double = 5,
         repeatNotification: Bool = false,
         scheduleType: LocalNotification.ScheduleType,
-        dateComponents: DateComponents = Calendar.current.dateComponents([.day, .minute, .second], from: Date.now)
+        dateComponents: DateComponents = Calendar.current.dateComponents([.day, .minute, .second], from: Date.now),
     ) {
         Task {
             switch scheduleType {
@@ -80,7 +80,7 @@ extension LocalNotificationService: LocalNotificationServiceProtocol {
                     title: title,
                     body: body,
                     timeInterval: timeInterval,
-                    repeats: repeatNotification
+                    repeats: repeatNotification,
                 )
                 await schedule(localNotification: localNotification)
             case .calendar:
@@ -89,7 +89,7 @@ extension LocalNotificationService: LocalNotificationServiceProtocol {
                     title: title,
                     body: body,
                     dateComponents: dateComponents,
-                    repeats: repeatNotification
+                    repeats: repeatNotification,
                 )
                 await schedule(localNotification: localNotification)
             }
@@ -125,7 +125,7 @@ extension LocalNotificationService: LocalNotificationServiceProtocol {
             guard let timeInterval = localNotification.timeInterval else { return }
             let trigger = UNTimeIntervalNotificationTrigger(
                 timeInterval: timeInterval,
-                repeats: localNotification.repeats
+                repeats: localNotification.repeats,
             )
             let request = UNNotificationRequest(identifier: localNotification.id.uuidString, content: content, trigger: trigger)
             try? await notificationCenter.add(request)
@@ -182,7 +182,7 @@ extension LocalNotificationService: UNUserNotificationCenterDelegate {
         NotificationCenter.default.post(
             name: Notification.Name("Deeplink"),
             object: nil,
-            userInfo: response.notification.request.content.userInfo
+            userInfo: response.notification.request.content.userInfo,
         )
     }
 }

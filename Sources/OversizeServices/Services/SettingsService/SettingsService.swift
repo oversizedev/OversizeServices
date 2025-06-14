@@ -6,7 +6,7 @@
 #if canImport(LocalAuthentication)
 import LocalAuthentication
 #endif
-import Factory
+import FactoryKit
 import OversizeCore
 import SwiftUI
 

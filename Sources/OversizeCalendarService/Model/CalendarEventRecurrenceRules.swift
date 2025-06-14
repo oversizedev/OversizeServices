@@ -28,7 +28,7 @@ public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable,
                 weeksOfTheYear: nil,
                 daysOfTheYear: nil,
                 setPositions: nil,
-                end: nil
+                end: nil,
             ))
         case .everyWeekend:
             .init(EKRecurrenceRule(
@@ -40,7 +40,7 @@ public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable,
                 weeksOfTheYear: nil,
                 daysOfTheYear: nil,
                 setPositions: nil,
-                end: nil
+                end: nil,
             ))
         case .everyWeek:
             .init(recurrenceWith: .weekly, interval: 1, end: nil)

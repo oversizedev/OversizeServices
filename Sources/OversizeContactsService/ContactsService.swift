@@ -30,7 +30,7 @@ public class ContactsService: @unchecked Sendable {
     public func fetchContacts(
         keysToFetch: [CNKeyDescriptor] = [CNContactVCardSerialization.descriptorForRequiredKeys()],
         order: CNContactSortOrder = .none,
-        unifyResults: Bool = true
+        unifyResults: Bool = true,
     ) async -> Result<[CNContact], AppError> {
         var contacts: [CNContact] = []
         let fetchRequest = CNContactFetchRequest(keysToFetch: keysToFetch)

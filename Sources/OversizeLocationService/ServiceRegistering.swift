@@ -3,7 +3,7 @@
 // ServiceRegistering.swift
 //
 
-import Factory
+import FactoryKit
 import Foundation
 
 public extension Container {

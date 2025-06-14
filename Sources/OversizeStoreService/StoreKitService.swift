@@ -68,7 +68,7 @@ public final class StoreKitService: Sendable {
                 consumable: sortByPrice(newConsumable),
                 nonConsumable: sortByPrice(newNonConsumable),
                 autoRenewable: sortByPrice(newAutoRenewable),
-                nonRenewable: sortByPrice(newNonRenewables)
+                nonRenewable: sortByPrice(newNonRenewables),
             )
 
             return .success(products)
@@ -138,7 +138,7 @@ public final class StoreKitService: Sendable {
                         let currentDate: Date = .init()
                         let expirationDate = Calendar(identifier: .gregorian).date(
                             byAdding: DateComponents(year: 1),
-                            to: transaction.purchaseDate
+                            to: transaction.purchaseDate,
                         )!
 
                         if currentDate < expirationDate {
@@ -171,7 +171,6 @@ public final class StoreKitService: Sendable {
         let products = await requestProducts(productIds: productIds)
         switch products {
         case let .success(preProducts):
-
             let result = await updateCustomerProductStatus(products: preProducts)
             switch result {
             case let .success(finalProducts):

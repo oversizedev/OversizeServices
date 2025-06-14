@@ -3,7 +3,7 @@
 // OversizeServicesTests.swift
 //
 
-import Factory
+import FactoryKit
 @testable import OversizeServices
 import XCTest
 

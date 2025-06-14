@@ -39,7 +39,7 @@ public extension BloodPressureService {
                     bloodPressureSystolicType,
                     bloodPressureDiastolicType,
                     heartRateType,
-                ]
+                ],
             )
             return .success(true)
         } catch {

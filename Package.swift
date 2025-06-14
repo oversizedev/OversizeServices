@@ -11,7 +11,7 @@ let remoteDependencies: [PackageDescription.Package.Dependency] = [
     .package(url: "https://github.com/oversizedev/OversizeModels.git", .upToNextMajor(from: "0.1.0")),
 ]
 
-let developmentDependencies: [PackageDescription.Package.Dependency] = [
+let localDependencies: [PackageDescription.Package.Dependency] = [
     .package(name: "OversizeCore", path: "../OversizeCore"),
     .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
     .package(name: "OversizeModels", path: "../OversizeModels"),
@@ -47,47 +47,47 @@ let package = Package(
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
                 .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
         .target(
             name: "OversizeFileManagerService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
         .target(
             name: "OversizeContactsService",
             dependencies: [
                 .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
         .target(
             name: "OversizeCalendarService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
         .target(
             name: "OversizeHealthService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
         .target(
             name: "OversizeLocationService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
         .target(
             name: "OversizeStoreService",
@@ -95,23 +95,23 @@ let package = Package(
                 "OversizeServices",
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
         .target(
             name: "OversizeNotificationService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeModels", package: "OversizeModels"),
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
         .testTarget(
             name: "OversizeServicesTests",
             dependencies: [
                 "OversizeServices",
-                .product(name: "Factory", package: "Factory"),
-            ]
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
         ),
-    ]
+    ],
 )
