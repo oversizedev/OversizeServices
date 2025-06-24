@@ -7,7 +7,7 @@ import FactoryKit
 import Foundation
 
 public extension Container {
-    var appStoreReviewService: Factory<AppStoreReviewServiceProtocol> {
+    var appStoreReviewService: Factory<AppStoreReviewService> {
         self { AppStoreReviewService() }
     }
 

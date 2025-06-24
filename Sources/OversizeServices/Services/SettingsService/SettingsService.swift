@@ -32,6 +32,7 @@ public protocol SettingsServiceProtocol {
     var authHistoryEnabend: Bool { get set }
     var askPasswordWhenInactiveEnabend: Bool { get set }
     var askPasswordAfterMinimizeEnabend: Bool { get set }
+    var appLockTimeout: TimeInterval { get set }
     func getPINCode() -> String
     func setPINCode(pin: String)
     func updatePINCode(oldPIN: String, newPIN: String) async -> Bool
@@ -69,6 +70,8 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol, @
         public static let authHistoryEnabend = "SettingsStore.authHistoryEnabend"
         public static let askPasswordWhenInactiveEnabend = "SettingsStore.askPasswordWhenInactiveEnabend"
         public static let askPasswordAfterMinimizeEnabend = "SettingsStore.askPasswordAfterMinimizeEnabend"
+        public static let appLockTimeout = "SettingsStore.TimeToLock"
+        public static let fastEnter = "SettingsStore.FastEnter"
     }
 
     // App
@@ -93,31 +96,33 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol, @
     @AppStorage(Keys.authHistoryEnabend) public var authHistoryEnabend = false
     @AppStorage(Keys.askPasswordWhenInactiveEnabend) public var askPasswordWhenInactiveEnabend = false
     @AppStorage(Keys.askPasswordAfterMinimizeEnabend) public var askPasswordAfterMinimizeEnabend = false
+    @AppStorage(Keys.appLockTimeout) public var appLockTimeout: TimeInterval = .init(60.0)
+    @AppStorage(Keys.fastEnter) public var fastEnter: Bool = false
     @SecureStorage(Keys.pinCode) private var pinCode
 }
 
 // PIN Code
 public extension SettingsService {
     func getPINCode() -> String {
-        log("🔐 Get PIN Code")
+        logSecurity("Get PIN Code")
         return pinCode ?? ""
     }
 
     func setPINCode(pin: String) {
-        log("🔐 Set PIN Code")
+        logSecurity("Set PIN Code")
         pinCode = pin
     }
 
     func updatePINCode(oldPIN: String, newPIN: String) async -> Bool {
-        log("🔐 Update PIN Code")
+        logSecurity("Update PIN Code")
         let currentCode = getPINCode()
 
         if oldPIN == currentCode {
             pinCode = newPIN
-            log("✅ PIN Code Updated")
+            logSuccess("PIN Code Updated")
             return true
         }
-        log("🛑 PIN Code Not updated")
+        logError("PIN Code Not updated")
         return false
     }
 
@@ -136,7 +141,7 @@ public extension SettingsService {
 public extension SettingsService {
     @MainActor
     func biometricChange(_ newState: Bool) async {
-        log("🪬 Updated biometric state")
+        logSecurity("Request biometric \(newState ? "enable" : "disable")")
         var reason = ""
         if newState {
             reason = "Provice \(biometricService.biometricType.rawValue) to enable"
@@ -145,7 +150,7 @@ public extension SettingsService {
         }
         let auth = await biometricService.authenticating(reason: reason)
         if auth {
-            log("✅ Updated biometric state")
+            logSuccess("Enabled biometric authentication")
             biometricEnabled = newState
         }
     }

@@ -16,9 +16,8 @@ public enum Info: Sendable {
     private static let configName = "AppConfig"
     private static let storeDictonaryName = "Store"
 
-    @MainActor
     public enum app: Sendable {
-        public static var verstion: String? {
+        public static var version: String? {
             Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
         }
 
@@ -26,6 +25,7 @@ public enum Info: Sendable {
             Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
         }
 
+        @MainActor
         public static var device: String? {
             #if os(iOS)
             return UIDevice.current.model
@@ -34,6 +34,7 @@ public enum Info: Sendable {
             #endif
         }
 
+        @MainActor
         public static var system: String? {
             #if os(iOS)
             return UIDevice.current.systemName + " " + UIDevice.current.systemVersion
@@ -124,7 +125,6 @@ public enum Info: Sendable {
         }
     }
 
-    @MainActor
     public enum url: Sendable {
         public static var appStoreReview: URL? {
             guard app.appStoreID != nil else { return nil }
@@ -225,7 +225,6 @@ public enum Info: Sendable {
         }
     }
 
-    @MainActor
     public enum store: Sendable {
         public static var features: [PlistConfiguration.Store.StoreFeature] {
             guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
