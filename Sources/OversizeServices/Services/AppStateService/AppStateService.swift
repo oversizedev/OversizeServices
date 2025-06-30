@@ -57,10 +57,10 @@ public final class AppStateService: ObservableObject {
     func logDebugInfo() {
         let debugInfo = """
         Debug Info:
-        First Run Date: \(firstRunDate.formatted(date: .abbreviated, time: .standard))
-        Last Run Date: \(lastRunDate.formatted(date: .abbreviated, time: .standard))
-        App Run Count: \(appRunCount)
-        App version: \(lastRunVersion)
+        ▫️ First Run Date: \(firstRunDate.formatted(date: .abbreviated, time: .standard))
+        ▫️ Last Run Date: \(lastRunDate.formatted(date: .abbreviated, time: .standard))
+        ▫️ App Run Count: \(appRunCount)
+        ▫️ App version: \(lastRunVersion)
         """
         logInfo(debugInfo)
     }
