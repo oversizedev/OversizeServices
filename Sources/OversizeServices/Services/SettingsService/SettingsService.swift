@@ -20,23 +20,23 @@ public protocol SettingsServiceProtocol {
     var cloudKitCVVEnabled: Bool { get set }
     var healthKitEnabled: Bool { get set }
     var biometricEnabled: Bool { get }
-    var biometricWhenGetCVVEnabend: Bool { get }
-    var pinCodeEnabend: Bool { get }
+    var biometricWhenGetCVVEnabled: Bool { get }
+    var pinCodeEnabled: Bool { get }
     var deleteDataIfBruteForceEnabled: Bool { get set }
     var spotlightEnabled: Bool { get set }
     var alertPINCodeEnabled: Bool { get set }
     var alertPINCode: String { get set }
-    var photoBreakerEnabend: Bool { get set }
-    var lookScreenDownEnabend: Bool { get set }
-    var blurMinimizeEnabend: Bool { get set }
-    var authHistoryEnabend: Bool { get set }
-    var askPasswordWhenInactiveEnabend: Bool { get set }
-    var askPasswordAfterMinimizeEnabend: Bool { get set }
+    var photoBreakerEnabled: Bool { get set }
+    var lockScreenDownEnabled: Bool { get set }
+    var blurMinimizeEnabled: Bool { get set }
+    var authHistoryEnabled: Bool { get set }
+    var askPasswordWhenInactiveEnabled: Bool { get set }
+    var askPasswordAfterMinimizeEnabled: Bool { get set }
     var appLockTimeout: TimeInterval { get set }
     func getPINCode() -> String
     func setPINCode(pin: String)
     func updatePINCode(oldPIN: String, newPIN: String) async -> Bool
-    func isSetedPinCode() -> Bool
+    func isSetPinCode() -> Bool
     func biometricChange(_ newState: Bool) async
     func biometricWhenGetCVVChange(_ newState: Bool) async
 }
@@ -84,21 +84,70 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol, @
 
     // Security
     @AppStorage(Keys.biometricEnabled) public var biometricEnabled = false
-    @AppStorage(Keys.biometricWhenGetCVVEnabend) public var biometricWhenGetCVVEnabend = false
-    @AppStorage(Keys.pinCodeEnabend) public var pinCodeEnabend = false
+    @AppStorage(Keys.biometricWhenGetCVVEnabend) public var biometricWhenGetCVVEnabled = false
+    @AppStorage(Keys.pinCodeEnabend) public var pinCodeEnabled = false
     @AppStorage(Keys.bruteForceSecurityEnabled) public var deleteDataIfBruteForceEnabled = false
     @AppStorage(Keys.spotlightEnabled) public var spotlightEnabled = false
     @AppStorage(Keys.alertPINCodeEnabled) public var alertPINCodeEnabled = false
     @AppStorage(Keys.alertPINCode) public var alertPINCode = ""
-    @AppStorage(Keys.photoBreakerEnabend) public var photoBreakerEnabend = false
-    @AppStorage(Keys.facedownLockEnabend) public var lookScreenDownEnabend = false
-    @AppStorage(Keys.blurMinimizeEnabend) public var blurMinimizeEnabend = false
-    @AppStorage(Keys.authHistoryEnabend) public var authHistoryEnabend = false
-    @AppStorage(Keys.askPasswordWhenInactiveEnabend) public var askPasswordWhenInactiveEnabend = false
-    @AppStorage(Keys.askPasswordAfterMinimizeEnabend) public var askPasswordAfterMinimizeEnabend = false
+    @AppStorage(Keys.photoBreakerEnabend) public var photoBreakerEnabled = false
+    @AppStorage(Keys.facedownLockEnabend) public var lockScreenDownEnabled = false
+    @AppStorage(Keys.blurMinimizeEnabend) public var blurMinimizeEnabled = false
+    @AppStorage(Keys.authHistoryEnabend) public var authHistoryEnabled = false
+    @AppStorage(Keys.askPasswordWhenInactiveEnabend) public var askPasswordWhenInactiveEnabled = false
+    @AppStorage(Keys.askPasswordAfterMinimizeEnabend) public var askPasswordAfterMinimizeEnabled = false
     @AppStorage(Keys.appLockTimeout) public var appLockTimeout: TimeInterval = .init(60.0)
     @AppStorage(Keys.fastEnter) public var fastEnter: Bool = false
     @SecureStorage(Keys.pinCode) private var pinCode
+
+    // Deprecated property aliases for backward compatibility
+    @available(*, deprecated, message: "Use biometricWhenGetCVVEnabled instead")
+    public var biometricWhenGetCVVEnabend: Bool {
+        get { biometricWhenGetCVVEnabled }
+        set { biometricWhenGetCVVEnabled = newValue }
+    }
+
+    @available(*, deprecated, message: "Use pinCodeEnabled instead")
+    public var pinCodeEnabend: Bool {
+        get { pinCodeEnabled }
+        set { pinCodeEnabled = newValue }
+    }
+
+    @available(*, deprecated, message: "Use photoBreakerEnabled instead")
+    public var photoBreakerEnabend: Bool {
+        get { photoBreakerEnabled }
+        set { photoBreakerEnabled = newValue }
+    }
+
+    @available(*, deprecated, message: "Use lockScreenDownEnabled instead")
+    public var lookScreenDownEnabend: Bool {
+        get { lockScreenDownEnabled }
+        set { lockScreenDownEnabled = newValue }
+    }
+
+    @available(*, deprecated, message: "Use blurMinimizeEnabled instead")
+    public var blurMinimizeEnabend: Bool {
+        get { blurMinimizeEnabled }
+        set { blurMinimizeEnabled = newValue }
+    }
+
+    @available(*, deprecated, message: "Use authHistoryEnabled instead")
+    public var authHistoryEnabend: Bool {
+        get { authHistoryEnabled }
+        set { authHistoryEnabled = newValue }
+    }
+
+    @available(*, deprecated, message: "Use askPasswordWhenInactiveEnabled instead")
+    public var askPasswordWhenInactiveEnabend: Bool {
+        get { askPasswordWhenInactiveEnabled }
+        set { askPasswordWhenInactiveEnabled = newValue }
+    }
+
+    @available(*, deprecated, message: "Use askPasswordAfterMinimizeEnabled instead")
+    public var askPasswordAfterMinimizeEnabend: Bool {
+        get { askPasswordAfterMinimizeEnabled }
+        set { askPasswordAfterMinimizeEnabled = newValue }
+    }
 }
 
 // PIN Code
@@ -126,13 +175,18 @@ public extension SettingsService {
         return false
     }
 
-    func isSetedPinCode() -> Bool {
+    func isSetPinCode() -> Bool {
         let pinCode = getPINCode()
         if pinCode == "" {
             return false
         } else {
             return true
         }
+    }
+
+    @available(*, deprecated, message: "Use isSetPinCode() instead")
+    func isSetedPinCode() -> Bool {
+        isSetPinCode()
     }
 }
 
@@ -144,9 +198,9 @@ public extension SettingsService {
         logSecurity("Request biometric \(newState ? "enable" : "disable")")
         var reason = ""
         if newState {
-            reason = "Provice \(biometricService.biometricType.rawValue) to enable"
+            reason = "Provide \(biometricService.biometricType.rawValue) to enable"
         } else {
-            reason = "Provice \(biometricService.biometricType.rawValue) to disable"
+            reason = "Provide \(biometricService.biometricType.rawValue) to disable"
         }
         let auth = await biometricService.authenticating(reason: reason)
         if auth {
@@ -159,13 +213,13 @@ public extension SettingsService {
         var reason = ""
         let biometricType = biometricService.biometricType
         if newState {
-            reason = "Provice \(biometricType.rawValue) to enable"
+            reason = "Provide \(biometricType.rawValue) to enable"
         } else {
-            reason = "Provice\(biometricType.rawValue) to disable"
+            reason = "Provide \(biometricType.rawValue) to disable"
         }
         let auth = await biometricService.authenticating(reason: reason)
         if auth {
-            biometricWhenGetCVVEnabend = newState
+            biometricWhenGetCVVEnabled = newState
         }
     }
 }
