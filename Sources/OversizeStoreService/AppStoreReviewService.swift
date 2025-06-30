@@ -69,7 +69,7 @@ public extension AppStoreReviewService {
         }
     }
 
-    func rewiewBunnerClosed() {
+    func reviewBannerClosed() {
         appReviewBannerClosedDate = Date()
         isAppReviewBannerClosed = true
     }
@@ -78,7 +78,7 @@ public extension AppStoreReviewService {
         isAppReviewed = true
         isAppGoodRating = goodRating
         appReviewEstimateDate = Date()
-        rewiewBunnerClosed()
+        reviewBannerClosed()
     }
 }
 
