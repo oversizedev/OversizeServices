@@ -14,7 +14,7 @@ import UIKit
 
 public enum Info: Sendable {
     private static let configName = "AppConfig"
-    private static let storeDictonaryName = "Store"
+    private static let storeDictionaryName = "Store"
 
     public enum app: Sendable {
         public static var version: String? {
@@ -112,8 +112,13 @@ public enum Info: Sendable {
             links?.company.dribbble
         }
 
-        public static var tnstagramID: String? {
+        public static var instagramID: String? {
             links?.company.instagram
+        }
+
+        @available(*, deprecated, message: "Use instagramID instead")
+        public static var tnstagramID: String? {
+            instagramID
         }
 
         public static var facebookID: String? {
@@ -191,7 +196,7 @@ public enum Info: Sendable {
         }
 
         public static var companyInstagram: URL? {
-            guard let id = company.tnstagramID else { return nil }
+            guard let id = company.instagramID else { return nil }
             guard let url = URL(string: "https://www.instagram.com/\(id)") else { return nil }
             return url
         }
@@ -248,27 +253,27 @@ public enum Info: Sendable {
         }
 
         public static var bannerLabel: String {
-            let value = PlistService.shared.getStringFromDictionary(field: "BannerLabel", dictionary: storeDictonaryName, plist: configName)
+            let value = PlistService.shared.getStringFromDictionary(field: "BannerLabel", dictionary: storeDictionaryName, plist: configName)
             return value ?? ""
         }
 
         public static var subscriptionsName: String {
-            let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsName", dictionary: storeDictonaryName, plist: configName)
+            let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsName", dictionary: storeDictionaryName, plist: configName)
             return value ?? ""
         }
 
         public static var subscriptionsDescription: String {
-            let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsDescription", dictionary: storeDictonaryName, plist: configName)
+            let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsDescription", dictionary: storeDictionaryName, plist: configName)
             return value ?? ""
         }
 
         public static var secretKey: String {
-            let value = PlistService.shared.getStringFromDictionary(field: "SecretKey", dictionary: storeDictonaryName, plist: configName)
+            let value = PlistService.shared.getStringFromDictionary(field: "SecretKey", dictionary: storeDictionaryName, plist: configName)
             return value ?? ""
         }
 
         public static var productIdentifiers: [String] {
-            let value = PlistService.shared.getStringArrayFromDictionary(field: "ProductIdentifiers", dictionary: storeDictonaryName, plist: configName)
+            let value = PlistService.shared.getStringArrayFromDictionary(field: "ProductIdentifiers", dictionary: storeDictionaryName, plist: configName)
             return value
         }
     }

@@ -63,7 +63,7 @@ public final class PlistService: Sendable {
         }
         let plist = NSDictionary(contentsOfFile: filePath)
         guard let value = plist?.object(forKey: field) as? String else {
-            fatalError("Couldn't find key '\(field)' in '\(String(describing: plist)).plistt'.")
+            fatalError("Couldn't find key '\(field)' in '\(String(describing: plist)).plist'.")
         }
         return value
     }

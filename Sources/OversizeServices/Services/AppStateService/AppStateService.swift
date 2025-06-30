@@ -12,9 +12,9 @@ public final class AppStateService: ObservableObject {
     public enum Keys {
         public static let appRunCount = "AppState.appRunCount"
         public static let appRunDate = "AppState.appRunDate"
-        public static let isShowOnboarding = "AppState.isShowOnbarding"
-        public static let isCompletedOnboarding = "AppState.isCompletedOnbarding"
-        public static let onbardingPage = "AppState.onbardingPage"
+        public static let isShowOnboarding = "AppState.isShowOnbarding" // Keep original key for data compatibility
+        public static let isCompletedOnboarding = "AppState.isCompletedOnbarding" // Keep original key for data compatibility
+        public static let onboardingPage = "AppState.onbardingPage" // Keep original key for data compatibility
         public static let lastRunDate = "AppState.lastRunDate"
         public static let firstRunDate = "AppState.firstRunDate"
         public static let lastRunVersion = "AppState.LastRunVersion"
@@ -23,7 +23,7 @@ public final class AppStateService: ObservableObject {
     @AppStorage(Keys.appRunCount) public var appRunCount: Int = .init()
     @AppStorage(Keys.isShowOnboarding) public var isShowOnboarding: Bool = .init()
     @AppStorage(Keys.isCompletedOnboarding) public var isCompletedOnboarding: Bool = .init()
-    @AppStorage(Keys.onbardingPage) public var onboardingPage: Int = .init()
+    @AppStorage(Keys.onboardingPage) public var onboardingPage: Int = .init()
     @AppStorage(Keys.lastRunDate) public var lastRunDate: Date = .init()
     @AppStorage(Keys.firstRunDate) public var firstRunDate: Date = .init()
     @AppStorage(Keys.lastRunVersion) public var lastRunVersion: String = .init()
@@ -38,20 +38,35 @@ public final class AppStateService: ObservableObject {
         logDebugInfo()
     }
 
-    public func completedOnbarding() {
+    public func completedOnboarding() {
         isCompletedOnboarding = true
         logInfo("Onboarding completed")
     }
 
-    public func restOnbarding() {
-        onboardingPage = 0
-        isCompletedOnboarding = false
-        logInfo("Onboarding rested")
+    @available(*, deprecated, message: "Use completedOnboarding() instead")
+    public func completedOnbarding() {
+        completedOnboarding()
     }
 
-    public func restAppRunCount() {
+    public func resetOnboarding() {
+        onboardingPage = 0
+        isCompletedOnboarding = false
+        logInfo("Onboarding reset")
+    }
+
+    @available(*, deprecated, message: "Use resetOnboarding() instead")
+    public func restOnbarding() {
+        resetOnboarding()
+    }
+
+    public func resetAppRunCount() {
         appRunCount = 0
-        logInfo("App run count rested")
+        logInfo("App run count reset")
+    }
+
+    @available(*, deprecated, message: "Use resetAppRunCount() instead")
+    public func restAppRunCount() {
+        resetAppRunCount()
     }
 
     func logDebugInfo() {
