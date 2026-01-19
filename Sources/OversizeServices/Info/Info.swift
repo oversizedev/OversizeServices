@@ -4,11 +4,7 @@
 //
 
 import Foundation
-import OversizeModels
 import SwiftUI
-#if canImport(UIKit)
-import UIKit
-#endif
 
 // swiftlint:disable all
 
@@ -55,11 +51,15 @@ public enum Info: Sendable {
         }
 
         public static var appStoreID: String? {
-            links?.app.appStoreId
+            guard let id = all?.links.app.appStoreId else {
+                print("[Info] Warning: appStoreId is not set in AppConfig.plist")
+                return nil
+            }
+            return id
         }
 
         public static var appStoreIDInt: Int? {
-            guard let appStoreID = links?.app.appStoreId else { return nil }
+            guard let appStoreID = all?.links.app.appStoreId else { return nil }
             return Int(appStoreID)
         }
 
@@ -68,7 +68,7 @@ public enum Info: Sendable {
         }
 
         public static var telegramChatID: String? {
-            links?.app.telegramChat
+            all?.links.app.telegramChat
         }
 
         public static var iconName: String? {
@@ -79,54 +79,75 @@ public enum Info: Sendable {
             else { return nil }
             return iconFileName
         }
+
+        public static var icon: Image? {
+            if let iconName, let uiImage = UIImage(named: iconName) {
+                Image(uiImage: uiImage)
+            } else {
+                nil
+            }
+        }
+
+        public static var alternateIconsNames: [String] {
+            guard let icons = Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any],
+                  let alternateIcons = icons["CFBundleAlternateIcons"] as? [String: Any]
+            else {
+                return []
+            }
+            return Array(alternateIcons.keys).sorted()
+        }
+
+        @MainActor
+        public static var alternateIconName: String? {
+            #if os(iOS)
+            UIApplication.shared.alternateIconName
+            #else
+            nil
+            #endif
+        }
     }
 
     public enum developer: Sendable {
         public static var url: String? {
-            links?.developer.url
+            all?.links.developer.url
         }
 
         public static var email: String? {
-            links?.developer.email
+            all?.links.developer.email
         }
 
         public static var name: String? {
-            links?.developer.name
+            all?.links.developer.name
         }
     }
 
     public enum company: Sendable {
         public static var url: URL? {
-            links?.company.url
+            all?.links.company.url
         }
 
         public static var appStoreID: String? {
-            links?.company.appStoreId
+            all?.links.company.appStoreId
         }
 
         public static var twitterID: String? {
-            links?.company.twitter
+            all?.links.company.twitter
         }
 
         public static var dribbbleID: String? {
-            links?.company.dribbble
+            all?.links.company.dribbble
         }
 
         public static var instagramID: String? {
-            links?.company.instagram
-        }
-
-        @available(*, deprecated, message: "Use instagramID instead")
-        public static var tnstagramID: String? {
-            instagramID
+            all?.links.company.instagram
         }
 
         public static var facebookID: String? {
-            links?.company.facebook
+            all?.links.company.facebook
         }
 
         public static var telegramID: String? {
-            links?.company.telegram
+            all?.links.company.telegram
         }
     }
 
@@ -161,14 +182,31 @@ public enum Info: Sendable {
             return url
         }
 
+        public static var appUrl: URL? {
+            guard let companyUrl = company.url,
+                  let appStoreId = app.appStoreID
+            else { return nil }
+            return URL(string: "\(companyUrl.absoluteString)/\(appStoreId)")
+        }
+
         public static var appPrivacyPolicyUrl: URL? {
-            let url = URL(string: "\(links?.app.urlString ?? "")/privacy-policy")
-            return url
+            guard let appUrl else { return nil }
+            return URL(string: "\(appUrl.absoluteString)/privacy-policy")
         }
 
         public static var appTermsOfUseUrl: URL? {
-            let url = URL(string: "\(links?.app.urlString ?? "")/terms-and-conditions")
-            return url
+            guard let appUrl else { return nil }
+            return URL(string: "\(appUrl.absoluteString)/terms-and-conditions")
+        }
+
+        public static var companyCdnUrl: URL? {
+            guard let cdnString = all?.links.company.cdnString else { return nil }
+            return URL(string: cdnString)
+        }
+
+        public static var companyEmail: URL? {
+            guard let email = all?.links.company.email else { return nil }
+            return URL(string: "mailto:\(email)")
         }
 
         public static var companyTelegram: URL? {
@@ -202,86 +240,10 @@ public enum Info: Sendable {
         }
     }
 
-    public static var apps: [PlistConfiguration.App] {
-        guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
-            fatalError("Couldn't find file \(configName).plist'.")
-        }
-        let data = try! Data(contentsOf: filePath)
-        let decoder: PropertyListDecoder = .init()
-        do {
-            let decodeData = try decoder.decode(PlistConfiguration.self, from: data)
-            return decodeData.apps
-        } catch {
-            return []
-        }
-    }
-
-    public static var links: PlistConfiguration.Links? {
-        guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
-            fatalError("Couldn't find file \(configName).plist'.")
-        }
-        let data = try! Data(contentsOf: filePath)
-        let decoder: PropertyListDecoder = .init()
-        do {
-            let decodeData = try decoder.decode(PlistConfiguration.self, from: data)
-            return decodeData.links
-        } catch {
-            return nil
-        }
-    }
-
-    public enum store: Sendable {
-        public static var features: [PlistConfiguration.Store.StoreFeature] {
-            guard let filePath = Bundle.main.url(forResource: configName, withExtension: "plist") else {
-                fatalError("Couldn't find file \(configName).plist'.")
-            }
-            let data = try! Data(contentsOf: filePath)
-            let decoder: PropertyListDecoder = .init()
-            do {
-                let decodeData = try decoder.decode(PlistConfiguration.self, from: data)
-                return decodeData.store.features
-            } catch {
-                return []
-            }
-        }
-
-        public static func parseConfig() -> PlistConfiguration {
-            let url = Bundle.main.url(forResource: configName, withExtension: "plist")!
-            let data = try! Data(contentsOf: url)
-            let decoder: PropertyListDecoder = .init()
-            return try! decoder.decode(PlistConfiguration.self, from: data)
-        }
-
-        public static var bannerLabel: String {
-            let value = PlistService.shared.getStringFromDictionary(field: "BannerLabel", dictionary: storeDictionaryName, plist: configName)
-            return value ?? ""
-        }
-
-        public static var subscriptionsName: String {
-            let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsName", dictionary: storeDictionaryName, plist: configName)
-            return value ?? ""
-        }
-
-        public static var subscriptionsDescription: String {
-            let value = PlistService.shared.getStringFromDictionary(field: "SubscriptionsDescription", dictionary: storeDictionaryName, plist: configName)
-            return value ?? ""
-        }
-
-        public static var secretKey: String {
-            let value = PlistService.shared.getStringFromDictionary(field: "SecretKey", dictionary: storeDictionaryName, plist: configName)
-            return value ?? ""
-        }
-
-        public static var productIdentifiers: [String] {
-            let value = PlistService.shared.getStringArrayFromDictionary(field: "ProductIdentifiers", dictionary: storeDictionaryName, plist: configName)
-            return value
-        }
-    }
-
-    public static var all: PlistConfiguration? {
-        let url = Bundle.main.url(forResource: configName, withExtension: "plist")!
-        let data = try! Data(contentsOf: url)
-        let decoder: PropertyListDecoder = .init()
-        return try? decoder.decode(PlistConfiguration.self, from: data)
+    private static var all: PlistConfiguration? {
+        guard let url = Bundle.main.url(forResource: configName, withExtension: "plist"),
+              let data = try? Data(contentsOf: url)
+        else { return nil }
+        return try? PropertyListDecoder().decode(PlistConfiguration.self, from: data)
     }
 }

@@ -15,7 +15,7 @@ public struct LocalNotification: Sendable {
         timeInterval: Double,
         repeats: Bool = false,
         bundleImageName _: String? = nil,
-        userInfo: [String: String]? = nil
+        userInfo: [String: String]? = nil,
     ) {
         self.id = id
         scheduleType = .time
@@ -39,7 +39,7 @@ public struct LocalNotification: Sendable {
         dateComponents: DateComponents,
         repeats: Bool,
         bundleImageName _: String? = nil,
-        userInfo: [String: String]? = nil
+        userInfo: [String: String]? = nil,
     ) {
         self.id = id
         scheduleType = .calendar
@@ -63,7 +63,7 @@ public struct LocalNotification: Sendable {
         date: Date,
         repeats: Bool,
         bundleImageName _: String? = nil,
-        userInfo: [String: String]? = nil
+        userInfo: [String: String]? = nil,
     ) {
         self.id = id
         scheduleType = .calendar

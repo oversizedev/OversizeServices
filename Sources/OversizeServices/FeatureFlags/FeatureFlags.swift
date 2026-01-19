@@ -57,11 +57,6 @@ public enum FeatureFlags: Sendable {
             let value = PlistService.shared.getBoolFromDictionary(field: "Spotlight", dictionary: dictionaryName, plist: configName)
             return value
         }
-
-        public static var alternateAppIcons: Int? {
-            let value = PlistService.shared.getIntFromDictionary(field: "AlternateAppIcons", dictionary: dictionaryName, plist: configName)
-            return value
-        }
     }
 
     @MainActor

@@ -122,7 +122,7 @@ public extension Product {
         var price = displayPrice
         if let unit = subscription?.subscriptionPeriod.unit {
             if #available(iOS 15.4, macOS 12.3, tvOS 15.4, *) {
-                price = self.displayPrice + " / " + unit.localizedDescription.lowercased()
+                price = displayPrice + " / " + unit.localizedDescription.lowercased()
             } else {
                 switch unit {
                 case .day:
