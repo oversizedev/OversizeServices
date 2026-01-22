@@ -6,7 +6,6 @@
 import Foundation
 import OversizeCore
 import SwiftUI
-
 #if os(watchOS)
 import WatchKit
 #endif
@@ -61,7 +60,10 @@ public enum Info: Sendable {
         }
 
         public static var appStoreId: String? {
-            guard let id = configuration?.links.app.appStoreId, !id.isEmpty else {
+            if let id = Bundle.main.object(forInfoDictionaryKey: "AppStoreId") as? String, !id.isEmpty {
+                return id
+            }
+            guard let id = linksConfiguration?.app?.appStoreId, !id.isEmpty else {
                 return nil
             }
             return id
@@ -72,7 +74,10 @@ public enum Info: Sendable {
         }
 
         public static var telegramChatId: String? {
-            configuration?.links.app.telegramChat
+            if let id = Bundle.main.object(forInfoDictionaryKey: "TelegramChatId") as? String, !id.isEmpty {
+                return id
+            }
+            return linksConfiguration?.app?.telegramChat
         }
 
         public static var iconName: String? {
@@ -121,7 +126,7 @@ public enum Info: Sendable {
         }
 
         public static var websiteUrl: URL? {
-            guard let companyUrl = Company.url, let appStoreId else { return nil }
+            guard let companyUrl = Company.websiteUrl, let appStoreId else { return nil }
             return URL(string: "\(companyUrl.absoluteString)/\(appStoreId)")
         }
 
@@ -144,16 +149,22 @@ public enum Info: Sendable {
     // MARK: - Developer
 
     public enum Developer: Sendable {
-        public static var website: String? {
-            configuration?.links.developer.url
+        private static var developerDict: [String: Any]? {
+            Bundle.main.infoDictionary?["Developer"] as? [String: Any]
+        }
+
+        public static var websiteUrl: URL? {
+            let urlString = developerDict?["WebsiteUrl"] as? String ?? linksConfiguration?.developer.url
+            guard let urlString else { return nil }
+            return URL(string: urlString.hasPrefix("http") ? urlString : "https://\(urlString)")
         }
 
         public static var email: String? {
-            configuration?.links.developer.email
+            developerDict?["Email"] as? String ?? linksConfiguration?.developer.email
         }
 
         public static var name: String? {
-            configuration?.links.developer.name
+            developerDict?["Name"] as? String ?? linksConfiguration?.developer.name
         }
 
         public static var emailUrl: URL? {
@@ -170,41 +181,52 @@ public enum Info: Sendable {
     // MARK: - Company
 
     public enum Company: Sendable {
-        public static var url: URL? {
-            configuration?.links.company.url
+        private static var companyDict: [String: Any]? {
+            Bundle.main.infoDictionary?["Company"] as? [String: Any]
+        }
+
+        public static var websiteUrl: URL? {
+            if let urlString = companyDict?["WebsiteUrl"] as? String {
+                return URL(string: urlString)
+            }
+            return linksConfiguration?.company.url
         }
 
         public static var appStoreId: String? {
-            configuration?.links.company.appStoreId
+            companyDict?["AppStoreId"] as? String ?? linksConfiguration?.company.appStoreId
         }
 
         public static var twitterUsername: String? {
-            configuration?.links.company.twitter
+            companyDict?["Twitter"] as? String ?? linksConfiguration?.company.twitter
         }
 
         public static var dribbbleUsername: String? {
-            configuration?.links.company.dribbble
+            companyDict?["Dribbble"] as? String ?? linksConfiguration?.company.dribbble
         }
 
         public static var instagramUsername: String? {
-            configuration?.links.company.instagram
+            companyDict?["Instagram"] as? String ?? linksConfiguration?.company.instagram
         }
 
         public static var facebookUsername: String? {
-            configuration?.links.company.facebook
+            companyDict?["Facebook"] as? String ?? linksConfiguration?.company.facebook
         }
 
         public static var telegramUsername: String? {
-            configuration?.links.company.telegram
+            companyDict?["Telegram"] as? String ?? linksConfiguration?.company.telegram
         }
 
         public static var cdnUrl: URL? {
-            guard let cdnString = configuration?.links.company.cdnString else { return nil }
+            if let cdnString = companyDict?["CdnUrl"] as? String {
+                return URL(string: cdnString)
+            }
+            guard let cdnString = linksConfiguration?.company.cdnString else { return nil }
             return URL(string: cdnString)
         }
 
         public static var emailUrl: URL? {
-            guard let email = configuration?.links.company.email else { return nil }
+            let email = companyDict?["Email"] as? String ?? linksConfiguration?.company.email
+            guard let email else { return nil }
             return URL(string: "mailto:\(email)")
         }
 
@@ -236,194 +258,40 @@ public enum Info: Sendable {
 
     // MARK: - Private
 
-    private static var configuration: PlistConfiguration? {
+    private static var linksConfiguration: Links? {
+        let info = Bundle.main.infoDictionary
+
+        if let developerDict = info?["Developer"] as? [String: Any],
+           let companyDict = info?["Company"] as? [String: Any]
+        {
+            let linksDict: [String: Any] = [
+                "Developer": developerDict,
+                "Company": companyDict,
+            ]
+            if let data = try? JSONSerialization.data(withJSONObject: linksDict) {
+                return try? JSONDecoder().decode(Links.self, from: data)
+            }
+        }
+
+        if let linksDict = info?["Links"] as? [String: Any],
+           let data = try? JSONSerialization.data(withJSONObject: linksDict)
+        {
+            return try? JSONDecoder().decode(Links.self, from: data)
+        }
+
+        if let configDict = info?["AppConfig"] as? [String: Any],
+           let data = try? JSONSerialization.data(withJSONObject: configDict),
+           let config = try? JSONDecoder().decode(PlistConfiguration.self, from: data)
+        {
+            return config.links
+        }
+
         guard let url = Bundle.main.url(forResource: configName, withExtension: "plist"),
-              let data = try? Data(contentsOf: url)
+              let data = try? Data(contentsOf: url),
+              let config = try? PropertyListDecoder().decode(PlistConfiguration.self, from: data)
         else {
             return nil
         }
-        return try? PropertyListDecoder().decode(PlistConfiguration.self, from: data)
+        return config.links
     }
 }
-
-// MARK: - Deprecated Compatibility
-
- public extension Info {
-    @available(*, deprecated, renamed: "App")
-    typealias app = App
-
-    @available(*, deprecated, renamed: "Developer")
-    typealias developer = Developer
-
-    @available(*, deprecated, renamed: "Company")
-    typealias company = Company
-
-    @available(*, deprecated, message: "URLs moved to App, Developer, Company")
-    typealias url = URLs
- }
-
- public extension Info.App {
-    @available(*, deprecated, renamed: "appStoreId")
-    static var appStoreID: String? { appStoreId }
-
-    @available(*, deprecated, renamed: "bundleId")
-    static var bundleID: String? { bundleId }
-
-    @available(*, deprecated, renamed: "telegramChatId")
-    static var telegramChatID: String? { telegramChatId }
-
-    @available(*, deprecated, renamed: "alternateIconNames")
-    static var alternateIconsNames: [String] { alternateIconNames }
-
-    @available(*, deprecated, renamed: "osVersion")
-    @MainActor static var system: String? { osVersion }
-
-    @available(*, deprecated, renamed: "localeIdentifier")
-    static var language: String? { localeIdentifier }
-
-    @available(*, deprecated, renamed: "appStoreUrl")
-    static var appStoreURL: URL? { appStoreUrl }
-
-    @available(*, deprecated, renamed: "appStoreReviewUrl")
-    static var appStoreReviewURL: URL? { appStoreReviewUrl }
-
-    @available(*, deprecated, renamed: "websiteUrl")
-    static var websiteURL: URL? { websiteUrl }
-
-    @available(*, deprecated, renamed: "privacyPolicyUrl")
-    static var privacyPolicyURL: URL? { privacyPolicyUrl }
-
-    @available(*, deprecated, renamed: "termsOfUseUrl")
-    static var termsOfUseURL: URL? { termsOfUseUrl }
-
-    @available(*, deprecated, renamed: "telegramChatUrl")
-    static var telegramChatURL: URL? { telegramChatUrl }
- }
-
- public extension Info.Developer {
-    @available(*, deprecated, renamed: "website")
-    static var url: String? { website }
-
-    @available(*, deprecated, renamed: "emailUrl")
-    static var emailURL: URL? { emailUrl }
-
-    @available(*, deprecated, renamed: "appsUrl")
-    static var appsURL: URL? { appsUrl }
- }
-
- public extension Info.Company {
-    @available(*, deprecated, renamed: "appStoreId")
-    static var appStoreID: String? { appStoreId }
-
-    @available(*, deprecated, renamed: "twitterUsername")
-    static var twitterID: String? { twitterUsername }
-
-    @available(*, deprecated, renamed: "dribbbleUsername")
-    static var dribbbleID: String? { dribbbleUsername }
-
-    @available(*, deprecated, renamed: "instagramUsername")
-    static var instagramID: String? { instagramUsername }
-
-    @available(*, deprecated, renamed: "facebookUsername")
-    static var facebookID: String? { facebookUsername }
-
-    @available(*, deprecated, renamed: "telegramUsername")
-    static var telegramID: String? { telegramUsername }
-
-    @available(*, deprecated, renamed: "cdnUrl")
-    static var cdnURL: URL? { cdnUrl }
-
-    @available(*, deprecated, renamed: "emailUrl")
-    static var emailURL: URL? { emailUrl }
-
-    @available(*, deprecated, renamed: "telegramUrl")
-    static var telegramURL: URL? { telegramUrl }
-
-    @available(*, deprecated, renamed: "facebookUrl")
-    static var facebookURL: URL? { facebookUrl }
-
-    @available(*, deprecated, renamed: "twitterUrl")
-    static var twitterURL: URL? { twitterUrl }
-
-    @available(*, deprecated, renamed: "dribbbleUrl")
-    static var dribbbleURL: URL? { dribbbleUrl }
-
-    @available(*, deprecated, renamed: "instagramUrl")
-    static var instagramURL: URL? { instagramUrl }
- }
-
-// MARK: - Deprecated URLs Enum
-
- @available(*, deprecated, message: "Use Info.App, Info.Developer, Info.Company instead")
- public extension Info {
-    enum URLs: Sendable {
-        @available(*, deprecated, renamed: "Info.App.appStoreReviewUrl")
-        public static var appStoreReview: URL? { App.appStoreReviewUrl }
-
-        @available(*, deprecated, renamed: "Info.App.appStoreUrl")
-        public static var appStore: URL? { App.appStoreUrl }
-
-        @available(*, deprecated, renamed: "Info.Developer.emailUrl")
-        public static var developerEmail: URL? { Developer.emailUrl }
-
-        @available(*, deprecated, renamed: "Info.Developer.appsUrl")
-        public static var developerApps: URL? { Developer.appsUrl }
-
-        @available(*, deprecated, renamed: "Info.App.telegramChatUrl")
-        public static var telegramChat: URL? { App.telegramChatUrl }
-
-        @available(*, deprecated, renamed: "Info.App.websiteUrl")
-        public static var app: URL? { App.websiteUrl }
-
-        @available(*, deprecated, renamed: "Info.App.privacyPolicyUrl")
-        public static var privacyPolicy: URL? { App.privacyPolicyUrl }
-
-        @available(*, deprecated, renamed: "Info.App.termsOfUseUrl")
-        public static var termsOfUse: URL? { App.termsOfUseUrl }
-
-        @available(*, deprecated, renamed: "Info.Company.cdnUrl")
-        public static var companyCDN: URL? { Company.cdnUrl }
-
-        @available(*, deprecated, renamed: "Info.Company.emailUrl")
-        public static var companyEmail: URL? { Company.emailUrl }
-
-        @available(*, deprecated, renamed: "Info.Company.telegramUrl")
-        public static var companyTelegram: URL? { Company.telegramUrl }
-
-        @available(*, deprecated, renamed: "Info.Company.facebookUrl")
-        public static var companyFacebook: URL? { Company.facebookUrl }
-
-        @available(*, deprecated, renamed: "Info.Company.twitterUrl")
-        public static var companyTwitter: URL? { Company.twitterUrl }
-
-        @available(*, deprecated, renamed: "Info.Company.dribbbleUrl")
-        public static var companyDribbble: URL? { Company.dribbbleUrl }
-
-        @available(*, deprecated, renamed: "Info.Company.instagramUrl")
-        public static var companyInstagram: URL? { Company.instagramUrl }
-
-        @available(*, deprecated, renamed: "Info.App.appStoreUrl")
-        public static var appInstallShare: URL? { App.appStoreUrl }
-
-        @available(*, deprecated, renamed: "Info.Developer.emailUrl")
-        public static var developerSendMail: URL? { Developer.emailUrl }
-
-        @available(*, deprecated, renamed: "Info.Developer.appsUrl")
-        public static var developerAllApps: URL? { Developer.appsUrl }
-
-        @available(*, deprecated, renamed: "Info.App.telegramChatUrl")
-        public static var appTelegramChat: URL? { App.telegramChatUrl }
-
-        @available(*, deprecated, renamed: "Info.App.websiteUrl")
-        public static var appUrl: URL? { App.websiteUrl }
-
-        @available(*, deprecated, renamed: "Info.App.privacyPolicyUrl")
-        public static var appPrivacyPolicyUrl: URL? { App.privacyPolicyUrl }
-
-        @available(*, deprecated, renamed: "Info.App.termsOfUseUrl")
-        public static var appTermsOfUseUrl: URL? { App.termsOfUseUrl }
-
-        @available(*, deprecated, renamed: "Info.Company.cdnUrl")
-        public static var companyCdnUrl: URL? { Company.cdnUrl }
-    }
- }

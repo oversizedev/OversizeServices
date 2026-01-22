@@ -5,95 +5,67 @@
 
 import Foundation
 
-// swiftlint:disable line_length type_name
-
 public enum FeatureFlags: Sendable {
-    private static let configName = "AppConfig"
-    private static let dictionaryName = "FeatureFlags"
+
+    private static var featureFlagsDict: [String: Any]? {
+        Bundle.main.infoDictionary?["FeatureFlags"] as? [String: Any]
+    }
+
+    @MainActor
+    private static func getBool(_ key: String) -> Bool? {
+        if let value = featureFlagsDict?[key] as? Bool {
+            return value
+        }
+        return PlistService.shared.getBoolFromDictionary(
+            field: key,
+            dictionary: "FeatureFlags",
+            plist: "AppConfig",
+        )
+    }
 
     @MainActor
     public enum app: Sendable {
         public static var appearance: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "Apperance", dictionary: dictionaryName, plist: configName)
-            return value
-        }
-
-        @available(*, deprecated, message: "Use appearance instead")
-        public static var apperance: Bool? {
-            appearance
+            getBool("Apperance")
         }
 
         public static var storeKit: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "StoreKit", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("StoreKit")
         }
 
         public static var сloudKit: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "CloudKit", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("CloudKit")
         }
 
         public static var healthKit: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "HealthKit", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("HealthKit")
         }
 
         public static var notifications: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "Notifications", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("Notifications")
         }
 
         public static var vibration: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "Vibration", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("Vibration")
         }
 
         public static var sounds: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "Sounds", dictionary: dictionaryName, plist: configName)
-            return value
-        }
-
-        public static var spotlight: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "Spotlight", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("Sounds")
         }
     }
 
     @MainActor
     public enum secure {
         public static var faceID: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "FaceID", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("FaceID")
         }
 
         public static var lookscreen: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "Lookscreen", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("Lookscreen")
         }
-
-        public static var CVVCodes: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "CVVCodes", dictionary: dictionaryName, plist: configName)
-            return value
-        }
-
-        public static var alertSecureCodes: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "AlertPINCode", dictionary: dictionaryName, plist: configName)
-            return value
-        }
-
+        
         public static var blurMinimize: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "BlurMinimize", dictionary: dictionaryName, plist: configName)
-            return value
-        }
-
-        public static var bruteForceSecure: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "BruteForceSecure", dictionary: dictionaryName, plist: configName)
-            return value
-        }
-
-        public static var photoBreaker: Bool? {
-            let value = PlistService.shared.getBoolFromDictionary(field: "PhotoBreaker", dictionary: dictionaryName, plist: configName)
-            return value
+            getBool("BlurMinimize")
         }
     }
 }
