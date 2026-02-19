@@ -23,98 +23,158 @@ public extension Info {
 
 public extension Info.App {
     @available(*, deprecated, renamed: "appStoreId")
-    static var appStoreID: String? { appStoreId }
+    static var appStoreID: String? {
+        appStoreId
+    }
 
     @available(*, deprecated, renamed: "bundleId")
-    static var bundleID: String? { bundleId }
+    static var bundleID: String? {
+        bundleId
+    }
 
     @available(*, deprecated, renamed: "telegramChatId")
-    static var telegramChatID: String? { telegramChatId }
+    static var telegramChatID: String? {
+        telegramChatId
+    }
 
     @available(*, deprecated, renamed: "alternateIconNames")
-    static var alternateIconsNames: [String] { alternateIconNames }
+    static var alternateIconsNames: [String] {
+        alternateIconNames
+    }
 
     @available(*, deprecated, renamed: "osVersion")
-    @MainActor static var system: String? { osVersion }
+    @MainActor static var system: String? {
+        osVersion
+    }
 
     @available(*, deprecated, renamed: "localeIdentifier")
-    static var language: String? { localeIdentifier }
+    static var language: String? {
+        localeIdentifier
+    }
 
     @available(*, deprecated, renamed: "appStoreUrl")
-    static var appStoreURL: URL? { appStoreUrl }
+    static var appStoreURL: URL? {
+        appStoreUrl
+    }
 
     @available(*, deprecated, renamed: "appStoreReviewUrl")
-    static var appStoreReviewURL: URL? { appStoreReviewUrl }
+    static var appStoreReviewURL: URL? {
+        appStoreReviewUrl
+    }
 
     @available(*, deprecated, renamed: "websiteUrl")
-    static var websiteURL: URL? { websiteUrl }
+    static var websiteURL: URL? {
+        websiteUrl
+    }
 
     @available(*, deprecated, renamed: "privacyPolicyUrl")
-    static var privacyPolicyURL: URL? { privacyPolicyUrl }
+    static var privacyPolicyURL: URL? {
+        privacyPolicyUrl
+    }
 
     @available(*, deprecated, renamed: "termsOfUseUrl")
-    static var termsOfUseURL: URL? { termsOfUseUrl }
+    static var termsOfUseURL: URL? {
+        termsOfUseUrl
+    }
 
     @available(*, deprecated, renamed: "telegramChatUrl")
-    static var telegramChatURL: URL? { telegramChatUrl }
+    static var telegramChatURL: URL? {
+        telegramChatUrl
+    }
 }
 
 public extension Info.Developer {
     @available(*, deprecated, renamed: "websiteUrl")
-    static var url: String? { websiteUrl?.absoluteString }
+    static var url: String? {
+        websiteUrl?.absoluteString
+    }
 
     @available(*, deprecated, renamed: "websiteUrl")
-    static var website: String? { websiteUrl?.absoluteString }
+    static var website: String? {
+        websiteUrl?.absoluteString
+    }
 
     @available(*, deprecated, renamed: "emailUrl")
-    static var emailURL: URL? { emailUrl }
+    static var emailURL: URL? {
+        emailUrl
+    }
 
     @available(*, deprecated, renamed: "appsUrl")
-    static var appsURL: URL? { appsUrl }
+    static var appsURL: URL? {
+        appsUrl
+    }
 }
 
 public extension Info.Company {
     @available(*, deprecated, renamed: "websiteUrl")
-    static var url: URL? { websiteUrl }
+    static var url: URL? {
+        websiteUrl
+    }
 
     @available(*, deprecated, renamed: "appStoreId")
-    static var appStoreID: String? { appStoreId }
+    static var appStoreID: String? {
+        appStoreId
+    }
 
     @available(*, deprecated, renamed: "twitterUsername")
-    static var twitterID: String? { twitterUsername }
+    static var twitterID: String? {
+        twitterUsername
+    }
 
     @available(*, deprecated, renamed: "dribbbleUsername")
-    static var dribbbleID: String? { dribbbleUsername }
+    static var dribbbleID: String? {
+        dribbbleUsername
+    }
 
     @available(*, deprecated, renamed: "instagramUsername")
-    static var instagramID: String? { instagramUsername }
+    static var instagramID: String? {
+        instagramUsername
+    }
 
     @available(*, deprecated, renamed: "facebookUsername")
-    static var facebookID: String? { facebookUsername }
+    static var facebookID: String? {
+        facebookUsername
+    }
 
     @available(*, deprecated, renamed: "telegramUsername")
-    static var telegramID: String? { telegramUsername }
+    static var telegramID: String? {
+        telegramUsername
+    }
 
     @available(*, deprecated, renamed: "cdnUrl")
-    static var cdnURL: URL? { cdnUrl }
+    static var cdnURL: URL? {
+        cdnUrl
+    }
 
     @available(*, deprecated, renamed: "emailUrl")
-    static var emailURL: URL? { emailUrl }
+    static var emailURL: URL? {
+        emailUrl
+    }
 
     @available(*, deprecated, renamed: "telegramUrl")
-    static var telegramURL: URL? { telegramUrl }
+    static var telegramURL: URL? {
+        telegramUrl
+    }
 
     @available(*, deprecated, renamed: "facebookUrl")
-    static var facebookURL: URL? { facebookUrl }
+    static var facebookURL: URL? {
+        facebookUrl
+    }
 
     @available(*, deprecated, renamed: "twitterUrl")
-    static var twitterURL: URL? { twitterUrl }
+    static var twitterURL: URL? {
+        twitterUrl
+    }
 
     @available(*, deprecated, renamed: "dribbbleUrl")
-    static var dribbbleURL: URL? { dribbbleUrl }
+    static var dribbbleURL: URL? {
+        dribbbleUrl
+    }
 
     @available(*, deprecated, renamed: "instagramUrl")
-    static var instagramURL: URL? { instagramUrl }
+    static var instagramURL: URL? {
+        instagramUrl
+    }
 }
 
 // MARK: - Deprecated URLs Enum
@@ -123,73 +183,119 @@ public extension Info.Company {
 public extension Info {
     enum URLs: Sendable {
         @available(*, deprecated, renamed: "Info.App.appStoreReviewUrl")
-        public static var appStoreReview: URL? { App.appStoreReviewUrl }
+        public static var appStoreReview: URL? {
+            App.appStoreReviewUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.appStoreUrl")
-        public static var appStore: URL? { App.appStoreUrl }
+        public static var appStore: URL? {
+            App.appStoreUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Developer.emailUrl")
-        public static var developerEmail: URL? { Developer.emailUrl }
+        public static var developerEmail: URL? {
+            Developer.emailUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Developer.appsUrl")
-        public static var developerApps: URL? { Developer.appsUrl }
+        public static var developerApps: URL? {
+            Developer.appsUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.telegramChatUrl")
-        public static var telegramChat: URL? { App.telegramChatUrl }
+        public static var telegramChat: URL? {
+            App.telegramChatUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.websiteUrl")
-        public static var app: URL? { App.websiteUrl }
+        public static var app: URL? {
+            App.websiteUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.privacyPolicyUrl")
-        public static var privacyPolicy: URL? { App.privacyPolicyUrl }
+        public static var privacyPolicy: URL? {
+            App.privacyPolicyUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.termsOfUseUrl")
-        public static var termsOfUse: URL? { App.termsOfUseUrl }
+        public static var termsOfUse: URL? {
+            App.termsOfUseUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Company.cdnUrl")
-        public static var companyCDN: URL? { Company.cdnUrl }
+        public static var companyCDN: URL? {
+            Company.cdnUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Company.emailUrl")
-        public static var companyEmail: URL? { Company.emailUrl }
+        public static var companyEmail: URL? {
+            Company.emailUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Company.telegramUrl")
-        public static var companyTelegram: URL? { Company.telegramUrl }
+        public static var companyTelegram: URL? {
+            Company.telegramUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Company.facebookUrl")
-        public static var companyFacebook: URL? { Company.facebookUrl }
+        public static var companyFacebook: URL? {
+            Company.facebookUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Company.twitterUrl")
-        public static var companyTwitter: URL? { Company.twitterUrl }
+        public static var companyTwitter: URL? {
+            Company.twitterUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Company.dribbbleUrl")
-        public static var companyDribbble: URL? { Company.dribbbleUrl }
+        public static var companyDribbble: URL? {
+            Company.dribbbleUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Company.instagramUrl")
-        public static var companyInstagram: URL? { Company.instagramUrl }
+        public static var companyInstagram: URL? {
+            Company.instagramUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.appStoreUrl")
-        public static var appInstallShare: URL? { App.appStoreUrl }
+        public static var appInstallShare: URL? {
+            App.appStoreUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Developer.emailUrl")
-        public static var developerSendMail: URL? { Developer.emailUrl }
+        public static var developerSendMail: URL? {
+            Developer.emailUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Developer.appsUrl")
-        public static var developerAllApps: URL? { Developer.appsUrl }
+        public static var developerAllApps: URL? {
+            Developer.appsUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.telegramChatUrl")
-        public static var appTelegramChat: URL? { App.telegramChatUrl }
+        public static var appTelegramChat: URL? {
+            App.telegramChatUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.websiteUrl")
-        public static var appUrl: URL? { App.websiteUrl }
+        public static var appUrl: URL? {
+            App.websiteUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.privacyPolicyUrl")
-        public static var appPrivacyPolicyUrl: URL? { App.privacyPolicyUrl }
+        public static var appPrivacyPolicyUrl: URL? {
+            App.privacyPolicyUrl
+        }
 
         @available(*, deprecated, renamed: "Info.App.termsOfUseUrl")
-        public static var appTermsOfUseUrl: URL? { App.termsOfUseUrl }
+        public static var appTermsOfUseUrl: URL? {
+            App.termsOfUseUrl
+        }
 
         @available(*, deprecated, renamed: "Info.Company.cdnUrl")
-        public static var companyCdnUrl: URL? { Company.cdnUrl }
+        public static var companyCdnUrl: URL? {
+            Company.cdnUrl
+        }
     }
 }
 
@@ -285,8 +391,7 @@ public final class PlistService: Sendable {
         guard let links = plist?.object(forKey: dictionary) as? [String: Any] else {
             return []
         }
-        let value: [String] = links[field] as? [String] ?? []
-        return value
+        return links[field] as? [String] ?? []
     }
 
     public func getBoolFromDictionary(field: String, dictionary: String, plist: String) -> Bool? {
@@ -297,8 +402,7 @@ public final class PlistService: Sendable {
         guard let links = plist?.object(forKey: dictionary) as? [String: Any] else {
             return nil
         }
-        let value: Bool? = links[field] as? Bool
-        return value
+        return links[field] as? Bool
     }
 
     public func getIntFromDictionary(field: String, dictionary: String, plist: String) -> Int? {
@@ -309,8 +413,7 @@ public final class PlistService: Sendable {
         guard let links = plist?.object(forKey: dictionary) as? [String: Any] else {
             return nil
         }
-        let value: Int? = links[field] as? Int
-        return value
+        return links[field] as? Int
     }
 
     public func getStringFromDictionary(field: String, dictionary: String, plist: String) -> String? {
@@ -321,8 +424,7 @@ public final class PlistService: Sendable {
         guard let links = plist?.object(forKey: dictionary) as? [String: Any] else {
             return nil
         }
-        let value: String? = links[field] as? String
-        return value
+        return links[field] as? String
     }
 
     public func getString(field: String, plist: String) -> String? {

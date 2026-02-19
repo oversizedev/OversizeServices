@@ -40,8 +40,7 @@ public enum StoreSpecialOfferEventType: String, Identifiable, CaseIterable, Hash
     public var eventInterval: DateInterval? {
         let caledar = Calendar.current
         guard let startDate = eventStartDate else { return nil }
-        let interval = caledar.dateInterval(of: .day, for: startDate)
-        return interval
+        return caledar.dateInterval(of: .day, for: startDate)
     }
 
     public var isNow: Bool {

@@ -70,7 +70,7 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol, @
     @SecureStorage(Keys.pinCode) private var pinCode
 }
 
-// PIN Code
+/// PIN Code
 public extension SettingsService {
     func getPINCode() -> String {
         logSecurity("Get PIN Code")

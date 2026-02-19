@@ -6,7 +6,6 @@
 import Foundation
 
 public enum FeatureFlags: Sendable {
-
     private static var featureFlagsDict: [String: Any]? {
         Bundle.main.infoDictionary?["FeatureFlags"] as? [String: Any]
     }
@@ -63,7 +62,7 @@ public enum FeatureFlags: Sendable {
         public static var lookscreen: Bool? {
             getBool("Lookscreen")
         }
-        
+
         public static var blurMinimize: Bool? {
             getBool("BlurMinimize")
         }
