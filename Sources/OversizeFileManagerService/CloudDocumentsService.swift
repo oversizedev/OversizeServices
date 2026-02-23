@@ -5,23 +5,22 @@
 
 import Foundation
 import OversizeCore
-import OversizeModels
 
 public protocol CloudDocumentsServiceProtocol {
-    func saveDocument(localDocumentsURL: URL, folder: String?, containerId: String?) async -> Result<URL, AppError>
-    func removeDocument(icloudUrl: URL) async -> Result<Bool, AppError>
-    func removeFolder(_ folder: String, containerId: String?) async -> Result<Bool, AppError>
+    func saveDocument(localDocumentsURL: URL, folder: String?, containerId: String?) async -> Result<URL, Error>
+    func removeDocument(icloudUrl: URL) async -> Result<Bool, Error>
+    func removeFolder(_ folder: String, containerId: String?) async -> Result<Bool, Error>
     func giveURL(folder: String?, file: String, containerId: String?) async -> URL?
 }
 
 public final class CloudDocumentsService: CloudDocumentsServiceProtocol {
-    public func saveDocument(localDocumentsURL: URL, folder: String?, containerId: String? = nil) async -> Result<URL, AppError> {
+    public func saveDocument(localDocumentsURL: URL, folder: String?, containerId: String? = nil) async -> Result<URL, Error> {
         if let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: containerId)?.appendingPathComponent("Documents", isDirectory: true) {
             if !FileManager.default.fileExists(atPath: iCloudDocumentsURL.path, isDirectory: nil) {
                 do {
                     try FileManager.default.createDirectory(at: iCloudDocumentsURL, withIntermediateDirectories: true, attributes: nil)
                 } catch {
-                    return .failure(.cloudDocuments(type: .savingItem))
+                    return .failure(CloudError.saveFailed)
                 }
             }
         }
@@ -37,7 +36,7 @@ public final class CloudDocumentsService: CloudDocumentsServiceProtocol {
                     do {
                         try FileManager.default.createDirectory(at: iCloudDocumentsFolderURL, withIntermediateDirectories: true, attributes: nil)
                     } catch {
-                        return .failure(.cloudDocuments(type: .savingItem))
+                        return .failure(CloudError.saveFailed)
                     }
                 }
             }
@@ -54,19 +53,19 @@ public final class CloudDocumentsService: CloudDocumentsServiceProtocol {
         var isDir: ObjCBool = false
 
         guard let iCloudDocumentsURL else {
-            return .failure(.cloudDocuments(type: .notAccess))
+            return .failure(CloudError.accessDenied)
         }
 
         if FileManager.default.fileExists(atPath: iCloudDocumentsURL.path, isDirectory: &isDir) {
             do {
                 try FileManager.default.removeItem(at: iCloudDocumentsURL)
             } catch {
-                return .failure(.cloudDocuments(type: .savingItem))
+                return .failure(CloudError.saveFailed)
             }
         }
 
         do {
-            guard localDocumentsURL.startAccessingSecurityScopedResource() else { return .failure(.cloudKit(type: .notAccess)) }
+            guard localDocumentsURL.startAccessingSecurityScopedResource() else { return .failure(CloudError.accessDenied) }
             defer {
                 localDocumentsURL.stopAccessingSecurityScopedResource()
             }
@@ -74,24 +73,24 @@ public final class CloudDocumentsService: CloudDocumentsServiceProtocol {
             try FileManager.default.copyItem(at: localDocumentsURL, to: iCloudDocumentsURL)
             return .success(iCloudDocumentsURL)
         } catch {
-            return .failure(.cloudDocuments(type: .savingItem))
+            return .failure(CloudError.saveFailed)
         }
     }
 
-    public func removeDocument(icloudUrl: URL) async -> Result<Bool, AppError> {
+    public func removeDocument(icloudUrl: URL) async -> Result<Bool, Error> {
         do {
             try FileManager.default.removeItem(at: icloudUrl)
             return .success(true)
         } catch {
-            return .failure(.cloudDocuments(type: .deleteItem))
+            return .failure(CloudError.deleteFailed)
         }
     }
 
-    public func removeFolder(_ folder: String, containerId: String? = nil) async -> Result<Bool, AppError> {
+    public func removeFolder(_ folder: String, containerId: String? = nil) async -> Result<Bool, Error> {
         guard let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: containerId)?
             .appendingPathComponent("Documents", isDirectory: true)
             .appendingPathComponent(folder, isDirectory: true)
-        else { return .failure(.cloudDocuments(type: .deleteItem)) }
+        else { return .failure(CloudError.deleteFailed) }
         var isDir: ObjCBool = true
 
         if FileManager.default.fileExists(atPath: iCloudDocumentsURL.path, isDirectory: &isDir) {
@@ -99,10 +98,10 @@ public final class CloudDocumentsService: CloudDocumentsServiceProtocol {
                 try FileManager.default.removeItem(at: iCloudDocumentsURL)
                 return .success(true)
             } catch {
-                return .failure(.cloudDocuments(type: .deleteItem))
+                return .failure(CloudError.deleteFailed)
             }
         }
-        return .failure(.cloudDocuments(type: .deleteItem))
+        return .failure(CloudError.deleteFailed)
     }
 
     public func giveURL(folder: String?, file: String, containerId: String? = nil) -> URL? {

@@ -14,6 +14,8 @@ A comprehensive collection of service modules for Apple platforms that provides 
 - 👥 **Contacts Services** - Contacts framework integration
 - 🔔 **Notification Services** - Local notifications management
 - 📁 **File Manager Services** - File operations with iCloud Documents support
+- 🌐 **Translation Services** - Apple Translation framework integration for text translation
+- 🧠 **Intelligence Services** - Apple Intelligence framework integration (iOS 26.0+)
 - 🏭 **Dependency Injection** - Factory-based service registration and injection
 - 🌐 **Multi-platform** - Support for iOS, macOS, tvOS, and watchOS
 
@@ -356,6 +358,109 @@ case .failure(let error):
 // Save document locally
 let localURL = URL(fileURLWithPath: "/path/to/local/document.pdf")
 let localResult = await fileManager.saveDocument(pickedURL: localURL, folder: "LocalDocs")
+```
+
+### 🌐 TranslationService
+
+Apple Translation framework integration for text translation.
+
+**Features:**
+- Single and batch text translation
+- Automatic source language detection
+- Streaming batch translations
+- Pre-loading translation models
+- Multi-platform support (iOS 26.0+, macOS 26.0+)
+
+**Usage Example:**
+
+```swift
+import OversizeServices
+import FactoryKit
+
+// Inject the service
+@Injected(\.translationService) var translationService: TranslationServiceProtocol
+
+// Single translation
+do {
+    let translation = try await translationService.translate(
+        "Hello, world!",
+        from: .init(languageCode: .english),
+        to: .init(languageCode: .russian)
+    )
+    print("Translation: \(translation)")
+} catch {
+    print("Translation error: \(error)")
+}
+
+// Auto-detect source language
+let autoTranslation = try await translationService.translate(
+    "Hello, world!",
+    from: nil, // auto-detect
+    to: .init(languageCode: .russian)
+)
+
+// Batch translation
+let texts = ["Hello", "Goodbye", "Thank you"]
+let translations = try await translationService.translate(
+    texts,
+    from: .init(languageCode: .english),
+    to: .init(languageCode: .russian)
+)
+
+// Streaming batch translation
+let requests = texts.enumerated().map {
+    (text: $0.element, id: "\($0.offset)")
+}
+
+for try await (id, translation) in translationService.translateBatch(
+    requests,
+    from: nil,
+    to: .init(languageCode: .russian)
+) {
+    print("[\(id)] \(translation)")
+}
+
+// Pre-load translation model
+try await translationService.prepareTranslation(
+    from: .init(languageCode: .english),
+    to: .init(languageCode: .russian)
+)
+```
+
+**Platform Requirements:**
+- Protocol available from iOS 17.4+, macOS 14.4+ (for dependency injection)
+- Translation functionality requires iOS 26.0+, macOS 26.0+
+- Requires physical device (does not work in Simulator)
+- Internet connection needed for initial language model download
+
+### 🧠 IntelligenceService
+
+Apple Intelligence framework integration (iOS 26.0+, macOS 26.0+).
+
+**Features:**
+- Text summarization
+- Writing tools integration
+- Privacy-focused on-device processing
+
+**Usage Example:**
+
+```swift
+import OversizeServices
+import FactoryKit
+
+// Inject the service (iOS 26.0+ only)
+@Injected(\.intelligenceService) var intelligenceService: IntelligenceServiceProtocol
+
+// Summarize text
+do {
+    let summary = try await intelligenceService.summarize(
+        "Long text to summarize...",
+        type: .brief
+    )
+    print("Summary: \(summary)")
+} catch {
+    print("Summarization error: \(error)")
+}
 ```
 
 ### 🏭 OversizeServices (Core)

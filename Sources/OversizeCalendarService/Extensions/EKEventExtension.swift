@@ -22,8 +22,7 @@ public extension EKEvent {
             return meetType.title
         } else if let location = location?.components(separatedBy: .newlines), let locationText: String = location.first {
             if locationText.count < 16 {
-                let clean = locationText.trimmingCharacters(in: .whitespacesAndNewlines)
-                return clean
+                return locationText.trimmingCharacters(in: .whitespacesAndNewlines)
             } else {
                 var clean = locationText.trimmingCharacters(in: .whitespacesAndNewlines)
                 let range = clean.index(clean.startIndex, offsetBy: 16) ..< clean.endIndex

@@ -8,12 +8,11 @@ import Foundation
 import HealthKit
 #endif
 import OversizeCore
-import OversizeModels
 
 #if os(iOS) || os(macOS)
 @available(iOS 15, macOS 13.0, *)
 public protocol BodyMassServiceProtocol {
-    func requestAuthorization() async -> Result<Bool, AppError>
+    func requestAuthorization() async -> Result<Bool, Error>
     func fetchBodyMass() async throws -> HKStatisticsCollection?
     func calculateSteps(completion: @Sendable @escaping (HKStatisticsCollection?) -> Void)
     func getWeightData(forDay days: Int, completion: @Sendable @escaping (_ weight: Double?, _ date: Date?) -> Void)
@@ -40,14 +39,15 @@ open class BodyMassService: @unchecked Sendable {
 
 @available(iOS 15, macOS 13.0, *)
 extension BodyMassService: BodyMassServiceProtocol {
-    public func requestAuthorization() async -> Result<Bool, AppError> {
-        guard let healthStore, let type = bodyMassType else { return .failure(AppError.custom(title: "Not authorization")) }
+    public func requestAuthorization() async -> Result<Bool, Error> {
+        guard let healthStore else { return .failure(HealthError.accessDenied) }
+        guard let type = bodyMassType else { return .failure(HealthError.dataTypeNotAvailable) }
 
         do {
             try await healthStore.requestAuthorization(toShare: [type], read: [type])
             return .success(true)
         } catch {
-            return .failure(AppError.custom(title: "Not get"))
+            return .failure(HealthError.unknown(error))
         }
     }
 

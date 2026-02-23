@@ -8,14 +8,13 @@
 #endif
 import Foundation
 import OversizeCore
-import OversizeModels
 
 #if !os(tvOS)
 public class CalendarService: @unchecked Sendable {
     private let eventStore: EKEventStore = .init()
     public init() {}
 
-    func requestFullAccess() async -> Result<Bool, AppError> {
+    func requestFullAccess() async -> Result<Bool, Error> {
         do {
             let status: Bool = if #available(iOS 17.0, macOS 14.0, watchOS 10.0, *) {
                 try await eventStore.requestFullAccessToEvents()
@@ -25,14 +24,14 @@ public class CalendarService: @unchecked Sendable {
             if status {
                 return .success(true)
             } else {
-                return .failure(AppError.eventKit(type: .notAccess))
+                return .failure(CalendarError.accessDenied)
             }
         } catch {
-            return .failure(AppError.eventKit(type: .notAccess))
+            return .failure(CalendarError.accessDenied)
         }
     }
 
-    func requestWriteOnlyAccess() async -> Result<Bool, AppError> {
+    func requestWriteOnlyAccess() async -> Result<Bool, Error> {
         do {
             let status: Bool = if #available(iOS 17.0, macOS 14.0, watchOS 10.0, *) {
                 try await eventStore.requestWriteOnlyAccessToEvents()
@@ -42,14 +41,14 @@ public class CalendarService: @unchecked Sendable {
             if status {
                 return .success(true)
             } else {
-                return .failure(AppError.eventKit(type: .notAccess))
+                return .failure(CalendarError.accessDenied)
             }
         } catch {
-            return .failure(AppError.eventKit(type: .notAccess))
+            return .failure(CalendarError.accessDenied)
         }
     }
 
-    public func fetchEvents(start: Date, end: Date = Date(), filtredCalendarsIds: [String] = []) async -> Result<[EKEvent], AppError> {
+    public func fetchEvents(start: Date, end: Date = Date(), filtredCalendarsIds: [String] = []) async -> Result<[EKEvent], Error> {
         let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendars = eventStore.calendars(for: .event)
@@ -70,21 +69,21 @@ public class CalendarService: @unchecked Sendable {
         return .success(events)
     }
 
-    public func fetchCalendars() async -> Result<[EKCalendar], AppError> {
+    public func fetchCalendars() async -> Result<[EKCalendar], Error> {
         let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendars = eventStore.calendars(for: .event)
         return .success(calendars)
     }
 
-    public func fetchDefaultCalendar() async -> Result<EKCalendar?, AppError> {
+    public func fetchDefaultCalendar() async -> Result<EKCalendar?, Error> {
         let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendar = eventStore.defaultCalendarForNewEvents
         return .success(calendar)
     }
 
-    public func fetchSourses() async -> Result<[EKSource], AppError> {
+    public func fetchSourses() async -> Result<[EKSource], Error> {
         let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
         let calendars = eventStore.sources
@@ -108,7 +107,7 @@ public class CalendarService: @unchecked Sendable {
         recurrenceRules: CalendarEventRecurrenceRules = .never,
         recurrenceEndRules: CalendarEventEndRecurrenceRules = .never,
         span: EKSpan = .thisEvent,
-    ) async -> Result<Bool, AppError> {
+    ) async -> Result<Bool, Error> {
         let access = await requestWriteOnlyAccess()
         if case let .failure(error) = access { return .failure(error) }
         let newEvent: EKEvent = if let event {
@@ -159,15 +158,15 @@ public class CalendarService: @unchecked Sendable {
             #endif
             return .success(true)
         } catch {
-            return .failure(.eventKit(type: .savingItem))
+            return .failure(CalendarError.saveFailed)
         }
     }
 
     @available(iOS 15.0, macOS 13.0, visionOS 1.0, *)
-    public func deleteEvent(identifier: String, span: EKSpan = .thisEvent) async -> Result<Bool, AppError> {
+    public func deleteEvent(identifier: String, span: EKSpan = .thisEvent) async -> Result<Bool, Error> {
         let access = await requestFullAccess()
         if case let .failure(error) = access { return .failure(error) }
-        guard let event = eventStore.fetchEvent(identifier: identifier) else { return .failure(.custom(title: "Not deleted")) }
+        guard let event = eventStore.fetchEvent(identifier: identifier) else { return .failure(CalendarError.itemNotFound) }
 
         do {
             #if !os(watchOS)
@@ -175,7 +174,7 @@ public class CalendarService: @unchecked Sendable {
             #endif
             return .success(true)
         } catch {
-            return .failure(.eventKit(type: .deleteItem))
+            return .failure(CalendarError.deleteFailed)
         }
     }
 }

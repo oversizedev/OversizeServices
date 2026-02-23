@@ -12,7 +12,7 @@ final class OversizeServicesTests: XCTestCase {
         Container.shared.appStateService.reset()
     }
 
-    func testAppRunCount() throws {
+    func testAppRunCount() {
         Container.shared.appStateService.register { AppStateService() }
         let newRunCount = Container.shared.appStateService().appRunCount + 1
         Container.shared.appStateService().appRun()

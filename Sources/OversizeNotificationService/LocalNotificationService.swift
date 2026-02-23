@@ -4,7 +4,6 @@
 //
 
 import OversizeCore
-import OversizeModels
 import SwiftUI
 @preconcurrency import UserNotifications
 
@@ -16,7 +15,7 @@ public protocol LocalNotificationServiceProtocol: Sendable {
     func scheduleNotification(id: UUID, title: String, body: String, timeInterval: Double, repeatNotification: Bool, scheduleType: LocalNotification.ScheduleType, dateComponents: DateComponents) async
     func fetchPendingIds() async -> [String]
     func removeRequest(withIdentifier identifier: String)
-    func requestAccess() async -> Result<Bool, AppError>
+    func requestAccess() async -> Result<Bool, Error>
 }
 
 public final class LocalNotificationService: NSObject, @unchecked Sendable {
@@ -43,22 +42,22 @@ extension LocalNotificationService: LocalNotificationServiceProtocol {
         isGranted = (currentSettings.authorizationStatus == .authorized)
     }
 
-    public func requestAccess() async -> Result<Bool, AppError> {
+    public func requestAccess() async -> Result<Bool, Error> {
         let _ = try? await requestAuthorization()
         let currentSettings = await notificationCenter.notificationSettings()
         switch currentSettings.authorizationStatus {
         case .notDetermined:
-            return .failure(.notifications(type: .notDetermined))
+            return .failure(NotificationError.permissionNotDetermined)
         case .denied:
-            return .failure(.notifications(type: .notAccess))
+            return .failure(NotificationError.accessDenied)
         case .authorized:
             return .success(true)
         case .provisional:
-            return .failure(.notifications(type: .notAccess))
+            return .failure(NotificationError.accessDenied)
         case .ephemeral:
-            return .failure(.notifications(type: .notAccess))
+            return .failure(NotificationError.accessDenied)
         @unknown default:
-            return .failure(.notifications(type: .unknown))
+            return .failure(NotificationError.unknown(nil))
         }
     }
 

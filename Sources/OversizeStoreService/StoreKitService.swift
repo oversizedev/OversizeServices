@@ -5,7 +5,6 @@
 
 import Foundation
 import OversizeCore
-import OversizeModels
 import OversizeServices
 import StoreKit
 
@@ -40,7 +39,7 @@ public enum SubscriptionTier: Int, Comparable, Sendable {
 }
 
 public final class StoreKitService: Sendable {
-    public func requestProducts(productIds: [String]) async -> Result<StoreKitProducts, AppError> {
+    public func requestProducts(productIds: [String]) async -> Result<StoreKitProducts, Error> {
         do {
             let storeProducts = try await Product.products(for: productIds)
 
@@ -74,11 +73,11 @@ public final class StoreKitService: Sendable {
             return .success(products)
         } catch {
             logError("Failed product request from the App Store server", error: error)
-            return .failure(.custom(title: "Failed product request from the App Store server"))
+            return .failure(CustomError(title: "Failed product request from the App Store server"))
         }
     }
 
-    public func purchase(_ product: Product) async throws -> Result<Transaction, AppError> {
+    public func purchase(_ product: Product) async throws -> Result<Transaction, Error> {
         let result = try await product.purchase()
 
         switch result {
@@ -88,9 +87,9 @@ public final class StoreKitService: Sendable {
 
             return .success(transaction)
         case .userCancelled, .pending:
-            return .failure(.custom(title: "Error"))
+            return .failure(CustomError(title: "Error"))
         default:
-            return .failure(.custom(title: "Error"))
+            return .failure(CustomError(title: "Error"))
         }
     }
 
@@ -118,7 +117,7 @@ public final class StoreKitService: Sendable {
     }
 
     @MainActor
-    public func updateCustomerProductStatus(products: StoreKitProducts) async -> Result<StoreKitProducts, AppError> {
+    public func updateCustomerProductStatus(products: StoreKitProducts) async -> Result<StoreKitProducts, Error> {
         var purchasedNonConsumable: [Product] = []
         var purchasedAutoRenewable: [Product] = []
         var purchasedNonRenewable: [Product] = []
@@ -154,7 +153,7 @@ public final class StoreKitService: Sendable {
                 }
 
             } catch {
-                return .failure(.custom(title: error.localizedDescription))
+                return .failure(CustomError(title: error.localizedDescription))
             }
         }
 
@@ -213,7 +212,7 @@ public final class StoreKitService: Sendable {
         products.sorted(by: { $0.price < $1.price })
     }
 
-    // Get a subscription's level of service using the product ID.
+    /// Get a subscription's level of service using the product ID.
     public func tier(for productId: String) -> SubscriptionTier {
         if productId.contains(".yearly") {
             .yearly
@@ -261,7 +260,7 @@ public final class StoreKitService: Sendable {
     }
 
     public func paymentTypeLabel(paymentMode: Product.SubscriptionOffer.PaymentMode) -> String {
-        let trialTypeLabel: String = if #available(iOS 15.4, macOS 12.3, tvOS 15.4, *) {
+        if #available(iOS 15.4, macOS 12.3, tvOS 15.4, *) {
             paymentMode.localizedDescription
         } else {
             switch paymentMode {
@@ -275,7 +274,6 @@ public final class StoreKitService: Sendable {
                 ""
             }
         }
-        return trialTypeLabel
     }
 
     public func salePercent(product: Product, products: StoreKitProducts) -> Decimal {

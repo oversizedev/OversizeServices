@@ -8,7 +8,6 @@ import Foundation
 import HealthKit
 #endif
 import OversizeCore
-import OversizeModels
 
 #if os(iOS) || os(macOS)
 @available(iOS 15, macOS 13.0, *)
@@ -21,12 +20,12 @@ public class BloodPressureService: HealthKitService, @unchecked Sendable {
 
 @available(iOS 15, macOS 13.0, *)
 public extension BloodPressureService {
-    func requestAuthorization() async -> Result<Bool, AppError> {
-        guard let healthStore,
-              let bloodPressureSystolicType,
+    func requestAuthorization() async -> Result<Bool, Error> {
+        guard let healthStore else { return .failure(HealthError.accessDenied) }
+        guard let bloodPressureSystolicType,
               let bloodPressureDiastolicType,
               let heartRateType
-        else { return .failure(AppError.healthKit(type: .unknown)) }
+        else { return .failure(HealthError.dataTypeNotAvailable) }
 
         do {
             try await healthStore.requestAuthorization(
@@ -43,16 +42,16 @@ public extension BloodPressureService {
             )
             return .success(true)
         } catch {
-            return .failure(AppError.healthKit(type: .notAccess))
+            return .failure(HealthError.unknown(error))
         }
     }
 }
 
-// Work with SyncId
+/// Work with SyncId
 @available(iOS 15, macOS 13.0, *)
 public extension BloodPressureService {
-    func saveHeartRate(value: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<HKQuantitySample, AppError> {
-        guard let heartRateType else { return .failure(AppError.healthKit(type: .savingItem)) }
+    func saveHeartRate(value: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<HKQuantitySample, Error> {
+        guard let heartRateType else { return .failure(HealthError.saveFailed) }
         var metadata = [String: Any]()
         metadata[HKMetadataKeySyncIdentifier] = syncId.uuidString
         metadata[HKMetadataKeySyncVersion] = syncVersion
@@ -62,11 +61,11 @@ public extension BloodPressureService {
         return await saveQuantitySample(heartRateSample)
     }
 
-    func saveBloodPressure(systolic: Int, diastolic: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<HKCorrelation, AppError> {
+    func saveBloodPressure(systolic: Int, diastolic: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<HKCorrelation, Error> {
         guard let bloodPressureType,
               let bloodPressureSystolicType,
               let bloodPressureDiastolicType
-        else { return .failure(AppError.healthKit(type: .savingItem)) }
+        else { return .failure(HealthError.saveFailed) }
 
         var metadata = [String: Any]()
         metadata[HKMetadataKeySyncIdentifier] = syncId.uuidString
@@ -86,13 +85,13 @@ public extension BloodPressureService {
         return await saveCorrelation(correlation)
     }
 
-    func saveBloodPressure(systolic: Int, diastolic: Int, heartRate: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<(HKCorrelation, HKQuantitySample), AppError> {
+    func saveBloodPressure(systolic: Int, diastolic: Int, heartRate: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<(HKCorrelation, HKQuantitySample), Error> {
         guard let bloodPressureType,
               let bloodPressureSystolicType,
               let bloodPressureDiastolicType,
               let heartRateType
         else {
-            return .failure(AppError.healthKit(type: .savingItem))
+            return .failure(HealthError.saveFailed)
         }
 
         var metadata = [String: Any]()
@@ -123,30 +122,30 @@ public extension BloodPressureService {
         }
     }
 
-    func deleteBloodPressure(syncId: UUID) async -> Result<Bool, AppError> {
-        guard let bloodPressureType else { return .failure(AppError.healthKit(type: .deleteItem)) }
+    func deleteBloodPressure(syncId: UUID) async -> Result<Bool, Error> {
+        guard let bloodPressureType else { return .failure(HealthError.deleteFailed) }
         return await delete(type: bloodPressureType, syncId: syncId)
     }
 
-    func deleteHeartRate(syncId: UUID) async -> Result<Bool, AppError> {
-        guard let heartRateType else { return .failure(AppError.healthKit(type: .deleteItem)) }
+    func deleteHeartRate(syncId: UUID) async -> Result<Bool, Error> {
+        guard let heartRateType else { return .failure(HealthError.deleteFailed) }
         return await delete(type: heartRateType, syncId: syncId)
     }
 
-    func replaceBloodPressure(systolic: Int, diastolic: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<HKCorrelation, AppError> {
+    func replaceBloodPressure(systolic: Int, diastolic: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<HKCorrelation, Error> {
         await saveBloodPressure(systolic: systolic, diastolic: diastolic, date: date, syncId: syncId, syncVersion: syncVersion + 1)
     }
 
-    func replaceBloodPressure(systolic: Int, diastolic: Int, heartRate: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<(HKCorrelation, HKQuantitySample), AppError> {
+    func replaceBloodPressure(systolic: Int, diastolic: Int, heartRate: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<(HKCorrelation, HKQuantitySample), Error> {
         await saveBloodPressure(systolic: systolic, diastolic: diastolic, heartRate: heartRate, date: date, syncId: syncId, syncVersion: syncVersion + 1)
     }
 
-    func replaceHeartRate(value: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<HKQuantitySample, AppError> {
+    func replaceHeartRate(value: Int, date: Date, syncId: UUID, syncVersion: Int) async -> Result<HKQuantitySample, Error> {
         await saveHeartRate(value: value, date: date, syncId: syncId, syncVersion: syncVersion + 1)
     }
 
-    func fetchBloodPressure(startDate: Date, endDate: Date = Date()) async -> Result<[(UUID, UUID?, Double, Double, Date)], AppError> {
-        guard let bloodPressureType, let bloodPressureSystolicType, let bloodPressureDiastolicType else { return .failure(AppError.healthKit(type: .fetchItems)) }
+    func fetchBloodPressure(startDate: Date, endDate: Date = Date()) async -> Result<[(UUID, UUID?, Double, Double, Date)], Error> {
+        guard let bloodPressureType, let bloodPressureSystolicType, let bloodPressureDiastolicType else { return .failure(HealthError.fetchFailed) }
         let result = await fetchCorrelation(startDate: startDate, endDate: endDate, type: bloodPressureType)
         switch result {
         case let .success(data):
@@ -182,11 +181,11 @@ public extension BloodPressureService {
     }
 }
 
-// Work with HKObjects UUIDs
+/// Work with HKObjects UUIDs
 @available(iOS 15, macOS 13.0, *)
 public extension BloodPressureService {
-    func fetchBloodPressure(startDate: Date, endDate: Date = Date()) async -> Result<[(UUID, Double, Double, Date)], AppError> {
-        guard let bloodPressureType, let bloodPressureSystolicType, let bloodPressureDiastolicType else { return .failure(AppError.healthKit(type: .fetchItems)) }
+    func fetchBloodPressure(startDate: Date, endDate: Date = Date()) async -> Result<[(UUID, Double, Double, Date)], Error> {
+        guard let bloodPressureType, let bloodPressureSystolicType, let bloodPressureDiastolicType else { return .failure(HealthError.fetchFailed) }
         let result = await fetchCorrelation(startDate: startDate, endDate: endDate, type: bloodPressureType)
         switch result {
         case let .success(data):
@@ -209,12 +208,12 @@ public extension BloodPressureService {
         }
     }
 
-    func fetchBloodPressureObjectById(uuid: UUID) async -> Result<HKObject, AppError> {
-        guard let bloodPressureType else { return .failure(AppError.healthKit(type: .fetchItems)) }
+    func fetchBloodPressureObjectById(uuid: UUID) async -> Result<HKObject, Error> {
+        guard let bloodPressureType else { return .failure(HealthError.fetchFailed) }
         return await fetchCorrelationById(uuid: uuid, type: bloodPressureType)
     }
 
-    func fetcHeartRate(startDate: Date, endDate: Date = Date()) async throws -> Result<[(UUID, Double, Date)], AppError> {
+    func fetcHeartRate(startDate: Date, endDate: Date = Date()) async throws -> Result<[(UUID, Double, Date)], Error> {
         let result = await fetchHeartRateSample(startDate: startDate, endDate: endDate)
         switch result {
         case let .success(samples):
@@ -225,17 +224,17 @@ public extension BloodPressureService {
         }
     }
 
-    func fetchHeartRateSample(startDate: Date, endDate: Date = Date()) async -> Result<[HKQuantitySample], AppError> {
-        guard let heartRateType else { return .failure(.healthKit(type: .fetchItems)) }
+    func fetchHeartRateSample(startDate: Date, endDate: Date = Date()) async -> Result<[HKQuantitySample], Error> {
+        guard let heartRateType else { return .failure(HealthError.fetchFailed) }
         return await fetchHKQuantitySample(startDate: startDate, endDate: endDate, type: heartRateType)
     }
 
-    func fetchHeartRateObjectById(uuid: UUID) async -> Result<HKObject, AppError> {
-        guard let heartRateType else { return .failure(AppError.healthKit(type: .fetchItems)) }
+    func fetchHeartRateObjectById(uuid: UUID) async -> Result<HKObject, Error> {
+        guard let heartRateType else { return .failure(HealthError.fetchFailed) }
         return await fetchObjectById(uuid: uuid, type: heartRateType)
     }
 
-    func replaceBloodPressure(uuid: UUID, systolic: Int, diastolic: Int, date: Date) async -> Result<HKCorrelation, AppError> {
+    func replaceBloodPressure(uuid: UUID, systolic: Int, diastolic: Int, date: Date) async -> Result<HKCorrelation, Error> {
         let result = await fetchBloodPressureObjectById(uuid: uuid)
         switch result {
         case let .success(object):
@@ -244,14 +243,14 @@ public extension BloodPressureService {
             case .success:
                 return await saveBloodPressure(systolic: systolic, diastolic: diastolic, date: date)
             case .failure:
-                return .failure(AppError.healthKit(type: .updateItem))
+                return .failure(HealthError.updateFailed)
             }
         case .failure:
-            return .failure(AppError.healthKit(type: .updateItem))
+            return .failure(HealthError.updateFailed)
         }
     }
 
-    func replaceBloodPressure(bpUuid: UUID, hrUuid: UUID, systolic: Int, diastolic: Int, heartRate: Int, date: Date) async -> Result<(HKCorrelation, HKQuantitySample), AppError> {
+    func replaceBloodPressure(bpUuid: UUID, hrUuid: UUID, systolic: Int, diastolic: Int, heartRate: Int, date: Date) async -> Result<(HKCorrelation, HKQuantitySample), Error> {
         let resultBloodPressureObject = await fetchBloodPressureObjectById(uuid: bpUuid)
         let resultHeartRateObject = await fetchHeartRateObjectById(uuid: hrUuid)
         if case let .success(bloodPressureObject) = resultBloodPressureObject, case let .success(heartRateObject) = resultHeartRateObject {
@@ -260,14 +259,14 @@ public extension BloodPressureService {
             case .success:
                 return await saveBloodPressure(systolic: systolic, diastolic: diastolic, heartRate: heartRate, date: date)
             case .failure:
-                return .failure(AppError.healthKit(type: .updateItem))
+                return .failure(HealthError.updateFailed)
             }
         } else {
-            return .failure(AppError.healthKit(type: .updateItem))
+            return .failure(HealthError.updateFailed)
         }
     }
 
-    func deleteBloodPressure(uuid: UUID) async -> Result<HKObject, AppError> {
+    func deleteBloodPressure(uuid: UUID) async -> Result<HKObject, Error> {
         let result = await fetchBloodPressureObjectById(uuid: uuid)
         switch result {
         case let .success(object):
@@ -277,11 +276,11 @@ public extension BloodPressureService {
         }
     }
 
-    func saveBloodPressure(systolic: Int, diastolic: Int, date: Date = Date()) async -> Result<HKCorrelation, AppError> {
+    func saveBloodPressure(systolic: Int, diastolic: Int, date: Date = Date()) async -> Result<HKCorrelation, Error> {
         guard let bloodPressureType,
               let bloodPressureSystolicType,
               let bloodPressureDiastolicType
-        else { return .failure(AppError.healthKit(type: .savingItem)) }
+        else { return .failure(HealthError.saveFailed) }
 
         let unit = HKUnit.millimeterOfMercury()
 
@@ -297,13 +296,13 @@ public extension BloodPressureService {
         return await saveCorrelation(correlation)
     }
 
-    func saveBloodPressure(systolic: Int, diastolic: Int, heartRate: Int, date: Date = Date()) async -> Result<(HKCorrelation, HKQuantitySample), AppError> {
+    func saveBloodPressure(systolic: Int, diastolic: Int, heartRate: Int, date: Date = Date()) async -> Result<(HKCorrelation, HKQuantitySample), Error> {
         guard let bloodPressureType,
               let bloodPressureSystolicType,
               let bloodPressureDiastolicType,
               let heartRateType
         else {
-            return .failure(AppError.healthKit(type: .savingItem))
+            return .failure(HealthError.saveFailed)
         }
 
         let unit = HKUnit.millimeterOfMercury()
@@ -330,15 +329,15 @@ public extension BloodPressureService {
         }
     }
 
-    func saveHeartRate(value: Int, date: Date) async -> Result<HKQuantitySample, AppError> {
-        guard let heartRateType else { return .failure(AppError.healthKit(type: .savingItem)) }
+    func saveHeartRate(value: Int, date: Date) async -> Result<HKQuantitySample, Error> {
+        guard let heartRateType else { return .failure(HealthError.saveFailed) }
         let beatsCountUnit = HKUnit.count()
         let heartRateQuantity = HKQuantity(unit: beatsCountUnit.unitDivided(by: HKUnit.minute()), doubleValue: Double(value))
         let heartRateSample = HKQuantitySample(type: heartRateType, quantity: heartRateQuantity, start: date, end: date)
         return await saveQuantitySample(heartRateSample)
     }
 
-    func deleteHeartRate(uuid: UUID) async -> Result<HKObject, AppError> {
+    func deleteHeartRate(uuid: UUID) async -> Result<HKObject, Error> {
         let result = await fetchHeartRateObjectById(uuid: uuid)
         switch result {
         case let .success(object):
@@ -348,7 +347,7 @@ public extension BloodPressureService {
         }
     }
 
-    func replaceHeartRate(uuid: UUID, value: Int, date: Date) async -> Result<HKQuantitySample, AppError> {
+    func replaceHeartRate(uuid: UUID, value: Int, date: Date) async -> Result<HKQuantitySample, Error> {
         let result = await fetchHeartRateObjectById(uuid: uuid)
         switch result {
         case let .success(object):
@@ -357,10 +356,10 @@ public extension BloodPressureService {
             case .success:
                 return await saveHeartRate(value: value, date: date)
             case .failure:
-                return .failure(AppError.healthKit(type: .updateItem))
+                return .failure(HealthError.updateFailed)
             }
         case .failure:
-            return .failure(AppError.healthKit(type: .updateItem))
+            return .failure(HealthError.updateFailed)
         }
     }
 }

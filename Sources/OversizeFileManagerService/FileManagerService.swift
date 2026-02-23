@@ -5,12 +5,11 @@
 
 import Foundation
 import OversizeCore
-import OversizeModels
 
 public protocol FileManagerServiceProtocol {
-    func saveDocument(pickedURL: URL, folder: String?) async -> Result<URL, AppError>
-    func removeDocument(localURL: URL) async -> Result<Bool, AppError>
-    func removeFolder(_ folder: String) async -> Result<Bool, AppError>
+    func saveDocument(pickedURL: URL, folder: String?) async -> Result<URL, Error>
+    func removeDocument(localURL: URL) async -> Result<Bool, Error>
+    func removeFolder(_ folder: String) async -> Result<Bool, Error>
     func giveURL(folder: String?, file: String) async -> URL?
 }
 
@@ -30,9 +29,9 @@ public final class FileManagerService: FileManagerServiceProtocol {
     ///   - pickedURL: URL of picked document
     ///   - project: project name
     /// - Returns: Local URL of document
-    public func saveDocument(pickedURL: URL, folder: String?) async -> Result<URL, AppError> {
+    public func saveDocument(pickedURL: URL, folder: String?) async -> Result<URL, Error> {
         guard let url = rootUrl else {
-            return .failure(.fileManager(type: .notAccess))
+            return .failure(FileError.accessDenied)
         }
         do {
             var destinationDocumentsURL: URL = url
@@ -50,7 +49,7 @@ public final class FileManagerService: FileManagerServiceProtocol {
                 do {
                     try FileManager.default.createDirectory(at: destinationDocumentsURL, withIntermediateDirectories: true, attributes: nil)
                 } catch {
-                    return .failure(.fileManager(type: .savingItem))
+                    return .failure(FileError.saveFailed)
                 }
             }
 
@@ -59,7 +58,7 @@ public final class FileManagerService: FileManagerServiceProtocol {
                 try FileManager.default.removeItem(at: destinationDocumentsURL)
             }
             guard pickedURL.startAccessingSecurityScopedResource() else {
-                return .failure(.fileManager(type: .savingItem))
+                return .failure(FileError.saveFailed)
             }
 
             defer {
@@ -68,18 +67,18 @@ public final class FileManagerService: FileManagerServiceProtocol {
             try FileManager.default.copyItem(at: pickedURL, to: destinationDocumentsURL)
             return .success(destinationDocumentsURL)
         } catch {
-            return .failure(.fileManager(type: .savingItem))
+            return .failure(FileError.saveFailed)
         }
     }
 
     /// Remove Document at URL
     /// - Parameter localURL: URL of Document to be removed
-    public func removeDocument(localURL: URL) async -> Result<Bool, AppError> {
+    public func removeDocument(localURL: URL) async -> Result<Bool, Error> {
         do {
             try FileManager.default.removeItem(at: localURL)
             return .success(true)
         } catch {
-            return .failure(.fileManager(type: .deleteItem))
+            return .failure(FileError.deleteFailed)
         }
     }
 
@@ -108,9 +107,9 @@ public final class FileManagerService: FileManagerServiceProtocol {
 
     /// Remove Project Directory
     /// - Parameter project: project name
-    public func removeFolder(_ folder: String) async -> Result<Bool, AppError> {
+    public func removeFolder(_ folder: String) async -> Result<Bool, Error> {
         guard let url = rootUrl else {
-            return .failure(.fileManager(type: .deleteItem))
+            return .failure(FileError.deleteFailed)
         }
         let localDocumentsURL = url
             .appendingPathComponent(folder, isDirectory: true)
@@ -121,9 +120,9 @@ public final class FileManagerService: FileManagerServiceProtocol {
                 try FileManager.default.removeItem(at: localDocumentsURL)
                 return .success(true)
             } catch {
-                return .failure(.fileManager(type: .deleteItem))
+                return .failure(FileError.deleteFailed)
             }
         }
-        return .failure(.fileManager(type: .deleteItem))
+        return .failure(FileError.deleteFailed)
     }
 }

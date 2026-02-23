@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import Foundation
@@ -7,15 +7,13 @@ import PackageDescription
 let remoteDependencies: [PackageDescription.Package.Dependency] = [
     .package(url: "https://github.com/oversizedev/OversizeCore.git", .upToNextMajor(from: "1.3.0")),
     .package(url: "https://github.com/oversizedev/OversizeLocalizable.git", .upToNextMajor(from: "1.5.0")),
-    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3")),
-    .package(url: "https://github.com/oversizedev/OversizeModels.git", .upToNextMajor(from: "0.1.0")),
+    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.5.0")),
 ]
 
 let localDependencies: [PackageDescription.Package.Dependency] = [
     .package(name: "OversizeCore", path: "../OversizeCore"),
     .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
-    .package(name: "OversizeModels", path: "../OversizeModels"),
-    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.1.3")),
+    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.5.0")),
 ]
 
 let dependencies: [PackageDescription.Package.Dependency] = remoteDependencies
@@ -46,7 +44,6 @@ let package = Package(
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
-                .product(name: "OversizeModels", package: "OversizeModels"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
@@ -54,14 +51,13 @@ let package = Package(
             name: "OversizeFileManagerService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "OversizeModels", package: "OversizeModels"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
         .target(
             name: "OversizeContactsService",
             dependencies: [
-                .product(name: "OversizeModels", package: "OversizeModels"),
+                .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
@@ -69,7 +65,6 @@ let package = Package(
             name: "OversizeCalendarService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "OversizeModels", package: "OversizeModels"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
@@ -77,7 +72,6 @@ let package = Package(
             name: "OversizeHealthService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "OversizeModels", package: "OversizeModels"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
@@ -85,7 +79,6 @@ let package = Package(
             name: "OversizeLocationService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "OversizeModels", package: "OversizeModels"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
@@ -94,7 +87,6 @@ let package = Package(
             dependencies: [
                 "OversizeServices",
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "OversizeModels", package: "OversizeModels"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
@@ -102,7 +94,6 @@ let package = Package(
             name: "OversizeNotificationService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "OversizeModels", package: "OversizeModels"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),

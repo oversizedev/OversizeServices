@@ -6,13 +6,12 @@
 import FactoryKit
 import Foundation
 import OversizeCore
-import OversizeModels
 
 public protocol FileManagerSyncServiceProtocol {
-    func isICloudContainerAvailable() -> Result<Bool, AppError>
-    func generateUrl(urlString: String?, location: FileLocation, folder: String?, file: String?) async -> Result<URL, AppError>
-    func deleteDocument(urlString: String?, location: FileLocation, folder: String?, file: String?) async -> Result<Bool, AppError>
-    func saveDocument(fileURL: URL, folder: String?, location: FileLocation) async -> Result<URL, AppError>
+    func isICloudContainerAvailable() -> Result<Bool, Error>
+    func generateUrl(urlString: String?, location: FileLocation, folder: String?, file: String?) async -> Result<URL, Error>
+    func deleteDocument(urlString: String?, location: FileLocation, folder: String?, file: String?) async -> Result<Bool, Error>
+    func saveDocument(fileURL: URL, folder: String?, location: FileLocation) async -> Result<URL, Error>
 }
 
 public class FileManagerSyncService {
@@ -29,18 +28,17 @@ extension FileManagerSyncService: FileManagerSyncServiceProtocol {
         }
     }
 
-    public func isICloudContainerAvailable() -> Result<Bool, AppError> {
+    public func isICloudContainerAvailable() -> Result<Bool, Error> {
         if FileManager.default.ubiquityIdentityToken != nil {
-            .success(true)
-        } else {
-            .failure(.cloudDocuments(type: .notAccess))
+            return .success(true)
         }
+        return .failure(CloudError.noAccount)
     }
 
-    public func generateUrl(urlString: String?, location: FileLocation, folder: String?, file: String?) async -> Result<URL, AppError> {
+    public func generateUrl(urlString: String?, location: FileLocation, folder: String?, file: String?) async -> Result<URL, Error> {
         if URL(string: urlString.valueOrEmpty)?.fileExists() ?? false {
             guard let url = URL(string: urlString.valueOrEmpty) else {
-                return .failure(.cloudDocuments(type: .fetchItems))
+                return .failure(FileError.fetchFailed)
             }
             return .success(url)
         }
@@ -49,24 +47,29 @@ extension FileManagerSyncService: FileManagerSyncServiceProtocol {
             do {
                 try await downloadFromCloud(url: url)
             } catch {
-                return .failure(.cloudDocuments(type: .fetchItems))
+                return .failure(CloudError.fetchFailed)
             }
         } else {
             let url = await fileManagerService.giveURL(folder: folder, file: file ?? "file")
             if url?.fileExists() ?? false {
-                guard let url else { return .failure(.fileManager(type: .fetchItems)) }
+                guard let url else { return .failure(FileError.fetchFailed) }
                 return .success(url)
             }
         }
-        return .failure(.cloudDocuments(type: .fetchItems))
+        switch location {
+        case .iCloud:
+            return .failure(CloudError.fetchFailed)
+        case .local:
+            return .failure(FileError.fetchFailed)
+        }
     }
 
-    public func deleteDocument(urlString: String?, location: FileLocation, folder: String?, file: String?) async -> Result<Bool, AppError> {
+    public func deleteDocument(urlString: String?, location: FileLocation, folder: String?, file: String?) async -> Result<Bool, Error> {
         let result = await generateUrl(urlString: urlString, location: location, folder: folder, file: file)
         switch result {
         case let .success(url):
             if location == .local, !url.fileExists() {
-                return .failure(.fileManager(type: .deleteItem))
+                return .failure(FileError.deleteFailed)
             }
             let status = isICloudContainerAvailable()
             switch status {
@@ -80,7 +83,7 @@ extension FileManagerSyncService: FileManagerSyncServiceProtocol {
         }
     }
 
-    public func saveDocument(fileURL: URL, folder: String?, location: FileLocation) async -> Result<URL, AppError> {
+    public func saveDocument(fileURL: URL, folder: String?, location: FileLocation) async -> Result<URL, Error> {
         switch location {
         case .iCloud:
             let status = isICloudContainerAvailable()

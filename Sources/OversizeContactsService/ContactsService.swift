@@ -7,23 +7,23 @@
 import Contacts
 #endif
 import Foundation
-import OversizeModels
+import OversizeCore
 
 #if canImport(Contacts)
 public class ContactsService: @unchecked Sendable {
     private let contactStore: CNContactStore = .init()
     public init() {}
 
-    public func requestAccess() async -> Result<Bool, AppError> {
+    public func requestAccess() async -> Result<Bool, Error> {
         do {
             let status = try await contactStore.requestAccess(for: .contacts)
             if status {
                 return .success(true)
             } else {
-                return .failure(AppError.contacts(type: .notAccess))
+                return .failure(ContactsError.notAccess)
             }
         } catch {
-            return .failure(AppError.contacts(type: .notAccess))
+            return .failure(ContactsError.notAccess)
         }
     }
 
@@ -31,7 +31,7 @@ public class ContactsService: @unchecked Sendable {
         keysToFetch: [CNKeyDescriptor] = [CNContactVCardSerialization.descriptorForRequiredKeys()],
         order: CNContactSortOrder = .none,
         unifyResults: Bool = true,
-    ) async -> Result<[CNContact], AppError> {
+    ) async -> Result<[CNContact], Error> {
         var contacts: [CNContact] = []
         let fetchRequest = CNContactFetchRequest(keysToFetch: keysToFetch)
         fetchRequest.unifyResults = unifyResults
@@ -42,7 +42,7 @@ public class ContactsService: @unchecked Sendable {
             }
             return .success(contacts)
         } catch {
-            return .failure(AppError.contacts(type: .unknown))
+            return .failure(ContactsError.unknown(error))
         }
     }
 }
