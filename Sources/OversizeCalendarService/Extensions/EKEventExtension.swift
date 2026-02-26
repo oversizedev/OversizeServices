@@ -84,22 +84,6 @@ public extension EKEvent {
         return nil
     }
 
-    var zoomURL: URL? {
-        if let url = noteURLs?.first(where: { url in
-            if let dmain = url.hostWithoutSubdomain, let pathFirst = url.pathComponents.first {
-                guard url.pathComponents.count > 1 else { return false }
-                let zoomURL = dmain + pathFirst + url.pathComponents[1]
-                return zoomURL == "zoom.us/j"
-            } else {
-                return false
-            }
-        }) {
-            url
-        } else {
-            nil
-        }
-    }
-
     var locationURLs: [URL]? {
         guard let text = location else { return nil }
         let types: NSTextCheckingResult.CheckingType = .link
@@ -125,25 +109,87 @@ public extension EKEvent {
             if let dmain = url.hostWithoutSubdomain, let pathFirst = url.pathComponents.first {
                 guard url.pathComponents.count > 1 else { return false }
                 let zoomURL = dmain + pathFirst + url.pathComponents[1]
-                return zoomURL == "zoom.us/j"
+                return zoomURL == "zoom.us/j" || zoomURL == "zoom.us/my"
             } else {
                 return false
             }
         }) {
             return .zoom
         }
-        if let _ = urls.first(where: { $0.host == "meet.google.com" }) {
-            return .googleMeet
-        }
         if let _ = urls.first(where: { url in
             guard url.pathComponents.count > 1,
                   let host = url.host,
                   let pathFirst = url.pathComponents.first else { return false }
-
-            let temsURL: String = host + pathFirst + url.pathComponents[1]
-            return temsURL == "teams.live.com/meet"
+            let teamsURL: String = host + pathFirst + url.pathComponents[1]
+            return teamsURL == "teams.live.com/meet"
         }) {
+            return .teams
+        }
+        if let _ = urls.first(where: { url in
+            guard let host = url.host else { return false }
+            return host == "teams.microsoft.com" && url.path.hasPrefix("/l/meetup-join/")
+        }) {
+            return .teams
+        }
+        if let _ = urls.first(where: { $0.host == "meet.google.com" }) {
             return .googleMeet
+        }
+        if let _ = urls.first(where: { $0.host == "facetime.apple.com" }) {
+            return .facetime
+        }
+        if let _ = urls.first(where: { $0.hostWithoutSubdomain == "webex.com" }) {
+            return .webex
+        }
+        if let _ = urls.first(where: { url in
+            guard let host = url.host else { return false }
+            return host == "discord.gg" || (host == "discord.com" && url.path.hasPrefix("/invite/"))
+        }) {
+            return .discord
+        }
+        if let _ = urls.first(where: { $0.host == "app.slack.com" && $0.path.hasPrefix("/huddle/") }) {
+            return .slackHuddle
+        }
+        if let _ = urls.first(where: { $0.host == "meet.jit.si" }) {
+            return .jitsi
+        }
+        if let _ = urls.first(where: { $0.hostWithoutSubdomain == "whereby.com" }) {
+            return .whereby
+        }
+        if let _ = urls.first(where: { $0.host == "telemost.yandex.ru" }) {
+            return .telemost
+        }
+        if let _ = urls.first(where: { $0.host == "meeting.tencent.com" && $0.path.hasPrefix("/dm/") }) {
+            return .tencentMeeting
+        }
+        if let _ = urls.first(where: { $0.host == "vc.feishu.cn" && $0.path.hasPrefix("/j/") }) {
+            return .feishu
+        }
+        if let _ = urls.first(where: { $0.host == "vc.larksuite.com" && $0.path.hasPrefix("/j/") }) {
+            return .lark
+        }
+        if let _ = urls.first(where: { $0.host == "voovmeeting.com" }) {
+            return .voov
+        }
+        if let _ = urls.first(where: { $0.host == "meet.goto.com" }) {
+            return .goToMeeting
+        }
+        if let _ = urls.first(where: { $0.host == "v.ringcentral.com" && $0.path.hasPrefix("/join/") }) {
+            return .ringCentral
+        }
+        if let _ = urls.first(where: { $0.host?.hasPrefix("meet.zoho.") == true }) {
+            return .zohoMeeting
+        }
+        if let _ = urls.first(where: { $0.host == "8x8.vc" }) {
+            return .meet8x8
+        }
+        if let _ = urls.first(where: { $0.host == "meetings.dialpad.com" }) {
+            return .dialpad
+        }
+        if let _ = urls.first(where: { $0.host == "signal.link" && $0.path.hasPrefix("/call/") }) {
+            return .signal
+        }
+        if let _ = urls.first(where: { $0.hostWithoutSubdomain == "daily.co" }) {
+            return .daily
         }
         return nil
     }
@@ -160,25 +206,87 @@ public extension EKEvent {
             if let dmain = url.hostWithoutSubdomain, let pathFirst = url.pathComponents.first {
                 guard url.pathComponents.count > 1 else { return false }
                 let zoomURL = dmain + pathFirst + url.pathComponents[1]
-                return zoomURL == "zoom.us/j"
+                return zoomURL == "zoom.us/j" || zoomURL == "zoom.us/my"
             } else {
                 return false
             }
         }) {
             return zoomLink
         }
-        if let googleMeetLink = urls.first(where: { $0.host == "meet.google.com" }) {
-            return googleMeetLink
-        }
         if let teamsLink = urls.first(where: { url in
             guard url.pathComponents.count > 1,
                   let host = url.host,
                   let pathFirst = url.pathComponents.first else { return false }
-
-            let temsURL: String = host + pathFirst + url.pathComponents[1]
-            return temsURL == "teams.live.com/meet"
+            let teamsURL: String = host + pathFirst + url.pathComponents[1]
+            return teamsURL == "teams.live.com/meet"
         }) {
             return teamsLink
+        }
+        if let teamsWorkLink = urls.first(where: { url in
+            guard let host = url.host else { return false }
+            return host == "teams.microsoft.com" && url.path.hasPrefix("/l/meetup-join/")
+        }) {
+            return teamsWorkLink
+        }
+        if let googleMeetLink = urls.first(where: { $0.host == "meet.google.com" }) {
+            return googleMeetLink
+        }
+        if let facetimeLink = urls.first(where: { $0.host == "facetime.apple.com" }) {
+            return facetimeLink
+        }
+        if let webexLink = urls.first(where: { $0.hostWithoutSubdomain == "webex.com" }) {
+            return webexLink
+        }
+        if let discordLink = urls.first(where: { url in
+            guard let host = url.host else { return false }
+            return host == "discord.gg" || (host == "discord.com" && url.path.hasPrefix("/invite/"))
+        }) {
+            return discordLink
+        }
+        if let slackHuddleLink = urls.first(where: { $0.host == "app.slack.com" && $0.path.hasPrefix("/huddle/") }) {
+            return slackHuddleLink
+        }
+        if let jitsiLink = urls.first(where: { $0.host == "meet.jit.si" }) {
+            return jitsiLink
+        }
+        if let wherebyLink = urls.first(where: { $0.hostWithoutSubdomain == "whereby.com" }) {
+            return wherebyLink
+        }
+        if let telomostLink = urls.first(where: { $0.host == "telemost.yandex.ru" }) {
+            return telomostLink
+        }
+        if let tencentLink = urls.first(where: { $0.host == "meeting.tencent.com" && $0.path.hasPrefix("/dm/") }) {
+            return tencentLink
+        }
+        if let feishuLink = urls.first(where: { $0.host == "vc.feishu.cn" && $0.path.hasPrefix("/j/") }) {
+            return feishuLink
+        }
+        if let larkLink = urls.first(where: { $0.host == "vc.larksuite.com" && $0.path.hasPrefix("/j/") }) {
+            return larkLink
+        }
+        if let voovLink = urls.first(where: { $0.host == "voovmeeting.com" }) {
+            return voovLink
+        }
+        if let goToMeetingLink = urls.first(where: { $0.host == "meet.goto.com" }) {
+            return goToMeetingLink
+        }
+        if let ringCentralLink = urls.first(where: { $0.host == "v.ringcentral.com" && $0.path.hasPrefix("/join/") }) {
+            return ringCentralLink
+        }
+        if let zohoLink = urls.first(where: { $0.host?.hasPrefix("meet.zoho.") == true }) {
+            return zohoLink
+        }
+        if let meet8x8Link = urls.first(where: { $0.host == "8x8.vc" }) {
+            return meet8x8Link
+        }
+        if let dialpadLink = urls.first(where: { $0.host == "meetings.dialpad.com" }) {
+            return dialpadLink
+        }
+        if let signalLink = urls.first(where: { $0.host == "signal.link" && $0.path.hasPrefix("/call/") }) {
+            return signalLink
+        }
+        if let dailyLink = urls.first(where: { $0.hostWithoutSubdomain == "daily.co" }) {
+            return dailyLink
         }
         return nil
     }
@@ -198,16 +306,55 @@ public extension EKEvent {
 }
 
 public enum EKEventMeetType {
-    case zoom, googleMeet, teams
+    case zoom, teams, googleMeet, facetime, webex
+    case discord, slackHuddle, jitsi, whereby, telemost
+    case tencentMeeting, feishu, lark, voov
+    case goToMeeting, ringCentral, zohoMeeting, meet8x8, dialpad, signal, daily
 
     public var title: String {
         switch self {
         case .zoom:
             "Zoom"
-        case .googleMeet:
-            "Google Meet"
         case .teams:
             "Microsoft Teams"
+        case .googleMeet:
+            "Google Meet"
+        case .facetime:
+            "FaceTime"
+        case .webex:
+            "Cisco Webex"
+        case .discord:
+            "Discord"
+        case .slackHuddle:
+            "Slack Huddle"
+        case .jitsi:
+            "Jitsi Meet"
+        case .whereby:
+            "Whereby"
+        case .telemost:
+            "Yandex Telemost"
+        case .tencentMeeting:
+            "Tencent Meeting"
+        case .feishu:
+            "Feishu"
+        case .lark:
+            "Lark"
+        case .voov:
+            "VooV Meeting"
+        case .goToMeeting:
+            "GoTo Meeting"
+        case .ringCentral:
+            "RingCentral"
+        case .zohoMeeting:
+            "Zoho Meeting"
+        case .meet8x8:
+            "8x8 Meet"
+        case .dialpad:
+            "Dialpad"
+        case .signal:
+            "Signal"
+        case .daily:
+            "Daily"
         }
     }
 }
