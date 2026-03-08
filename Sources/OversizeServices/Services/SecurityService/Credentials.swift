@@ -7,7 +7,7 @@ import Foundation
 import OversizeCore
 
 public extension SecureStorageService {
-    struct Credentials: Sendable {
+    struct Credentials {
         public var login: String
         public var password: String
 

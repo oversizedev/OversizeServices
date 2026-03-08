@@ -8,7 +8,7 @@ import OversizeCore
 import Security
 
 public final class SecureStorageService: @unchecked Sendable {
-    enum KeychainError: Error, Sendable {
+    enum KeychainError: Error {
         case itemAlreadyExist
         case itemNotFound
         case errorStatus(String?)
