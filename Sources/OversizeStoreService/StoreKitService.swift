@@ -161,7 +161,14 @@ public final class StoreKitService: Sendable {
         prushedPrducts.purchasedNonConsumable = purchasedNonConsumable
         prushedPrducts.purchasedNonRenewable = purchasedNonRenewable
         prushedPrducts.purchasedAutoRenewable = purchasedAutoRenewable
-        prushedPrducts.subscriptionGroupStatus = try? await prushedPrducts.autoRenewable.first?.subscription?.status.first?.state
+        if let subscription = prushedPrducts.autoRenewable.first?.subscription,
+           let statuses = try? await subscription.status
+        {
+            let priorityOrder: [RenewalState] = [.subscribed, .inGracePeriod, .inBillingRetryPeriod, .expired, .revoked]
+            prushedPrducts.subscriptionGroupStatus = priorityOrder.first { priority in
+                statuses.contains { $0.state == priority }
+            }
+        }
 
         return .success(prushedPrducts)
     }
