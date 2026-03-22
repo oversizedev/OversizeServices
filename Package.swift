@@ -29,14 +29,15 @@ let package = Package(
         .watchOS(.v9),
     ],
     products: [
-        .library(name: "OversizeHealthService", targets: ["OversizeHealthService"]),
         .library(name: "OversizeServices", targets: ["OversizeServices"]),
+        .library(name: "OversizeHealthService", targets: ["OversizeHealthService"]),
         .library(name: "OversizeStoreService", targets: ["OversizeStoreService"]),
         .library(name: "OversizeLocationService", targets: ["OversizeLocationService"]),
         .library(name: "OversizeCalendarService", targets: ["OversizeCalendarService"]),
         .library(name: "OversizeContactsService", targets: ["OversizeContactsService"]),
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
+        .library(name: "OversizeWebService", targets: ["OversizeWebService"]),
     ],
     dependencies: dependencies,
     targets: [
@@ -93,6 +94,13 @@ let package = Package(
         ),
         .target(
             name: "OversizeNotificationService",
+            dependencies: [
+                .product(name: "OversizeCore", package: "OversizeCore"),
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
+        ),
+        .target(
+            name: "OversizeWebService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "FactoryKit", package: "Factory"),
