@@ -24,6 +24,11 @@ public enum Info: Sendable {
             Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
         }
 
+        public static var isFirstVersion: Bool {
+            guard let version else { return false }
+            return version == "1.0" || version == "1.0.0"
+        }
+
         @MainActor
         public static var device: String? {
             #if os(iOS) || os(tvOS) || os(visionOS)
