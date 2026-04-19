@@ -30,6 +30,7 @@ let package = Package(
     ],
     products: [
         .library(name: "OversizeServices", targets: ["OversizeServices"]),
+        .library(name: "OversizeCloudService", targets: ["OversizeCloudService"]),
         .library(name: "OversizeHealthService", targets: ["OversizeHealthService"]),
         .library(name: "OversizeStoreService", targets: ["OversizeStoreService"]),
         .library(name: "OversizeLocationService", targets: ["OversizeLocationService"]),
@@ -38,6 +39,7 @@ let package = Package(
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
         .library(name: "OversizeWebService", targets: ["OversizeWebService"]),
+        .library(name: "OversizeWeatherService", targets: ["OversizeWeatherService"]),
     ],
     dependencies: dependencies,
     targets: [
@@ -46,6 +48,13 @@ let package = Package(
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
+        ),
+        .target(
+            name: "OversizeCloudService",
+            dependencies: [
+                .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
@@ -104,6 +113,16 @@ let package = Package(
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "FactoryKit", package: "Factory"),
+            ],
+        ),
+        .target(
+            name: "OversizeWeatherService",
+            dependencies: [
+                .product(name: "OversizeCore", package: "OversizeCore"),
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
+            linkerSettings: [
+                .linkedFramework("WeatherKit", .when(platforms: [.iOS, .macOS, .watchOS, .tvOS])),
             ],
         ),
         .testTarget(
