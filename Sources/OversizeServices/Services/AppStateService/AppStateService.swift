@@ -34,7 +34,7 @@ public final class AppStateService: ObservableObject {
         }
         appRunCount += 1
         lastRunDate = Date()
-        lastRunVersion = Info.App.version.valueOrEmpty
+        lastRunVersion = Info.App.version?.stringValue ?? ""
         logDebugInfo()
     }
 
