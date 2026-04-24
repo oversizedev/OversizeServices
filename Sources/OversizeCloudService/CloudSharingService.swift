@@ -103,6 +103,12 @@ public actor CloudSharingService {
             .map { ShareParticipant(from: $0) }
     }
 
+    public func canCurrentUserEdit(zoneID: CKRecordZone.ID) async throws -> Bool {
+        guard let share = try await fetchShare(zoneID: zoneID) else { return true }
+        guard let participant = share.currentUserParticipant else { return true }
+        return participant.role == .owner || participant.permission == .readWrite
+    }
+
     public func updatePermission(
         for participant: ShareParticipant,
         to permission: ShareParticipant.Permission,

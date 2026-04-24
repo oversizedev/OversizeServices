@@ -107,7 +107,7 @@ public class CalendarService: @unchecked Sendable {
         recurrenceRules: CalendarEventRecurrenceRules = .never,
         recurrenceEndRules: CalendarEventEndRecurrenceRules = .never,
         span: EKSpan = .thisEvent,
-    ) async -> Result<Bool, Error> {
+    ) async -> Result<EKEvent, Error> {
         let access = await requestWriteOnlyAccess()
         if case let .failure(error) = access { return .failure(error) }
         let newEvent: EKEvent = if let event {
@@ -156,10 +156,16 @@ public class CalendarService: @unchecked Sendable {
             #if !os(watchOS)
             try eventStore.save(newEvent, span: span, commit: true)
             #endif
-            return .success(true)
+            return .success(newEvent)
         } catch {
             return .failure(CalendarError.saveFailed)
         }
+    }
+
+    public func fetchEvent(identifier: String) async -> EKEvent? {
+        let access = await requestFullAccess()
+        guard case .success = access else { return nil }
+        return eventStore.event(withIdentifier: identifier)
     }
 
     @available(iOS 15.0, macOS 13.0, visionOS 1.0, *)
