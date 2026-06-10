@@ -5,7 +5,7 @@
 import Foundation
 import WeatherKit
 
-@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
+@available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)
 public struct WeatherData: Sendable {
     public let date: Date
     public let highTemperature: Measurement<UnitTemperature>
@@ -15,7 +15,7 @@ public struct WeatherData: Sendable {
     public let precipitationChance: Double
 }
 
-@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
+@available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)
 extension WeatherData {
     init(from day: DayWeather) {
         date = day.date
@@ -27,8 +27,8 @@ extension WeatherData {
     }
 }
 
-@available(iOS 16.0, macOS 13.0, watchOS 9.0, tvOS 16.0, *)
-private extension WeatherCondition {
+@available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)
+extension WeatherCondition {
     var weatherDescription: String {
         switch self {
         case .blizzard: "Blizzard"
