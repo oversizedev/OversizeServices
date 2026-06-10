@@ -59,7 +59,7 @@ public final class StoreKitService: Sendable {
                 case .nonRenewable:
                     newNonRenewables.append(product)
                 default:
-                    logError("Unknown product")
+                    Log.error("Unknown product")
                 }
             }
 
@@ -72,7 +72,7 @@ public final class StoreKitService: Sendable {
 
             return .success(products)
         } catch {
-            logError("Failed product request from the App Store server", error: error)
+            Log.error("Failed product request from the App Store server", error: error)
             return .failure(CustomError(title: "Failed product request from the App Store server"))
         }
     }

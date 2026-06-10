@@ -21,7 +21,7 @@ public actor LinkMetadataService {
         let provider = LPMetadataProvider()
         do {
             let metadata = try await provider.startFetchingMetadata(for: url)
-            #if canImport(UIKit)
+            #if canImport(UIKit) && !os(watchOS)
             let image = await loadImage(from: metadata.imageProvider)
             let icon = await loadImage(from: metadata.iconProvider)
             let color = image.flatMap { $0.averageColor }.map { Color(uiColor: $0) }
@@ -57,6 +57,8 @@ public actor LinkMetadataService {
                 host: url.host,
                 videoURL: metadata.remoteVideoURL,
                 color: nil,
+                image: nil,
+                icon: nil,
             )
             #endif
             return .success(result)
@@ -71,7 +73,7 @@ public actor LinkMetadataService {
         do {
             let metadata = try await provider.startFetchingMetadata(for: url)
             let resolvedThemeColor = await themeColor
-            #if canImport(UIKit)
+            #if canImport(UIKit) && !os(watchOS)
             let image = await loadImage(from: metadata.imageProvider)
             let icon = await loadImage(from: metadata.iconProvider)
             let averageColor = image.flatMap { $0.averageColor }.map { Color(uiColor: $0) }
@@ -107,6 +109,8 @@ public actor LinkMetadataService {
                 host: url.host,
                 videoURL: metadata.remoteVideoURL,
                 color: resolvedThemeColor,
+                image: nil,
+                icon: nil,
             )
             #endif
             return .success(result)
@@ -134,7 +138,7 @@ public actor LinkMetadataService {
         return Color(hex: String(html[swiftRange]))
     }
 
-    #if canImport(UIKit)
+    #if canImport(UIKit) && !os(watchOS)
     private func loadImage(from provider: NSItemProvider?) async -> UIImage? {
         guard let provider else { return nil }
         return await withCheckedContinuation { continuation in

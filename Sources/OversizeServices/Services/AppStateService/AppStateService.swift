@@ -34,13 +34,13 @@ public final class AppStateService: ObservableObject {
         }
         appRunCount += 1
         lastRunDate = Date()
-        lastRunVersion = Info.App.version?.stringValue ?? ""
+        lastRunVersion = Info.App.version?.description ?? ""
         logDebugInfo()
     }
 
     public func completedOnboarding() {
         isCompletedOnboarding = true
-        logInfo("Onboarding completed")
+        Log.info("Onboarding completed")
     }
 
     @available(*, deprecated, message: "Use completedOnboarding() instead")
@@ -51,7 +51,7 @@ public final class AppStateService: ObservableObject {
     public func resetOnboarding() {
         onboardingPage = 0
         isCompletedOnboarding = false
-        logInfo("Onboarding reset")
+        Log.info("Onboarding reset")
     }
 
     @available(*, deprecated, message: "Use resetOnboarding() instead")
@@ -61,7 +61,7 @@ public final class AppStateService: ObservableObject {
 
     public func resetAppRunCount() {
         appRunCount = 0
-        logInfo("App run count reset")
+        Log.info("App run count reset")
     }
 
     @available(*, deprecated, message: "Use resetAppRunCount() instead")
@@ -77,6 +77,6 @@ public final class AppStateService: ObservableObject {
         ▫️ App Run Count: \(appRunCount)
         ▫️ App version: \(lastRunVersion)
         """
-        logInfo(debugInfo)
+        Log.info(debugInfo)
     }
 }

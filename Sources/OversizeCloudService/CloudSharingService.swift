@@ -6,8 +6,13 @@ import Foundation
 
 public actor CloudSharingService {
     public nonisolated let container: CKContainer
-    private var privateCloudDatabase: CKDatabase {
+
+    public nonisolated var privateCloudDatabase: CKDatabase {
         container.privateCloudDatabase
+    }
+
+    public nonisolated var sharedCloudDatabase: CKDatabase {
+        container.sharedCloudDatabase
     }
 
     public init(containerIdentifier: String) {
@@ -23,6 +28,17 @@ public actor CloudSharingService {
     public func ensureZone(zoneName: String) async throws -> CKRecordZone {
         let zone = CKRecordZone(zoneID: zoneID(zoneName: zoneName))
         return try await privateCloudDatabase.save(zone)
+    }
+
+    public func deleteZone(zoneName: String) async throws {
+        let id = zoneID(zoneName: zoneName)
+        try await privateCloudDatabase.deleteRecordZone(withID: id)
+    }
+
+    public func sharedZoneID(for planId: UUID) async throws -> CKRecordZone.ID? {
+        let zoneName = "plan-\(planId.uuidString)"
+        let zones = try await sharedCloudDatabase.allRecordZones()
+        return zones.first(where: { $0.zoneID.zoneName == zoneName })?.zoneID
     }
 
     // MARK: - Share
@@ -68,16 +84,19 @@ public actor CloudSharingService {
         _ records: [CKRecord],
         inZone zoneID: CKRecordZone.ID,
         recordTypes: [String],
+        database: CKDatabase? = nil,
     ) async throws {
+        let db = database ?? privateCloudDatabase
         let newIDs = Set(records.map { $0.recordID })
         var toDelete: [CKRecord.ID] = []
         for type in recordTypes {
-            let existing = try await fetchZoneRecords(type: type, zoneID: zoneID)
+            let existing = try await fetchZoneRecords(type: type, zoneID: zoneID, database: db)
             toDelete += existing.map { $0.recordID }.filter { !newIDs.contains($0) }
         }
-        let result = try await privateCloudDatabase.modifyRecords(
+        let result = try await db.modifyRecords(
             saving: records,
             deleting: toDelete,
+            savePolicy: .allKeys,
         )
         for case let .failure(error) in result.saveResults.values {
             throw error
@@ -85,6 +104,67 @@ public actor CloudSharingService {
         for case let .failure(error) in result.deleteResults.values {
             throw error
         }
+    }
+
+    // MARK: - Incremental Sync
+
+    public func fetchZoneChanges(
+        zoneID: CKRecordZone.ID,
+        changeToken: CKServerChangeToken?,
+        database: CKDatabase? = nil,
+    ) async throws -> (records: [CKRecord], deleted: [CKRecord.ID], newToken: CKServerChangeToken?) {
+        let db = database ?? privateCloudDatabase
+        let (stream, continuation) = AsyncThrowingStream<ZoneChangeEvent, Error>.makeStream()
+
+        let config = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
+        config.previousServerChangeToken = changeToken
+
+        let operation = CKFetchRecordZoneChangesOperation(
+            recordZoneIDs: [zoneID],
+            configurationsByRecordZoneID: [zoneID: config],
+        )
+        operation.recordWasChangedBlock = { _, result in
+            if case let .success(record) = result {
+                continuation.yield(.changed(record))
+            }
+        }
+        operation.recordWithIDWasDeletedBlock = { recordID, _ in
+            continuation.yield(.deleted(recordID))
+        }
+        operation.recordZoneChangeTokensUpdatedBlock = { _, token, _ in
+            if let token { continuation.yield(.tokenUpdated(token)) }
+        }
+        operation.fetchRecordZoneChangesResultBlock = { result in
+            switch result {
+            case .success: continuation.finish()
+            case let .failure(error): continuation.finish(throwing: error)
+            }
+        }
+        db.add(operation)
+
+        var records: [CKRecord] = []
+        var deletedIDs: [CKRecord.ID] = []
+        var newToken: CKServerChangeToken?
+        for try await event in stream {
+            switch event {
+            case let .changed(record): records.append(record)
+            case let .deleted(id): deletedIDs.append(id)
+            case let .tokenUpdated(token): newToken = token
+            }
+        }
+        return (records: records, deleted: deletedIDs, newToken: newToken)
+    }
+
+    // MARK: - Subscriptions
+
+    public func setupZoneSubscription(zoneID: CKRecordZone.ID, database: CKDatabase? = nil) async throws {
+        let db = database ?? privateCloudDatabase
+        let subscriptionID = "zone-\(zoneID.zoneName)"
+        let subscription = CKRecordZoneSubscription(zoneID: zoneID, subscriptionID: subscriptionID)
+        let notificationInfo = CKSubscription.NotificationInfo()
+        notificationInfo.shouldSendContentAvailable = true
+        subscription.notificationInfo = notificationInfo
+        _ = try await db.save(subscription)
     }
 
     // MARK: - Participants
@@ -141,20 +221,36 @@ public actor CloudSharingService {
         })
     }
 
-    private func fetchZoneRecords(type: String, zoneID: CKRecordZone.ID) async throws -> [CKRecord] {
-        let initial = try await privateCloudDatabase.records(
-            matching: CKQuery(recordType: type, predicate: NSPredicate(value: true)),
-            inZoneWith: zoneID,
+    private func fetchZoneRecords(type: String, zoneID: CKRecordZone.ID, database: CKDatabase) async throws -> [CKRecord] {
+        let (stream, continuation) = AsyncThrowingStream<CKRecord, Error>.makeStream()
+        let operation = CKFetchRecordZoneChangesOperation(
+            recordZoneIDs: [zoneID],
+            configurationsByRecordZoneID: [zoneID: .init()],
         )
-        var allRecords = initial.matchResults.compactMap { try? $0.1.get() }
-        var cursor = initial.queryCursor
-        while let currentCursor = cursor {
-            let next = try await privateCloudDatabase.records(continuingMatchFrom: currentCursor)
-            allRecords += next.matchResults.compactMap {
-                try? $0.1.get()
+        operation.recordWasChangedBlock = { _, result in
+            if case let .success(record) = result, record.recordType == type {
+                continuation.yield(record)
             }
-            cursor = next.queryCursor
         }
-        return allRecords
+        operation.fetchRecordZoneChangesResultBlock = { result in
+            switch result {
+            case .success: continuation.finish()
+            case let .failure(error): continuation.finish(throwing: error)
+            }
+        }
+        database.add(operation)
+        var records: [CKRecord] = []
+        for try await record in stream {
+            records.append(record)
+        }
+        return records
     }
+}
+
+// MARK: - Private Types
+
+private enum ZoneChangeEvent: @unchecked Sendable {
+    case changed(CKRecord)
+    case deleted(CKRecord.ID)
+    case tokenUpdated(CKServerChangeToken)
 }

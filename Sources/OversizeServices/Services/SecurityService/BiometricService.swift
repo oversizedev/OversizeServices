@@ -55,7 +55,7 @@ extension BiometricService: BiometricServiceProtocol {
 
         let isBimetricAvailable = laContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
         if let error {
-            log(error.localizedDescription)
+            Log.debug(error.localizedDescription)
         }
 
         return isBimetricAvailable

@@ -41,7 +41,9 @@ public struct ShareParticipant: Identifiable, Sendable, Hashable {
 
     public var avatarFirstName: String? {
         if let firstName { return firstName }
-        return email?.components(separatedBy: "@").first
+        if let email { return email.components(separatedBy: "@").first }
+        if isOwner { return "M" }
+        return nil
     }
 
     public var roleTitle: String {
