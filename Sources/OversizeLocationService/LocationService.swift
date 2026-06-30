@@ -18,6 +18,7 @@ public protocol LocationServiceProtocol: Sendable {
 
 public final class LocationService: NSObject, @unchecked Sendable {
     private lazy var locationManager = CLLocationManager()
+    private let continuationLock = NSLock()
     private var locationContinuation: CheckedContinuation<CLLocationCoordinate2D?, Error>?
 
     override init() {
@@ -26,19 +27,37 @@ public final class LocationService: NSObject, @unchecked Sendable {
     }
 }
 
+private extension LocationService {
+    func replaceLocationContinuation(with continuation: CheckedContinuation<CLLocationCoordinate2D?, Error>) {
+        continuationLock.lock()
+        let previousContinuation = locationContinuation
+        locationContinuation = continuation
+        continuationLock.unlock()
+
+        previousContinuation?.resume(throwing: CancellationError())
+    }
+
+    func takeLocationContinuation() -> CheckedContinuation<CLLocationCoordinate2D?, Error>? {
+        continuationLock.lock()
+        defer { continuationLock.unlock() }
+        let continuation = locationContinuation
+        locationContinuation = nil
+        return continuation
+    }
+}
+
 extension LocationService: LocationServiceProtocol {
     public func currentLocation() async throws -> CLLocationCoordinate2D? {
         try await withTaskCancellationHandler(operation: {
             try await withCheckedThrowingContinuation { continuation in
-                self.locationContinuation = continuation
+                self.replaceLocationContinuation(with: continuation)
                 self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
                 self.locationManager.requestWhenInUseAuthorization()
                 self.locationManager.requestLocation()
             }
         }, onCancel: {
-            #if os(iOS)
-            self.locationManager.stopUpdatingHeading()
-            #endif
+            self.locationManager.stopUpdatingLocation()
+            self.takeLocationContinuation()?.resume(throwing: CancellationError())
         })
     }
 
@@ -51,9 +70,9 @@ extension LocationService: LocationServiceProtocol {
         locationManager.requestWhenInUseAuthorization()
         switch locationManager.authorizationStatus {
         case .notDetermined:
-            return .failure(LocationError.notDetermined)
+            return .failure(LocationError.permissionNotDetermined)
         case .denied:
-            return .failure(LocationError.notAccess)
+            return .failure(LocationError.accessDenied)
         case .restricted, .authorizedAlways, .authorizedWhenInUse:
             return .success(true)
         @unknown default:
@@ -88,17 +107,18 @@ extension LocationService: LocationServiceProtocol {
 
 extension LocationService: CLLocationManagerDelegate {
     public func locationManager(_: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let locationObj = locations.last {
-            // Location
-            let coord = locationObj.coordinate
-            let location = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.longitude)
-            locationContinuation?.resume(returning: location)
-            locationContinuation = nil
+        guard let locationObj = locations.last else {
+            takeLocationContinuation()?.resume(returning: nil)
+            return
         }
+
+        let coord = locationObj.coordinate
+        let location = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.longitude)
+        takeLocationContinuation()?.resume(returning: location)
     }
 
     public func locationManager(_: CLLocationManager, didFailWithError error: Error) {
-        locationContinuation?.resume(throwing: error)
+        takeLocationContinuation()?.resume(throwing: error)
     }
 
     /*

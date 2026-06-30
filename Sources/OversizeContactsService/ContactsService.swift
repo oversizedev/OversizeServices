@@ -20,10 +20,10 @@ public class ContactsService: @unchecked Sendable {
             if status {
                 return .success(true)
             } else {
-                return .failure(ContactsError.notAccess)
+                return .failure(ContactsError.accessDenied)
             }
         } catch {
-            return .failure(ContactsError.notAccess)
+            return .failure(ContactsError.accessDenied)
         }
     }
 

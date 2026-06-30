@@ -16,8 +16,9 @@ public enum Info: Sendable {
     // MARK: - App
 
     public enum App: Sendable {
-        public static var version: String? {
-            Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        public static var version: Version? {
+            guard let versionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String else { return nil }
+            return Version(versionString)
         }
 
         public static var build: String? {

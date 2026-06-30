@@ -73,25 +73,25 @@ public final class SettingsService: ObservableObject, SettingsServiceProtocol, @
 /// PIN Code
 public extension SettingsService {
     func getPINCode() -> String {
-        logSecurity("Get PIN Code")
+        Log.notice("Get PIN Code")
         return pinCode ?? ""
     }
 
     func setPINCode(pin: String) {
-        logSecurity("Set PIN Code")
+        Log.notice("Set PIN Code")
         pinCode = pin
     }
 
     func updatePINCode(oldPIN: String, newPIN: String) async -> Bool {
-        logSecurity("Update PIN Code")
+        Log.notice("Update PIN Code")
         let currentCode = getPINCode()
 
         if oldPIN == currentCode {
             pinCode = newPIN
-            logSuccess("PIN Code Updated")
+            Log.info("PIN Code Updated")
             return true
         }
-        logError("PIN Code Not updated")
+        Log.error("PIN Code Not updated")
         return false
     }
 
@@ -115,7 +115,7 @@ public extension SettingsService {
 public extension SettingsService {
     @MainActor
     func biometricChange(_ newState: Bool) async {
-        logSecurity("Request biometric \(newState ? "enable" : "disable")")
+        Log.notice("Request biometric \(newState ? "enable" : "disable")")
         var reason = ""
         if newState {
             reason = "Provide \(biometricService.biometricType.rawValue) to enable"
@@ -124,7 +124,7 @@ public extension SettingsService {
         }
         let auth = await biometricService.authenticating(reason: reason)
         if auth {
-            logSuccess("Enabled biometric authentication")
+            Log.info("Enabled biometric authentication")
             biometricEnabled = newState
         }
     }

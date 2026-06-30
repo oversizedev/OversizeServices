@@ -7,7 +7,7 @@ import Foundation
 import OversizeCore
 
 public extension SecureStorageService {
-    struct Credentials: Sendable {
+    struct Credentials {
         public var login: String
         public var password: String
 
@@ -27,7 +27,7 @@ public extension SecureStorageService {
         do {
             try addItem(query: query)
         } catch {
-            logError("Failed to add credentials with label \(label)", error: error)
+            Log.error("Failed to add credentials with label \(label)", error: error)
             return
         }
     }
@@ -47,7 +47,7 @@ public extension SecureStorageService {
         do {
             result = try findItem(query: query)
         } catch {
-            logError("Failed to get credentials with label \(label)", error: error)
+            Log.error("Failed to get credentials with label \(label)", error: error)
             return nil
         }
 
@@ -69,7 +69,7 @@ public extension SecureStorageService {
         do {
             try deleteItem(query: query)
         } catch {
-            logError("Failed to delete credentials with label \(label)", error: error)
+            Log.error("Failed to delete credentials with label \(label)", error: error)
             return
         }
     }

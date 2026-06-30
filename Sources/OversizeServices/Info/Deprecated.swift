@@ -181,7 +181,7 @@ public extension Info.Company {
 
 @available(*, deprecated, message: "Use Info.App, Info.Developer, Info.Company instead")
 public extension Info {
-    enum URLs: Sendable {
+    enum URLs {
         @available(*, deprecated, renamed: "Info.App.appStoreReviewUrl")
         public static var appStoreReview: URL? {
             App.appStoreReviewUrl
@@ -306,7 +306,7 @@ public struct Links: Codable, Sendable {
     public var developer: Developer
     public var company: Company
 
-    private enum CodingKeys: String, CodingKey, Sendable {
+    private enum CodingKeys: String, CodingKey {
         case app = "App"
         case developer = "Developer"
         case company = "Company"
@@ -316,7 +316,7 @@ public struct Links: Codable, Sendable {
         public var telegramChat: String?
         public var appStoreId: String
 
-        private enum CodingKeys: String, CodingKey, Sendable {
+        private enum CodingKeys: String, CodingKey {
             case telegramChat = "TelegramChat"
             case appStoreId = "AppStoreID"
         }
@@ -329,7 +329,7 @@ public struct Links: Codable, Sendable {
         public var facebook: String?
         public var telegram: String?
 
-        private enum CodingKeys: String, CodingKey, Sendable {
+        private enum CodingKeys: String, CodingKey {
             case name = "Name"
             case url = "Url"
             case email = "Email"
@@ -374,7 +374,7 @@ public struct Links: Codable, Sendable {
 public struct PlistConfiguration: Codable, Sendable {
     public var links: Links
 
-    private enum CodingKeys: String, CodingKey, Sendable {
+    private enum CodingKeys: String, CodingKey {
         case links = "Links"
     }
 }

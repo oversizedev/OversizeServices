@@ -7,16 +7,17 @@ import PackageDescription
 let remoteDependencies: [PackageDescription.Package.Dependency] = [
     .package(url: "https://github.com/oversizedev/OversizeCore.git", .upToNextMajor(from: "1.3.0")),
     .package(url: "https://github.com/oversizedev/OversizeLocalizable.git", .upToNextMajor(from: "1.5.0")),
-    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.5.0")),
+    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "3.0.2")),
 ]
 
 let localDependencies: [PackageDescription.Package.Dependency] = [
     .package(name: "OversizeCore", path: "../OversizeCore"),
     .package(name: "OversizeLocalizable", path: "../OversizeLocalizable"),
-    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "2.5.0")),
+    .package(url: "https://github.com/hmlongco/Factory.git", .upToNextMajor(from: "3.0.2")),
 ]
 
-let dependencies: [PackageDescription.Package.Dependency] = remoteDependencies
+let isLocalDev = FileManager.default.fileExists(atPath: "\(NSHomeDirectory())/Developer/Packages/OversizeCore")
+let dependencies: [PackageDescription.Package.Dependency] = isLocalDev ? localDependencies : remoteDependencies
 
 let package = Package(
     name: "OversizeServices",
@@ -28,14 +29,18 @@ let package = Package(
         .watchOS(.v9),
     ],
     products: [
-        .library(name: "OversizeHealthService", targets: ["OversizeHealthService"]),
         .library(name: "OversizeServices", targets: ["OversizeServices"]),
+        .library(name: "OversizeCloudService", targets: ["OversizeCloudService"]),
+        .library(name: "OversizeHealthService", targets: ["OversizeHealthService"]),
         .library(name: "OversizeStoreService", targets: ["OversizeStoreService"]),
         .library(name: "OversizeLocationService", targets: ["OversizeLocationService"]),
         .library(name: "OversizeCalendarService", targets: ["OversizeCalendarService"]),
         .library(name: "OversizeContactsService", targets: ["OversizeContactsService"]),
         .library(name: "OversizeNotificationService", targets: ["OversizeNotificationService"]),
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
+        .library(name: "OversizeWebService", targets: ["OversizeWebService"]),
+        .library(name: "OversizeWeatherService", targets: ["OversizeWeatherService"]),
+        .library(name: "OversizeIntelligenceService", targets: ["OversizeIntelligenceService"]),
     ],
     dependencies: dependencies,
     targets: [
@@ -44,6 +49,13 @@ let package = Package(
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "OversizeLocalizable", package: "OversizeLocalizable"),
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
+        ),
+        .target(
+            name: "OversizeCloudService",
+            dependencies: [
+                .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
@@ -92,6 +104,30 @@ let package = Package(
         ),
         .target(
             name: "OversizeNotificationService",
+            dependencies: [
+                .product(name: "OversizeCore", package: "OversizeCore"),
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
+        ),
+        .target(
+            name: "OversizeWebService",
+            dependencies: [
+                .product(name: "OversizeCore", package: "OversizeCore"),
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
+        ),
+        .target(
+            name: "OversizeWeatherService",
+            dependencies: [
+                .product(name: "OversizeCore", package: "OversizeCore"),
+                .product(name: "FactoryKit", package: "Factory"),
+            ],
+            linkerSettings: [
+                .linkedFramework("WeatherKit", .when(platforms: [.iOS, .macOS, .watchOS, .tvOS])),
+            ],
+        ),
+        .target(
+            name: "OversizeIntelligenceService",
             dependencies: [
                 .product(name: "OversizeCore", package: "OversizeCore"),
                 .product(name: "FactoryKit", package: "Factory"),

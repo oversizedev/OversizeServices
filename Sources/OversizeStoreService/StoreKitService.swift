@@ -59,7 +59,7 @@ public final class StoreKitService: Sendable {
                 case .nonRenewable:
                     newNonRenewables.append(product)
                 default:
-                    logError("Unknown product")
+                    Log.error("Unknown product")
                 }
             }
 
@@ -72,7 +72,7 @@ public final class StoreKitService: Sendable {
 
             return .success(products)
         } catch {
-            logError("Failed product request from the App Store server", error: error)
+            Log.error("Failed product request from the App Store server", error: error)
             return .failure(CustomError(title: "Failed product request from the App Store server"))
         }
     }
@@ -161,7 +161,14 @@ public final class StoreKitService: Sendable {
         prushedPrducts.purchasedNonConsumable = purchasedNonConsumable
         prushedPrducts.purchasedNonRenewable = purchasedNonRenewable
         prushedPrducts.purchasedAutoRenewable = purchasedAutoRenewable
-        prushedPrducts.subscriptionGroupStatus = try? await prushedPrducts.autoRenewable.first?.subscription?.status.first?.state
+        if let subscription = prushedPrducts.autoRenewable.first?.subscription,
+           let statuses = try? await subscription.status
+        {
+            let priorityOrder: [RenewalState] = [.subscribed, .inGracePeriod, .inBillingRetryPeriod, .expired, .revoked]
+            prushedPrducts.subscriptionGroupStatus = priorityOrder.first { priority in
+                statuses.contains { $0.state == priority }
+            }
+        }
 
         return .success(prushedPrducts)
     }
