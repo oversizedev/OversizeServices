@@ -13,7 +13,7 @@ public actor OversizeWeatherService {
 
     public init() {}
 
-    public func fetchWeather(for date: Date, location: CLLocationCoordinate2D) async -> Result<WeatherData, Error> {
+    public func fetchWeather(for date: Date, location: CLLocationCoordinate2D) async -> Result<DayWeather, Error> {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
         guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
@@ -27,14 +27,14 @@ public actor OversizeWeatherService {
             guard let day = forecast.forecast.first else {
                 return .failure(WeatherError.noDataForDate)
             }
-            return .success(WeatherData(from: day))
+            return .success(day)
         } catch {
             Log.error("fetchWeather failed: \(error.localizedDescription)")
             return .failure(WeatherError.unknown(error))
         }
     }
 
-    public func fetchForecast(location: CLLocationCoordinate2D) async -> Result<Forecast, Error> {
+    public func fetchForecast(location: CLLocationCoordinate2D) async -> Result<AppForecast, Error> {
         let now = Date()
         let calendar = Calendar.current
         let hourlyEnd = calendar.date(byAdding: .hour, value: 24, to: now) ?? now
@@ -46,29 +46,28 @@ public actor OversizeWeatherService {
                 .hourly(startDate: now, endDate: hourlyEnd),
                 .daily(startDate: now, endDate: dailyEnd),
             )
-            let forecast = Forecast(
-                current: CurrentForecast(from: current),
-                hourly: hourly.forecast.map { HourForecast(from: $0) },
-                daily: daily.forecast.map { DayForecast(from: $0) },
-            )
-            return .success(forecast)
+            return .success(AppForecast(
+                current: current,
+                hourly: Array(hourly.forecast),
+                daily: Array(daily.forecast),
+            ))
         } catch {
             Log.error("fetchForecast failed: \(error.localizedDescription)")
             return .failure(WeatherError.unknown(error))
         }
     }
 
-    public func fetchCurrentForecast(location: CLLocationCoordinate2D) async -> Result<CurrentForecast, Error> {
+    public func fetchCurrentForecast(location: CLLocationCoordinate2D) async -> Result<CurrentWeather, Error> {
         do {
             let current = try await service.weather(for: clLocation(from: location), including: .current)
-            return .success(CurrentForecast(from: current))
+            return .success(current)
         } catch {
             Log.error("fetchCurrentForecast failed: \(error.localizedDescription)")
             return .failure(WeatherError.unknown(error))
         }
     }
 
-    public func fetchHourlyForecast(location: CLLocationCoordinate2D, hours: Int) async -> Result<[HourForecast], Error> {
+    public func fetchHourlyForecast(location: CLLocationCoordinate2D, hours: Int) async -> Result<[HourWeather], Error> {
         let now = Date()
         let endDate = Calendar.current.date(byAdding: .hour, value: hours, to: now) ?? now
         do {
@@ -76,14 +75,14 @@ public actor OversizeWeatherService {
                 for: clLocation(from: location),
                 including: .hourly(startDate: now, endDate: endDate),
             )
-            return .success(forecast.forecast.map { HourForecast(from: $0) })
+            return .success(Array(forecast.forecast))
         } catch {
             Log.error("fetchHourlyForecast failed: \(error.localizedDescription)")
             return .failure(WeatherError.unknown(error))
         }
     }
 
-    public func fetchDailyForecast(location: CLLocationCoordinate2D, days: Int) async -> Result<[DayForecast], Error> {
+    public func fetchDailyForecast(location: CLLocationCoordinate2D, days: Int) async -> Result<[DayWeather], Error> {
         let now = Date()
         let endDate = Calendar.current.date(byAdding: .day, value: days, to: now) ?? now
         do {
@@ -91,14 +90,14 @@ public actor OversizeWeatherService {
                 for: clLocation(from: location),
                 including: .daily(startDate: now, endDate: endDate),
             )
-            return .success(forecast.forecast.map { DayForecast(from: $0) })
+            return .success(Array(forecast.forecast))
         } catch {
             Log.error("fetchDailyForecast failed: \(error.localizedDescription)")
             return .failure(WeatherError.unknown(error))
         }
     }
 
-    public func fetchDayForecast(for date: Date, location: CLLocationCoordinate2D) async -> Result<DayForecast, Error> {
+    public func fetchDayForecast(for date: Date, location: CLLocationCoordinate2D) async -> Result<DayWeather, Error> {
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: date)
         guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
@@ -112,7 +111,7 @@ public actor OversizeWeatherService {
             guard let day = forecast.forecast.first else {
                 return .failure(WeatherError.noDataForDate)
             }
-            return .success(DayForecast(from: day))
+            return .success(day)
         } catch {
             Log.error("fetchDayForecast failed: \(error.localizedDescription)")
             return .failure(WeatherError.unknown(error))

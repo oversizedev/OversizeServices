@@ -3,14 +3,15 @@
 
 #if canImport(WeatherKit)
 import Foundation
+import WeatherKit
 
 @available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)
-public struct Forecast: Sendable {
-    public let current: CurrentForecast
-    public let hourly: [HourForecast]
-    public let daily: [DayForecast]
+public struct AppForecast: Sendable {
+    public let current: CurrentWeather
+    public let hourly: [HourWeather]
+    public let daily: [DayWeather]
 
-    public init(current: CurrentForecast, hourly: [HourForecast], daily: [DayForecast]) {
+    public init(current: CurrentWeather, hourly: [HourWeather], daily: [DayWeather]) {
         self.current = current
         self.hourly = hourly
         self.daily = daily
@@ -18,7 +19,7 @@ public struct Forecast: Sendable {
 }
 
 @available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)
-public extension Forecast {
+public extension AppForecast {
     var sunPositionPercent: Double {
         guard let sunrise = daily.first?.sunrise,
               let sunset = daily.first?.sunset else { return 0 }
@@ -33,7 +34,7 @@ public extension Forecast {
     }
 
     var isSunglassesNeeded: Bool {
-        current.uvIndex > 2
+        current.uvIndex.value > 2
     }
 }
 #endif
