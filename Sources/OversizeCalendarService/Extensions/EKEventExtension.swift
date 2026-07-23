@@ -100,9 +100,15 @@ public extension EKEvent {
     var meetType: EKEventMeetType? {
         var urls: [URL] = .init()
 
-        if let url { urls.append(url) }
-        if let noteURLs { urls.append(contentsOf: noteURLs) }
-        if let locationURLs { urls.append(contentsOf: locationURLs) }
+        if let url {
+            urls.append(url)
+        }
+        if let noteURLs {
+            urls.append(contentsOf: noteURLs)
+        }
+        if let locationURLs {
+            urls.append(contentsOf: locationURLs)
+        }
         guard urls.isEmpty == false else { return nil }
 
         if let _ = urls.first(where: { url in
@@ -197,9 +203,15 @@ public extension EKEvent {
     var meetURL: URL? {
         var urls: [URL] = .init()
 
-        if let url { urls.append(url) }
-        if let noteURLs { urls.append(contentsOf: noteURLs) }
-        if let locationURLs { urls.append(contentsOf: locationURLs) }
+        if let url {
+            urls.append(url)
+        }
+        if let noteURLs {
+            urls.append(contentsOf: noteURLs)
+        }
+        if let locationURLs {
+            urls.append(contentsOf: locationURLs)
+        }
         guard urls.isEmpty == false else { return nil }
 
         if let zoomLink = urls.first(where: { url in

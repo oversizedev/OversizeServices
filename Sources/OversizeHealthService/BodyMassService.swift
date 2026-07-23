@@ -11,7 +11,7 @@ import OversizeCore
 
 #if os(iOS) || os(macOS)
 @available(iOS 15, macOS 13.0, *)
-public protocol BodyMassServiceProtocol {
+public protocol BodyMassServiceProtocol: Sendable {
     func requestAuthorization() async -> Result<Bool, Error>
     func fetchBodyMass() async throws -> HKStatisticsCollection?
     func calculateSteps(completion: @Sendable @escaping (HKStatisticsCollection?) -> Void)

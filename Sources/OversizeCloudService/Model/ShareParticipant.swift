@@ -33,16 +33,28 @@ public struct ShareParticipant: Identifiable, Sendable, Hashable {
 
     public var displayName: String {
         let full = [firstName, lastName].compactMap { $0 }.joined(separator: " ")
-        if !full.isEmpty { return full }
-        if let email { return email }
-        if isOwner { return "Me" }
+        if !full.isEmpty {
+            return full
+        }
+        if let email {
+            return email
+        }
+        if isOwner {
+            return "Me"
+        }
         return acceptanceStatus == .pending ? "Invited" : "Unknown"
     }
 
     public var avatarFirstName: String? {
-        if let firstName { return firstName }
-        if let email { return email.components(separatedBy: "@").first }
-        if isOwner { return "M" }
+        if let firstName {
+            return firstName
+        }
+        if let email {
+            return email.components(separatedBy: "@").first
+        }
+        if isOwner {
+            return "M"
+        }
         return nil
     }
 
