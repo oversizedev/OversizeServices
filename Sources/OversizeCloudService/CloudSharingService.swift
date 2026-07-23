@@ -132,7 +132,9 @@ public actor CloudSharingService {
             continuation.yield(.deleted(recordID))
         }
         operation.recordZoneChangeTokensUpdatedBlock = { _, token, _ in
-            if let token { continuation.yield(.tokenUpdated(token)) }
+            if let token {
+                continuation.yield(.tokenUpdated(token))
+            }
         }
         operation.fetchRecordZoneChangesResultBlock = { result in
             switch result {

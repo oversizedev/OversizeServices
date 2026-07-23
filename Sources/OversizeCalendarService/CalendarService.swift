@@ -50,7 +50,9 @@ public class CalendarService: @unchecked Sendable {
 
     public func fetchEvents(start: Date, end: Date = Date(), filtredCalendarsIds: [String] = []) async -> Result<[EKEvent], Error> {
         let access = await requestFullAccess()
-        if case let .failure(error) = access { return .failure(error) }
+        if case let .failure(error) = access {
+            return .failure(error)
+        }
         let calendars = eventStore.calendars(for: .event)
         var filtredCalendars: [EKCalendar] = []
         for calendar in calendars {
@@ -71,21 +73,27 @@ public class CalendarService: @unchecked Sendable {
 
     public func fetchCalendars() async -> Result<[EKCalendar], Error> {
         let access = await requestFullAccess()
-        if case let .failure(error) = access { return .failure(error) }
+        if case let .failure(error) = access {
+            return .failure(error)
+        }
         let calendars = eventStore.calendars(for: .event)
         return .success(calendars)
     }
 
     public func fetchDefaultCalendar() async -> Result<EKCalendar?, Error> {
         let access = await requestFullAccess()
-        if case let .failure(error) = access { return .failure(error) }
+        if case let .failure(error) = access {
+            return .failure(error)
+        }
         let calendar = eventStore.defaultCalendarForNewEvents
         return .success(calendar)
     }
 
     public func fetchSourses() async -> Result<[EKSource], Error> {
         let access = await requestFullAccess()
-        if case let .failure(error) = access { return .failure(error) }
+        if case let .failure(error) = access {
+            return .failure(error)
+        }
         let calendars = eventStore.sources
         return .success(calendars)
     }
@@ -109,7 +117,9 @@ public class CalendarService: @unchecked Sendable {
         span: EKSpan = .thisEvent,
     ) async -> Result<EKEvent, Error> {
         let access = await requestWriteOnlyAccess()
-        if case let .failure(error) = access { return .failure(error) }
+        if case let .failure(error) = access {
+            return .failure(error)
+        }
         let newEvent: EKEvent = if let event {
             eventStore.event(withIdentifier: event.eventIdentifier ?? "") ?? .init(eventStore: eventStore)
         } else {
@@ -171,7 +181,9 @@ public class CalendarService: @unchecked Sendable {
     @available(iOS 15.0, macOS 13.0, visionOS 1.0, *)
     public func deleteEvent(identifier: String, span: EKSpan = .thisEvent) async -> Result<Bool, Error> {
         let access = await requestFullAccess()
-        if case let .failure(error) = access { return .failure(error) }
+        if case let .failure(error) = access {
+            return .failure(error)
+        }
         guard let event = eventStore.fetchEvent(identifier: identifier) else { return .failure(CalendarError.itemNotFound) }
 
         do {
