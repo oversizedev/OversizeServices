@@ -40,7 +40,6 @@ let package = Package(
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
         .library(name: "OversizeWebService", targets: ["OversizeWebService"]),
         .library(name: "OversizeWeatherService", targets: ["OversizeWeatherService"]),
-        .library(name: "OversizeIntelligenceService", targets: ["OversizeIntelligenceService"]),
     ],
     dependencies: dependencies,
     targets: [
@@ -124,13 +123,6 @@ let package = Package(
             ],
             linkerSettings: [
                 .linkedFramework("WeatherKit", .when(platforms: [.iOS, .macOS, .watchOS, .tvOS])),
-            ],
-        ),
-        .target(
-            name: "OversizeIntelligenceService",
-            dependencies: [
-                .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "FactoryKit", package: "Factory"),
             ],
         ),
         .testTarget(
