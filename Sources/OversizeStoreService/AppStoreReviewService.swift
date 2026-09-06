@@ -10,7 +10,7 @@ import SwiftUI
 // MARK: AppStoreReviewService
 
 public actor AppStoreReviewService {
-    private enum Keys {
+    public enum Keys {
         static let appRunCount = "AppState.appRunCount"
         static let appStoreReviewReceivedActionsCount = "AppState.AppStoreReviewReceivedActionsCount"
         static let isAppReviewBannerClosed = "AppState.isAppReviewBannerClosed"

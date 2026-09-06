@@ -10,12 +10,13 @@ import Testing
 @Suite(.serialized)
 final class AppStoreReviewServiceTests {
     private static let keys: [String] = [
-        "AppState.AppStoreReviewReceivedActionsCount",
-        "AppState.isAppReviewBannerClosed",
-        "AppState.isAppReviewd",
-        "AppState.isAppGoodRating",
-        "AppState.appReviewBannerClosedDate",
-        "AppState.appReviewEstimateDate",
+        AppStoreReviewService.Keys.appRunCount,
+        AppStoreReviewService.Keys.appStoreReviewReceivedActionsCount,
+        AppStoreReviewService.Keys.isAppReviewBannerClosed,
+        AppStoreReviewService.Keys.isAppReviewed,
+        AppStoreReviewService.Keys.isAppGoodRating,
+        AppStoreReviewService.Keys.appReviewBannerClosedDate,
+        AppStoreReviewService.Keys.appReviewEstimateDate,
     ]
 
     init() {

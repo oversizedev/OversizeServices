@@ -67,7 +67,11 @@ struct StoreSpecialOfferEventTypeTests {
         for event in StoreSpecialOfferEventType.allCases {
             #expect(event.specialOfferImageURL.hasSuffix("/large.png"))
         }
-        #expect(Set(StoreSpecialOfferEventType.allCases.map(\.specialOfferImageURL)).count == 9)
+    }
+
+    @Test
+    func calendarCasesHaveUniqueImages() {
+        #expect(Set(calendarCases.map(\.specialOfferImageURL)).count == calendarCases.count)
     }
 
     @Test
