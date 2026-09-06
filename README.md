@@ -58,6 +58,18 @@ import OversizeNotificationService
 import OversizeFileManagerService
 ```
 
+### Moved Services
+
+`OversizeIntelligenceService` is no longer part of this package. It now ships as a standalone package:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/oversizedev/OversizeIntelligenceService.git", .upToNextMajor(from: "1.0.0"))
+]
+```
+
+The product name is unchanged, so only the package declaration needs updating.
+
 ## Services Documentation
 
 ### 🏥 OversizeHealthService
