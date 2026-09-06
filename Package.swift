@@ -40,7 +40,6 @@ let package = Package(
         .library(name: "OversizeFileManagerService", targets: ["OversizeFileManagerService"]),
         .library(name: "OversizeWebService", targets: ["OversizeWebService"]),
         .library(name: "OversizeWeatherService", targets: ["OversizeWeatherService"]),
-        .library(name: "OversizeIntelligenceService", targets: ["OversizeIntelligenceService"]),
     ],
     dependencies: dependencies,
     targets: [
@@ -126,18 +125,92 @@ let package = Package(
                 .linkedFramework("WeatherKit", .when(platforms: [.iOS, .macOS, .watchOS, .tvOS])),
             ],
         ),
-        .target(
-            name: "OversizeIntelligenceService",
-            dependencies: [
-                .product(name: "OversizeCore", package: "OversizeCore"),
-                .product(name: "FactoryKit", package: "Factory"),
-            ],
-        ),
         .testTarget(
             name: "OversizeServicesTests",
             dependencies: [
                 "OversizeServices",
                 .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeCloudServiceTests",
+            dependencies: [
+                "OversizeCloudService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeCalendarServiceTests",
+            dependencies: [
+                "OversizeCalendarService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeContactsServiceTests",
+            dependencies: [
+                "OversizeContactsService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeFileManagerServiceTests",
+            dependencies: [
+                "OversizeFileManagerService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeHealthServiceTests",
+            dependencies: [
+                "OversizeHealthService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeLocationServiceTests",
+            dependencies: [
+                "OversizeLocationService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeNotificationServiceTests",
+            dependencies: [
+                "OversizeNotificationService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeStoreServiceTests",
+            dependencies: [
+                "OversizeStoreService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeWeatherServiceTests",
+            dependencies: [
+                "OversizeWeatherService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
+            ],
+        ),
+        .testTarget(
+            name: "OversizeWebServiceTests",
+            dependencies: [
+                "OversizeWebService",
+                .product(name: "FactoryKit", package: "Factory"),
+                .product(name: "FactoryTesting", package: "Factory"),
             ],
         ),
     ],

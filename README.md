@@ -15,7 +15,6 @@ A comprehensive collection of service modules for Apple platforms that provides 
 - 🔔 **Notification Services** - Local notifications management
 - 📁 **File Manager Services** - File operations with iCloud Documents support
 - 🌐 **Translation Services** - Apple Translation framework integration for text translation
-- 🧠 **Intelligence Services** - Apple Intelligence framework integration (iOS 26.0+)
 - 🏭 **Dependency Injection** - Factory-based service registration and injection
 - 🌐 **Multi-platform** - Support for iOS, macOS, tvOS, and watchOS
 
@@ -58,6 +57,18 @@ import OversizeContactsService
 import OversizeNotificationService
 import OversizeFileManagerService
 ```
+
+### Moved Services
+
+`OversizeIntelligenceService` is no longer part of this package. It now ships as a standalone package:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/oversizedev/OversizeIntelligenceService.git", .upToNextMajor(from: "1.0.0"))
+]
+```
+
+The product name is unchanged, so only the package declaration needs updating.
 
 ## Services Documentation
 
@@ -432,36 +443,6 @@ try await translationService.prepareTranslation(
 - Translation functionality requires iOS 26.0+, macOS 26.0+
 - Requires physical device (does not work in Simulator)
 - Internet connection needed for initial language model download
-
-### 🧠 IntelligenceService
-
-Apple Intelligence framework integration (iOS 26.0+, macOS 26.0+).
-
-**Features:**
-- Text summarization
-- Writing tools integration
-- Privacy-focused on-device processing
-
-**Usage Example:**
-
-```swift
-import OversizeServices
-import FactoryKit
-
-// Inject the service (iOS 26.0+ only)
-@Injected(\.intelligenceService) var intelligenceService: IntelligenceServiceProtocol
-
-// Summarize text
-do {
-    let summary = try await intelligenceService.summarize(
-        "Long text to summarize...",
-        type: .brief
-    )
-    print("Summary: \(summary)")
-} catch {
-    print("Summarization error: \(error)")
-}
-```
 
 ### 🏭 OversizeServices (Core)
 

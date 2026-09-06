@@ -45,7 +45,7 @@ public enum CalendarEventRecurrenceRules: CaseIterable, Equatable, Identifiable,
         case .everyWeek:
             .init(recurrenceWith: .weekly, interval: 1, end: nil)
         case .everyTwoWeeks:
-            .init(recurrenceWith: .daily, interval: 2, end: nil)
+            .init(recurrenceWith: .weekly, interval: 2, end: nil)
         case .everyMonth:
             .init(recurrenceWith: .monthly, interval: 1, end: nil)
         case .everyYear:
