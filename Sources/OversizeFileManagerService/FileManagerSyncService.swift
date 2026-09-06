@@ -68,15 +68,19 @@ extension FileManagerSyncService: FileManagerSyncServiceProtocol {
         let result = await generateUrl(urlString: urlString, location: location, folder: folder, file: file)
         switch result {
         case let .success(url):
-            if location == .local, !url.fileExists() {
-                return .failure(FileError.deleteFailed)
-            }
-            let status = isICloudContainerAvailable()
-            switch status {
-            case .success:
+            switch location {
+            case .local:
+                guard url.fileExists() else {
+                    return .failure(FileError.deleteFailed)
+                }
                 return await fileManagerService.removeDocument(localURL: url)
-            case .failure:
-                return await cloudDocumentsService.removeDocument(icloudUrl: url)
+            case .iCloud:
+                switch isICloudContainerAvailable() {
+                case .success:
+                    return await cloudDocumentsService.removeDocument(icloudUrl: url)
+                case let .failure(error):
+                    return .failure(error)
+                }
             }
         case let .failure(error):
             return .failure(error)

@@ -20,7 +20,7 @@ struct CalendarEventRecurrenceRulesTests {
         (CalendarEventRecurrenceRules.everyWorkingDay, EKRecurrenceFrequency.weekly, 1),
         (CalendarEventRecurrenceRules.everyWeekend, EKRecurrenceFrequency.weekly, 1),
         (CalendarEventRecurrenceRules.everyWeek, EKRecurrenceFrequency.weekly, 1),
-        (CalendarEventRecurrenceRules.everyTwoWeeks, EKRecurrenceFrequency.daily, 2),
+        (CalendarEventRecurrenceRules.everyTwoWeeks, EKRecurrenceFrequency.weekly, 2),
         (CalendarEventRecurrenceRules.everyMonth, EKRecurrenceFrequency.monthly, 1),
         (CalendarEventRecurrenceRules.everyYear, EKRecurrenceFrequency.yearly, 1),
     ])

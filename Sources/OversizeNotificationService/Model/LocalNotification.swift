@@ -14,7 +14,7 @@ public struct LocalNotification: Sendable {
         body: String,
         timeInterval: Double,
         repeats: Bool = false,
-        bundleImageName _: String? = nil,
+        bundleImageName: String? = nil,
         userInfo: [String: String]? = nil,
     ) {
         self.id = id
@@ -26,7 +26,7 @@ public struct LocalNotification: Sendable {
         dateComponents = nil
         self.repeats = repeats
         self.userInfo = userInfo
-        bundleImageName = nil
+        self.bundleImageName = bundleImageName
         self.categoryIdentifier = categoryIdentifier
     }
 
@@ -38,7 +38,7 @@ public struct LocalNotification: Sendable {
         body: String,
         dateComponents: DateComponents,
         repeats: Bool,
-        bundleImageName _: String? = nil,
+        bundleImageName: String? = nil,
         userInfo: [String: String]? = nil,
     ) {
         self.id = id
@@ -50,7 +50,7 @@ public struct LocalNotification: Sendable {
         self.dateComponents = dateComponents
         self.repeats = repeats
         self.userInfo = userInfo
-        bundleImageName = nil
+        self.bundleImageName = bundleImageName
         self.categoryIdentifier = categoryIdentifier
     }
 
@@ -62,7 +62,7 @@ public struct LocalNotification: Sendable {
         body: String,
         date: Date,
         repeats: Bool,
-        bundleImageName _: String? = nil,
+        bundleImageName: String? = nil,
         userInfo: [String: String]? = nil,
     ) {
         self.id = id
@@ -74,7 +74,7 @@ public struct LocalNotification: Sendable {
         dateComponents = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
         self.repeats = repeats
         self.userInfo = userInfo
-        bundleImageName = nil
+        self.bundleImageName = bundleImageName
         self.categoryIdentifier = categoryIdentifier
     }
 

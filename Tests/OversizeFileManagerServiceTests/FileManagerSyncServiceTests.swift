@@ -182,27 +182,8 @@ struct FileManagerSyncServiceTests {
         expectFailure(result, is: FileError.fetchFailed)
     }
 
-    @Test(.container, .enabled(if: !FileManagerSyncServiceTests.isICloudAvailable))
-    func deleteDocumentRoutesToCloudServiceWithoutICloudAccount() async throws {
-        let fileManagerService = MockFileManagerService()
-        let cloudDocumentsService = MockCloudDocumentsService()
-        let existing = try makeTemporaryFile()
-        defer { try? FileManager.default.removeItem(at: existing) }
-        fileManagerService.giveURLResult = existing
-        cloudDocumentsService.removeDocumentResult = .success(true)
-        Container.shared.fileManagerService.register { fileManagerService }
-        Container.shared.cloudDocumentsService.register { cloudDocumentsService }
-
-        let service = FileManagerSyncService()
-        let result = await service.deleteDocument(urlString: nil, location: .local, folder: nil, file: "a.txt")
-
-        #expect(expectSuccess(result) == true)
-        #expect(cloudDocumentsService.removeDocumentCalls == [existing])
-        #expect(fileManagerService.removeDocumentCalls.isEmpty)
-    }
-
-    @Test(.container, .enabled(if: FileManagerSyncServiceTests.isICloudAvailable))
-    func deleteDocumentRoutesToFileManagerServiceWithICloudAccount() async throws {
+    @Test(.container)
+    func deleteDocumentLocallyRoutesToFileManagerService() async throws {
         let fileManagerService = MockFileManagerService()
         let cloudDocumentsService = MockCloudDocumentsService()
         let existing = try makeTemporaryFile()
@@ -217,6 +198,55 @@ struct FileManagerSyncServiceTests {
 
         #expect(expectSuccess(result) == true)
         #expect(fileManagerService.removeDocumentCalls == [existing])
+        #expect(cloudDocumentsService.removeDocumentCalls.isEmpty)
+    }
+
+    @Test(.container)
+    func deleteDocumentLocallyFailsWhenFileIsMissing() async {
+        let fileManagerService = MockFileManagerService()
+        fileManagerService.giveURLResult = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("\(UUID().uuidString).txt")
+        Container.shared.fileManagerService.register { fileManagerService }
+        Container.shared.cloudDocumentsService.register { MockCloudDocumentsService() }
+
+        let service = FileManagerSyncService()
+        let result = await service.deleteDocument(urlString: nil, location: .local, folder: nil, file: "a.txt")
+
+        expectFailure(result, is: FileError.fetchFailed)
+        #expect(fileManagerService.removeDocumentCalls.isEmpty)
+    }
+
+    @Test(.container, .enabled(if: FileManagerSyncServiceTests.isICloudAvailable))
+    func deleteDocumentInICloudRoutesToCloudService() async throws {
+        let fileManagerService = MockFileManagerService()
+        let cloudDocumentsService = MockCloudDocumentsService()
+        let existing = try makeTemporaryFile()
+        defer { try? FileManager.default.removeItem(at: existing) }
+        cloudDocumentsService.giveURLResult = existing
+        cloudDocumentsService.removeDocumentResult = .success(true)
+        Container.shared.fileManagerService.register { fileManagerService }
+        Container.shared.cloudDocumentsService.register { cloudDocumentsService }
+
+        let service = FileManagerSyncService()
+        let result = await service.deleteDocument(urlString: existing.absoluteString, location: .iCloud, folder: nil, file: "a.txt")
+
+        #expect(expectSuccess(result) == true)
+        #expect(cloudDocumentsService.removeDocumentCalls == [existing])
+        #expect(fileManagerService.removeDocumentCalls.isEmpty)
+    }
+
+    @Test(.container, .enabled(if: !FileManagerSyncServiceTests.isICloudAvailable))
+    func deleteDocumentInICloudFailsWithoutAccount() async throws {
+        let cloudDocumentsService = MockCloudDocumentsService()
+        let existing = try makeTemporaryFile()
+        defer { try? FileManager.default.removeItem(at: existing) }
+        Container.shared.fileManagerService.register { MockFileManagerService() }
+        Container.shared.cloudDocumentsService.register { cloudDocumentsService }
+
+        let service = FileManagerSyncService()
+        let result = await service.deleteDocument(urlString: existing.absoluteString, location: .iCloud, folder: nil, file: "a.txt")
+
+        expectFailure(result, is: CloudError.noAccount)
         #expect(cloudDocumentsService.removeDocumentCalls.isEmpty)
     }
 

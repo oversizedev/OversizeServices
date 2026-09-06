@@ -77,14 +77,39 @@ struct LocalNotificationTests {
     }
 
     @Test
-    func bundleImageNameIsAlwaysNil() {
-        let notification = LocalNotification(
+    func bundleImageNameIsPreserved() {
+        let timed = LocalNotification(
             id: UUID(),
             title: "Title",
             body: "Body",
             timeInterval: 1,
             bundleImageName: "image",
         )
+        let scheduled = LocalNotification(
+            id: UUID(),
+            title: "Title",
+            body: "Body",
+            dateComponents: DateComponents(year: 2026, month: 3, day: 16),
+            repeats: false,
+            bundleImageName: "image",
+        )
+        let dated = LocalNotification(
+            id: UUID(),
+            title: "Title",
+            body: "Body",
+            date: Date(),
+            repeats: false,
+            bundleImageName: "image",
+        )
+
+        #expect(timed.bundleImageName == "image")
+        #expect(scheduled.bundleImageName == "image")
+        #expect(dated.bundleImageName == "image")
+    }
+
+    @Test
+    func bundleImageNameDefaultsToNil() {
+        let notification = LocalNotification(id: UUID(), title: "Title", body: "Body", timeInterval: 1)
 
         #expect(notification.bundleImageName == nil)
     }
