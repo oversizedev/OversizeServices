@@ -12,20 +12,32 @@ public enum FeatureFlags: Sendable {
 
     @MainActor
     private static func getBool(_ key: String) -> Bool? {
-        if let value = featureFlagsDict?[key] as? Bool {
-            return value
+        getBool(anyOf: [key])
+    }
+
+    @MainActor
+    private static func getBool(anyOf keys: [String]) -> Bool? {
+        for key in keys {
+            if let value = featureFlagsDict?[key] as? Bool {
+                return value
+            }
         }
-        return PlistService.shared.getBoolFromDictionary(
-            field: key,
-            dictionary: "FeatureFlags",
-            plist: "AppConfig",
-        )
+        for key in keys {
+            if let value = PlistService.shared.getBoolFromDictionary(
+                field: key,
+                dictionary: "FeatureFlags",
+                plist: "AppConfig",
+            ) {
+                return value
+            }
+        }
+        return nil
     }
 
     @MainActor
     public enum app: Sendable {
         public static var appearance: Bool? {
-            getBool("Apperance")
+            getBool(anyOf: ["Appearance", "Apperance"])
         }
 
         public static var storeKit: Bool? {
