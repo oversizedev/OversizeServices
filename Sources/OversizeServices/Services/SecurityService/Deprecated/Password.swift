@@ -7,6 +7,7 @@ import Foundation
 import OversizeCore
 import Security
 
+@available(*, deprecated, message: "Use Keychain(service:) instead")
 public extension SecureStorageService {
     func addPassword(_ password: String, for account: String) {
         var query: [CFString: Any] = [:]

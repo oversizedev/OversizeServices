@@ -5,6 +5,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, message: "Use Keychain(service:) with setObject/object instead")
 @propertyWrapper
 public struct Credentials: DynamicProperty {
     private let label: String
