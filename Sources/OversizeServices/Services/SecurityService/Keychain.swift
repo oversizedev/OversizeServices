@@ -26,6 +26,10 @@ public struct Keychain: Sendable {
         synchronizable: Bool = false,
         useDataProtectionKeychain: Bool = false,
     ) {
+        precondition(
+            !synchronizable || accessibility.supportsSynchronization,
+            "A ThisDeviceOnly accessibility cannot be combined with synchronizable",
+        )
         self.service = service
         self.accessibility = accessibility
         self.synchronizable = synchronizable
@@ -58,7 +62,9 @@ public struct Keychain: Sendable {
         let query = query(forKey: key)
         var attributes = query
         attributes[kSecValueData] = data
-        attributes[kSecAttrAccessible] = accessibility.attribute
+        if enforcesAccessibility {
+            attributes[kSecAttrAccessible] = accessibility.attribute
+        }
         let addStatus = SecItemAdd(attributes as CFDictionary, nil)
         guard addStatus == errSecDuplicateItem else { return try check(addStatus) }
         var changes: [CFString: Any] = [kSecValueData: data]
@@ -174,6 +180,13 @@ private extension Keychain {
 }
 
 private extension Keychain.Accessibility {
+    var supportsSynchronization: Bool {
+        switch self {
+        case .afterFirstUnlock, .whenUnlocked: true
+        case .afterFirstUnlockThisDeviceOnly, .whenUnlockedThisDeviceOnly, .whenPasscodeSetThisDeviceOnly: false
+        }
+    }
+
     var attribute: CFString {
         switch self {
         case .afterFirstUnlock: kSecAttrAccessibleAfterFirstUnlock
