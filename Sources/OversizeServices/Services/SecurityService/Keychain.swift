@@ -12,14 +12,24 @@ public struct Keychain: Sendable {
         case afterFirstUnlockThisDeviceOnly
         case whenUnlocked
         case whenUnlockedThisDeviceOnly
+        case whenPasscodeSetThisDeviceOnly
     }
 
     public let service: String?
     public let accessibility: Accessibility
+    public let synchronizable: Bool
+    public let useDataProtectionKeychain: Bool
 
-    public init(service: String?, accessibility: Accessibility = .afterFirstUnlock) {
+    public init(
+        service: String?,
+        accessibility: Accessibility = .afterFirstUnlock,
+        synchronizable: Bool = false,
+        useDataProtectionKeychain: Bool = false,
+    ) {
         self.service = service
         self.accessibility = accessibility
+        self.synchronizable = synchronizable
+        self.useDataProtectionKeychain = useDataProtectionKeychain
     }
 
     public func data(forKey key: String) throws -> Data? {
@@ -52,9 +62,9 @@ public struct Keychain: Sendable {
         let addStatus = SecItemAdd(attributes as CFDictionary, nil)
         guard addStatus == errSecDuplicateItem else { return try check(addStatus) }
         var changes: [CFString: Any] = [kSecValueData: data]
-        #if !os(macOS)
-        changes[kSecAttrAccessible] = accessibility.attribute
-        #endif
+        if enforcesAccessibility {
+            changes[kSecAttrAccessible] = accessibility.attribute
+        }
         let updateStatus = SecItemUpdate(query as CFDictionary, changes as CFDictionary)
         guard updateStatus == errSecItemNotFound else { return try check(updateStatus) }
         try check(SecItemAdd(attributes as CFDictionary, nil))
@@ -83,27 +93,64 @@ public struct Keychain: Sendable {
         return true
     }
 
+    public func keys() throws -> [String] {
+        guard service != nil else { throw KeychainError.serviceRequired }
+        var query = baseQuery()
+        query[kSecReturnAttributes] = kCFBooleanTrue
+        query[kSecMatchLimit] = kSecMatchLimitAll
+        let items: [[CFString: Any]] = try copy(query) ?? []
+        return items.compactMap { $0[kSecAttrAccount] as? String }
+    }
+
     public func remove(forKey key: String) throws {
         try delete(query(forKey: key))
     }
 
     public func removeAll() throws {
-        guard let service else { throw KeychainError.serviceRequired }
-        var query: [CFString: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrService: service]
+        guard service != nil else { throw KeychainError.serviceRequired }
+        var query = baseQuery()
         #if os(macOS)
-        query[kSecMatchLimit] = kSecMatchLimitAll
+        if !usesDataProtectionKeychain {
+            query[kSecMatchLimit] = kSecMatchLimitAll
+        }
         #endif
         try delete(query)
     }
 }
 
-private extension Keychain {
-    func query(forKey key: String) -> [CFString: Any] {
-        var query: [CFString: Any] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: key]
+extension Keychain {
+    func baseQuery() -> [CFString: Any] {
+        var query: [CFString: Any] = [kSecClass: kSecClassGenericPassword]
         if let service {
             query[kSecAttrService] = service
         }
+        if synchronizable {
+            query[kSecAttrSynchronizable] = kCFBooleanTrue
+        }
+        if useDataProtectionKeychain {
+            query[kSecUseDataProtectionKeychain] = kCFBooleanTrue
+        }
         return query
+    }
+
+    func query(forKey key: String) -> [CFString: Any] {
+        var query = baseQuery()
+        query[kSecAttrAccount] = key
+        return query
+    }
+}
+
+private extension Keychain {
+    var usesDataProtectionKeychain: Bool {
+        useDataProtectionKeychain || synchronizable
+    }
+
+    var enforcesAccessibility: Bool {
+        #if os(macOS)
+        usesDataProtectionKeychain
+        #else
+        true
+        #endif
     }
 
     func copy<Result>(_ query: [CFString: Any]) throws -> Result? {
@@ -133,6 +180,7 @@ private extension Keychain.Accessibility {
         case .afterFirstUnlockThisDeviceOnly: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         case .whenUnlocked: kSecAttrAccessibleWhenUnlocked
         case .whenUnlockedThisDeviceOnly: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        case .whenPasscodeSetThisDeviceOnly: kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly
         }
     }
 }

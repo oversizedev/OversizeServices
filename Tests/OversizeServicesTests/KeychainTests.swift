@@ -151,6 +151,43 @@ struct KeychainTests {
     }
 
     @Test
+    func keysListsAccountsOfTheService() throws {
+        defer { cleanUp() }
+        #expect(try keychain.keys() == [])
+
+        try keychain.set("1", forKey: "one")
+        try keychain.set("2", forKey: "two")
+        try otherKeychain.set("3", forKey: "three")
+
+        #expect(try keychain.keys().sorted() == ["one", "two"])
+        #expect(try otherKeychain.keys() == ["three"])
+    }
+
+    @Test
+    func keysNeedAService() {
+        #expect(throws: KeychainError.serviceRequired) {
+            try legacyKeychain.keys()
+        }
+    }
+
+    @Test
+    func synchronizableQueryCarriesTheFlag() {
+        let synchronizable = Keychain(service: service, synchronizable: true)
+
+        #expect(synchronizable.query(forKey: "token")[kSecAttrSynchronizable] as? Bool == true)
+        #expect(keychain.query(forKey: "token")[kSecAttrSynchronizable] == nil)
+    }
+
+    @Test
+    func dataProtectionQueryCarriesTheFlag() {
+        let protected = Keychain(service: service, useDataProtectionKeychain: true)
+
+        #expect(protected.query(forKey: "token")[kSecUseDataProtectionKeychain] as? Bool == true)
+        #expect(keychain.query(forKey: "token")[kSecUseDataProtectionKeychain] == nil)
+        #expect(keychain.query(forKey: "token")[kSecAttrAccount] as? String == "token")
+    }
+
+    @Test
     func removeAllNeedsAService() {
         #expect(throws: KeychainError.serviceRequired) {
             try legacyKeychain.removeAll()
