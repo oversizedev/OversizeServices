@@ -15,7 +15,6 @@ struct ContainerRegistrationTests {
         #expect(Container.shared.settingsService() is SettingsService)
         #expect(Container.shared.biometricService() is BiometricService)
         _ = Container.shared.appStateService()
-        _ = Container.shared.secureStorageService()
     }
 
     @Test(.container)

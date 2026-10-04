@@ -19,6 +19,7 @@ public extension Container {
         self { BiometricService() }
     }
 
+    @available(*, deprecated, message: "Use Keychain(service:) instead")
     var secureStorageService: Factory<SecureStorageService> {
         self { SecureStorageService() }
     }

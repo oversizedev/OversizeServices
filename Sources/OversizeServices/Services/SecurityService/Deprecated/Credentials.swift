@@ -6,6 +6,7 @@
 import Foundation
 import OversizeCore
 
+@available(*, deprecated, message: "Use Keychain(service:) instead")
 public extension SecureStorageService {
     struct Credentials {
         public var login: String

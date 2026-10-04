@@ -7,6 +7,7 @@ import Foundation
 import OversizeCore
 import Security
 
+@available(*, deprecated, message: "Use Keychain(service:) instead")
 public final class SecureStorageService: @unchecked Sendable {
     enum KeychainError: Error {
         case itemAlreadyExist
