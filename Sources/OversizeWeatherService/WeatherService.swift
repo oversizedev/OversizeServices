@@ -60,9 +60,9 @@ public actor OversizeWeatherService {
     public func fetchForecastWithTimeline(location: CLLocationCoordinate2D) async -> Result<AppForecastTimeline, Error> {
         let now = Date()
         let calendar = Calendar.current
-        let timelineStart = calendar.date(byAdding: .hour, value: -24, to: now) ?? now
-        let timelineEnd = calendar.date(byAdding: .hour, value: 240, to: now) ?? now
         let hourlyStart = calendar.dateInterval(of: .hour, for: now)?.start ?? now
+        let timelineStart = calendar.date(byAdding: .hour, value: -24, to: hourlyStart) ?? hourlyStart
+        let timelineEnd = calendar.date(byAdding: .hour, value: 240, to: now) ?? now
         let hourlyEnd = calendar.date(byAdding: .hour, value: 24, to: now) ?? now
         let dailyEnd = calendar.date(byAdding: .day, value: 10, to: now) ?? now
         do {
