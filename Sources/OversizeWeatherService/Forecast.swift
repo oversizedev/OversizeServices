@@ -19,6 +19,17 @@ public struct AppForecast: Sendable {
 }
 
 @available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)
+public struct AppForecastTimeline: Sendable {
+    public let forecast: AppForecast
+    public let timeline: [HourWeather]
+
+    public init(forecast: AppForecast, timeline: [HourWeather]) {
+        self.forecast = forecast
+        self.timeline = timeline
+    }
+}
+
+@available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *)
 public extension AppForecast {
     var sunPositionPercent: Double {
         guard let sunrise = daily.first?.sunrise,
