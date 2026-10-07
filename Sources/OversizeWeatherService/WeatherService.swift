@@ -65,14 +65,19 @@ public actor OversizeWeatherService {
         let timelineEnd = calendar.date(byAdding: .hour, value: 240, to: now) ?? now
         let hourlyEnd = calendar.date(byAdding: .hour, value: 24, to: now) ?? now
         let dailyEnd = calendar.date(byAdding: .day, value: 10, to: now) ?? now
+        let weatherLocation = clLocation(from: location)
+        async let pastHours = fetchPastHours(location: weatherLocation, start: timelineStart, end: hourlyStart)
         do {
             let (current, hourly, daily) = try await service.weather(
-                for: clLocation(from: location),
+                for: weatherLocation,
                 including: .current,
-                .hourly(startDate: timelineStart, endDate: timelineEnd),
+                .hourly(startDate: hourlyStart, endDate: timelineEnd),
                 .daily(startDate: now, endDate: dailyEnd),
             )
-            let timeline = Array(hourly.forecast)
+            let past = await pastHours
+            let futureHours = Array(hourly.forecast)
+            let knownDates = Set(past.map(\.date))
+            let timeline = (past + futureHours.filter { !knownDates.contains($0.date) }).sorted { $0.date < $1.date }
             let upcomingHours = timeline.filter { $0.date >= hourlyStart && $0.date < hourlyEnd }
             let forecast = AppForecast(
                 current: current,
@@ -83,6 +88,16 @@ public actor OversizeWeatherService {
         } catch {
             Log.error("fetchForecastWithTimeline failed: \(error.localizedDescription)")
             return .failure(WeatherError.unknown(error))
+        }
+    }
+
+    private func fetchPastHours(location: CLLocation, start: Date, end: Date) async -> [HourWeather] {
+        do {
+            let forecast = try await service.weather(for: location, including: .hourly(startDate: start, endDate: end))
+            return Array(forecast.forecast)
+        } catch {
+            Log.error("fetchPastHours failed: \(error.localizedDescription)")
+            return []
         }
     }
 
