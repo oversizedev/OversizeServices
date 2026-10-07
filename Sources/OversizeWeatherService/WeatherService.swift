@@ -60,7 +60,7 @@ public actor OversizeWeatherService {
     public func fetchForecastWithTimeline(location: CLLocationCoordinate2D) async -> Result<AppForecastTimeline, Error> {
         let now = Date()
         let calendar = Calendar.current
-        let hourlyStart = calendar.dateInterval(of: .hour, for: now)?.start ?? now
+        let hourlyStart = Date(timeIntervalSinceReferenceDate: floor(now.timeIntervalSinceReferenceDate / 3600) * 3600)
         let timelineStart = calendar.date(byAdding: .hour, value: -24, to: hourlyStart) ?? hourlyStart
         let timelineEnd = calendar.date(byAdding: .hour, value: 240, to: now) ?? now
         let hourlyEnd = calendar.date(byAdding: .hour, value: 24, to: now) ?? now
@@ -76,8 +76,8 @@ public actor OversizeWeatherService {
             )
             let past = await pastHours
             let futureHours = Array(hourly.forecast)
-            let knownDates = Set(past.map(\.date))
-            let timeline = (past + futureHours.filter { !knownDates.contains($0.date) }).sorted { $0.date < $1.date }
+            let pastBeforeStart = past.filter { $0.date < hourlyStart }
+            let timeline = (pastBeforeStart + futureHours).sorted { $0.date < $1.date }
             let upcomingHours = timeline.filter { $0.date >= hourlyStart && $0.date < hourlyEnd }
             let forecast = AppForecast(
                 current: current,
@@ -85,6 +85,8 @@ public actor OversizeWeatherService {
                 daily: Array(daily.forecast),
             )
             return .success(AppForecastTimeline(forecast: forecast, timeline: timeline))
+        } catch is CancellationError {
+            return .failure(CancellationError())
         } catch {
             Log.error("fetchForecastWithTimeline failed: \(error.localizedDescription)")
             return .failure(WeatherError.unknown(error))
@@ -95,6 +97,8 @@ public actor OversizeWeatherService {
         do {
             let forecast = try await service.weather(for: location, including: .hourly(startDate: start, endDate: end))
             return Array(forecast.forecast)
+        } catch is CancellationError {
+            return []
         } catch {
             Log.error("fetchPastHours failed: \(error.localizedDescription)")
             return []
