@@ -57,6 +57,54 @@ public actor OversizeWeatherService {
         }
     }
 
+    public func fetchForecastWithTimeline(location: CLLocationCoordinate2D) async -> Result<AppForecastTimeline, Error> {
+        let now = Date()
+        let calendar = Calendar.current
+        let hourlyStart = Date(timeIntervalSinceReferenceDate: floor(now.timeIntervalSinceReferenceDate / 3600) * 3600)
+        let timelineStart = calendar.date(byAdding: .hour, value: -24, to: hourlyStart) ?? hourlyStart
+        let timelineEnd = calendar.date(byAdding: .hour, value: 240, to: now) ?? now
+        let hourlyEnd = calendar.date(byAdding: .hour, value: 24, to: now) ?? now
+        let dailyEnd = calendar.date(byAdding: .day, value: 10, to: now) ?? now
+        let weatherLocation = clLocation(from: location)
+        async let pastHours = fetchPastHours(location: weatherLocation, start: timelineStart, end: hourlyStart)
+        do {
+            let (current, hourly, daily) = try await service.weather(
+                for: weatherLocation,
+                including: .current,
+                .hourly(startDate: hourlyStart, endDate: timelineEnd),
+                .daily(startDate: now, endDate: dailyEnd),
+            )
+            let past = await pastHours
+            let futureHours = Array(hourly.forecast)
+            let pastBeforeStart = past.filter { $0.date < hourlyStart }
+            let timeline = (pastBeforeStart + futureHours).sorted { $0.date < $1.date }
+            let upcomingHours = timeline.filter { $0.date >= hourlyStart && $0.date < hourlyEnd }
+            let forecast = AppForecast(
+                current: current,
+                hourly: upcomingHours,
+                daily: Array(daily.forecast),
+            )
+            return .success(AppForecastTimeline(forecast: forecast, timeline: timeline))
+        } catch is CancellationError {
+            return .failure(CancellationError())
+        } catch {
+            Log.error("fetchForecastWithTimeline failed: \(error.localizedDescription)")
+            return .failure(WeatherError.unknown(error))
+        }
+    }
+
+    private func fetchPastHours(location: CLLocation, start: Date, end: Date) async -> [HourWeather] {
+        do {
+            let forecast = try await service.weather(for: location, including: .hourly(startDate: start, endDate: end))
+            return Array(forecast.forecast)
+        } catch is CancellationError {
+            return []
+        } catch {
+            Log.error("fetchPastHours failed: \(error.localizedDescription)")
+            return []
+        }
+    }
+
     public func fetchCurrentForecast(location: CLLocationCoordinate2D) async -> Result<CurrentWeather, Error> {
         do {
             let current = try await service.weather(for: clLocation(from: location), including: .current)
