@@ -13,8 +13,9 @@ public actor OversizeWeatherService {
 
     public init() {}
 
-    public func fetchWeather(for date: Date, location: CLLocationCoordinate2D) async -> Result<DayWeather, Error> {
-        let calendar = Calendar.current
+    public func fetchWeather(for date: Date, location: CLLocationCoordinate2D, timeZone: TimeZone = .current) async -> Result<DayWeather, Error> {
+        var calendar = Calendar.current
+        calendar.timeZone = timeZone
         let startOfDay = calendar.startOfDay(for: date)
         guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else {
             return .failure(WeatherError.noDataForDate)
