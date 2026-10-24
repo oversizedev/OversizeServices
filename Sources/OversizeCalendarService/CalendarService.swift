@@ -53,14 +53,8 @@ public class CalendarService: @unchecked Sendable {
         if case let .failure(error) = access {
             return .failure(error)
         }
-        let calendars = eventStore.calendars(for: .event)
-        var filtredCalendars: [EKCalendar] = []
-        for calendar in calendars {
-            if let _ = filtredCalendarsIds.first(where: { calendar.calendarIdentifier == $0 }) {
-                break
-            } else {
-                filtredCalendars.append(calendar)
-            }
+        let filtredCalendars = eventStore.calendars(for: .event).filter { calendar in
+            !filtredCalendarsIds.contains(calendar.calendarIdentifier)
         }
         var events: [EKEvent] = []
         for calendar in filtredCalendars {
